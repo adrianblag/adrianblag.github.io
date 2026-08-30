@@ -1,0 +1,53 @@
+---
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { readingMinutes, stampDate, url } from '../../lib/format';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('posts');
+  return posts
+    .filter((post) => import.meta.env.DEV || !post.data.draft)
+    .map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Base title={post.data.title} description={post.data.description}>
+  <div class="wrap page rv">
+    <header class="post-header">
+      <span class="row-stamp">
+        {
+          [
+            stampDate(post.data.date),
+            post.data.category,
+            `${readingMinutes(post.body)} min`,
+          ]
+            .filter(Boolean)
+            .join(' · ')
+        }
+      </span>
+      <h1 class="post-lead-title">{post.data.title}</h1>
+      <p class="page-lead">{post.data.description}</p>
+    </header>
+
+    <Placeholder
+      class="post-hero"
+      src={post.data.image}
+      alt={post.data.image ? post.data.title : ''}
+      caption="post image, 16:9 — optional"
+    />
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <a class="post-back" href={url('/writing')}>← All writing</a>
+  </div>
+</Base>

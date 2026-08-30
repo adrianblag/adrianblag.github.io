@@ -1,0 +1,109 @@
+---
+/**
+ * Category filter pills.
+ *
+ * Contract with the markup around it (see any of the list pages):
+ *  - An ancestor element carries `data-filter-root` — the filtering is scoped
+ *    to that subtree.
+ *  - Each filterable row carries `data-category="<the category string>"`.
+ *  - Each list container carries `data-filter-list`. Add `data-group` too if
+ *    the whole container (e.g. a year heading + its rows) should disappear
+ *    when nothing inside it matches.
+ *  - An optional `[data-count]` inside a group has its text kept in sync.
+ *  - An optional `[data-filter-empty]` element is shown when nothing matches.
+ *
+ * No client framework — plain DOM, ~40 lines, re-initialised on every Astro
+ * view transition via the `astro:page-load` event.
+ */
+interface Props {
+  categories: readonly string[];
+  /** Accessible name for the pill group, e.g. "Filter publications by type" */
+  label: string;
+}
+const { categories, label } = Astro.props;
+---
+
+{
+  categories.length > 0 && (
+    <div class="pills" role="group" aria-label={label} data-filter-pills>
+      <button class="pill" type="button" data-filter="*" aria-pressed="true">
+        All
+      </button>
+      {categories.map((c) => (
+        <button class="pill" type="button" data-filter={c} aria-pressed="false">
+          {c}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+<script>
+  function applyFilter(root: HTMLElement, value: string) {
+    // 1. Show/hide individual rows.
+    root.querySelectorAll<HTMLElement>('[data-category]').forEach((row) => {
+      row.hidden = value !== '*' && row.dataset.category !== value;
+    });
+
+    // 2. Per list: refresh the trailing hairline, the count, and emptiness.
+    root.querySelectorAll<HTMLElement>('[data-filter-list]').forEach((list) => {
+      const rows = Array.from(
+        list.querySelectorAll<HTMLElement>('[data-category]')
+      );
+      const visible = rows.filter((row) => !row.hidden);
+
+      rows.forEach((row) => row.classList.remove('is-last-visible'));
+      visible.at(-1)?.classList.add('is-last-visible');
+
+      const counter = list.querySelector<HTMLElement>('[data-count]');
+      if (counter) {
+        const noun = counter.dataset.noun ?? 'items';
+        const one = noun.replace(/s$/, '');
+        counter.textContent = `${visible.length} ${
+          visible.length === 1 ? one : noun
+        }`;
+      }
+
+      if (list.hasAttribute('data-group')) list.hidden = visible.length === 0;
+    });
+
+    // 3. "Nothing matches" message.
+    const empty = root.querySelector<HTMLElement>('[data-filter-empty]');
+    if (empty) {
+      const anyVisible = Array.from(
+        root.querySelectorAll<HTMLElement>('[data-category]')
+      ).some((row) => !row.hidden);
+      empty.hidden = anyVisible;
+    }
+  }
+
+  function initFilters() {
+    document
+      .querySelectorAll<HTMLElement>('[data-filter-pills]')
+      .forEach((group) => {
+        const root = group.closest<HTMLElement>('[data-filter-root]');
+        if (!root || root.dataset.filterReady === 'true') return;
+        root.dataset.filterReady = 'true';
+
+        const pills = Array.from(
+          group.querySelectorAll<HTMLButtonElement>('.pill')
+        );
+
+        group.addEventListener('click', (event) => {
+          const pill = (event.target as HTMLElement).closest<HTMLButtonElement>(
+            '.pill'
+          );
+          if (!pill) return;
+          pills.forEach((p) =>
+            p.setAttribute('aria-pressed', String(p === pill))
+          );
+          applyFilter(root, pill.dataset.filter ?? '*');
+        });
+
+        applyFilter(root, '*');
+      });
+  }
+
+  document.addEventListener('astro:page-load', initFilters);
+  initFilters();
+</script>

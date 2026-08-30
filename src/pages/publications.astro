@@ -1,0 +1,107 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import FilterPills from '../components/FilterPills.astro';
+import YearHead from '../components/YearHead.astro';
+import { pageIntros } from '../config/site';
+import { publicationTypes } from '../config/taxonomy';
+import { groupByYear, doiUrl, resolveCategories } from '../lib/format';
+
+const all = (await getCollection('publications')).sort((a, b) => {
+  if (b.data.year !== a.data.year) return b.data.year - a.data.year;
+  const ad = a.data.date?.getTime() ?? 0;
+  const bd = b.data.date?.getTime() ?? 0;
+  if (bd !== ad) return bd - ad;
+  return a.data.title.localeCompare(b.data.title);
+});
+
+const groups = groupByYear(all, (p) => p.data.year);
+const categories = resolveCategories(
+  publicationTypes,
+  all.map((p) => p.data.venueType)
+);
+
+/** PDF and DOI are promoted to link tags alongside any explicit `links`. */
+function tagLinks(data: (typeof all)[number]['data']) {
+  const out: { label: string; url: string }[] = [];
+  if (data.pdf) out.push({ label: 'PDF', url: data.pdf });
+  if (data.doi) out.push({ label: 'DOI', url: doiUrl(data.doi) });
+  out.push(...data.links);
+  return out;
+}
+---
+
+<Base title="Publications" description={pageIntros.publications}>
+  <div class="wrap page rv" data-filter-root>
+    <PageHeader title="Publications" lead={pageIntros.publications}>
+      <FilterPills
+        categories={categories}
+        label="Filter publications by type"
+      />
+    </PageHeader>
+
+    {
+      groups.map((group) => (
+        <section class="year-group" data-filter-list data-group>
+          <YearHead year={group.year} count={group.items.length} noun="items" />
+          {group.items.map((pub, i) => {
+            const links = tagLinks(pub.data);
+            const primary = links[0]?.url;
+            const isLast = i === group.items.length - 1;
+            return (
+              <article
+                class:list={['row', 'pub-row', { 'is-last-visible': isLast }]}
+                data-category={pub.data.venueType}
+              >
+                <div class="pub-body">
+                  {primary ? (
+                    <a class="row-title" href={primary}>
+                      {pub.data.title}
+                    </a>
+                  ) : (
+                    <h2 class="row-title">{pub.data.title}</h2>
+                  )}
+                  <span class="row-meta pub-authors">
+                    {pub.data.authors.map((a, ai) => (
+                      <Fragment>
+                        {ai > 0 && ', '}
+                        {a.isYou ? <span class="you">{a.name}</span> : a.name}
+                      </Fragment>
+                    ))}
+                  </span>
+                  <span class="row-venue">
+                    {[pub.data.venue, pub.data.venueType, pub.data.note]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </span>
+                </div>
+                <div class="taglinks">
+                  {links.map((l) => (
+                    <a href={l.url}>
+                      {l.label}
+                      <span class="sr-only"> — {pub.data.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </article>
+            );
+          })}
+        </section>
+      ))
+    }
+
+    <p class="filter-empty" data-filter-empty hidden>
+      No publications in this category yet.
+    </p>
+
+    {
+      all.length === 0 && (
+        <p class="filter-empty">
+          No publications yet — add a Markdown file to
+          <code> src/content/publications/</code>.
+        </p>
+      )
+    }
+  </div>
+</Base>

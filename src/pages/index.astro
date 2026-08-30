@@ -1,0 +1,112 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { site } from '../config/site';
+import { stampMonth, url } from '../lib/format';
+
+/* ---- "Selected work": featured publications, newest first, else the
+        three most recent. ---------------------------------------------- */
+const pubs = (await getCollection('publications')).sort(
+  (a, b) => b.data.year - a.data.year
+);
+const featured = pubs.filter((p) => p.data.featured);
+const selected = (featured.length > 0 ? featured : pubs).slice(0, 3);
+
+/* ---- "Notes & talks": posts and talks interleaved by date. ----------- */
+const posts = (await getCollection('posts')).filter(
+  (p) => import.meta.env.DEV || !p.data.draft
+);
+const talks = await getCollection('talks');
+
+const notes = [
+  ...posts.map((p) => ({
+    title: p.data.title,
+    date: p.data.date,
+    meta: [stampMonth(p.data.date), p.data.category ?? 'Note'],
+    href: url(`/writing/${p.id}`),
+  })),
+  ...talks.map((t) => ({
+    title: t.data.title,
+    date: t.data.date,
+    meta: [stampMonth(t.data.date), t.data.event],
+    href: url('/talks'),
+  })),
+]
+  .sort((a, b) => b.date.getTime() - a.date.getTime())
+  .slice(0, 3);
+---
+
+<Base description={site.description}>
+  <div class="wrap hero rv">
+    <div class="hero-text">
+      <p class="eyebrow">{site.role}</p>
+      <h1 class="hero-statement">{site.heroStatement}</h1>
+      <p class="hero-bio">{site.bio}</p>
+      <div class="hero-links">
+        <a href={`mailto:${site.email}`}>{site.email}</a>
+        {
+          site.socials.map((s) => (
+            <a href={s.url} rel="me noopener">
+              {s.label}
+            </a>
+          ))
+        }
+      </div>
+    </div>
+
+    <Placeholder
+      class="hero-portrait"
+      src={site.avatar}
+      alt={site.avatar ? site.name : ''}
+      caption={site.avatarCaption}
+    />
+  </div>
+
+  <div class="panels rv2">
+    <div class="panels-inner">
+      <section class="panel">
+        <h2 class="panel-label">Selected work</h2>
+        <div class="panel-list">
+          {
+            selected.map((pub) => (
+              <a class="panel-item" href={url('/publications')}>
+                <span class="panel-year">{pub.data.year}</span>
+                <span class="panel-title">
+                  {pub.data.title}{' '}
+                  <span class="panel-venue">{pub.data.venue}</span>
+                </span>
+              </a>
+            ))
+          }
+          {
+            selected.length === 0 && (
+              <p class="panel-empty">Publications will appear here.</p>
+            )
+          }
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-label">Notes &amp; talks</h2>
+        <div class="panel-list stacked">
+          {
+            notes.map((note) => (
+              <a class="panel-note" href={note.href}>
+                <span class="panel-note-title">{note.title}</span>
+                <span class="panel-note-meta">
+                  {note.meta.filter(Boolean).join(' · ')}
+                </span>
+              </a>
+            ))
+          }
+          {
+            notes.length === 0 && (
+              <p class="panel-empty">Posts and talks will appear here.</p>
+            )
+          }
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>

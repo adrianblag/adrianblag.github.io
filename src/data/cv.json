@@ -1,0 +1,85 @@
+{
+  "_readme": [
+    "CV timeline data. All values below are PLACEHOLDER — replace them.",
+    "`sections` sets the order and headings of the timeline; each entry's",
+    "`section` must match one of the section `id`s. Set `end` to \"present\"",
+    "for a current role — that entry gets a filled timeline dot. Omit `end`",
+    "entirely for a single-year item (an award, a service role). `bullets`",
+    "and `organization` are both optional."
+  ],
+
+  "sections": [
+    { "id": "employment", "label": "Appointments" },
+    { "id": "education", "label": "Education" },
+    { "id": "awards", "label": "Grants, awards & service" }
+  ],
+
+  "entries": [
+    {
+      "section": "employment",
+      "title": "Sample Current Position",
+      "organization": "Your Institution · Your Group",
+      "start": "2023",
+      "end": "present",
+      "bullets": [
+        "One line on what you do here: the group you lead, the courses you teach, the systems you build.",
+        "A second line if the role needs it — otherwise delete this."
+      ]
+    },
+    {
+      "section": "employment",
+      "title": "Sample Previous Position",
+      "organization": "A Previous Institution · Department",
+      "start": "2021",
+      "end": "2023",
+      "bullets": [
+        "A sentence about the work: the project, the output, the thing that came out of it."
+      ]
+    },
+    {
+      "section": "employment",
+      "title": "Sample Visiting Role",
+      "organization": "Another Institution · City",
+      "start": "2020",
+      "end": "2021",
+      "bullets": []
+    },
+    {
+      "section": "education",
+      "title": "PhD, Your Field",
+      "organization": "Your PhD University · advisor: Advisor Name",
+      "start": "2016",
+      "end": "2020",
+      "bullets": ["Thesis: A placeholder thesis title goes here."]
+    },
+    {
+      "section": "education",
+      "title": "MSc, Your Field · BSc, Your Field",
+      "organization": "Your Earlier University",
+      "start": "2014",
+      "end": "2016",
+      "bullets": []
+    },
+    {
+      "section": "awards",
+      "title": "Sample award or honour",
+      "organization": "Awarding Body",
+      "start": "2025",
+      "bullets": []
+    },
+    {
+      "section": "awards",
+      "title": "Sample grant — placeholder project title",
+      "organization": "Funding Agency",
+      "start": "2024",
+      "bullets": ["Amount, duration, or a one-line description if useful."]
+    },
+    {
+      "section": "awards",
+      "title": "Sample service role, e.g. area chair or reviewer",
+      "organization": "Conference or Journal",
+      "start": "2023",
+      "bullets": []
+    }
+  ]
+}

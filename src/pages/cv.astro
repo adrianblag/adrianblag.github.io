@@ -1,0 +1,85 @@
+---
+import Base from '../layouts/Base.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { site, pageIntros } from '../config/site';
+import { url } from '../lib/format';
+import cv from '../data/cv.json';
+
+type Entry = {
+  section: string;
+  title: string;
+  organization?: string;
+  start: string;
+  end?: string;
+  bullets?: string[];
+};
+
+const entries = cv.entries as Entry[];
+
+/** Sections in the order declared in cv.json; empty ones are skipped. */
+const sections = cv.sections
+  .map((s) => ({ ...s, items: entries.filter((e) => e.section === s.id) }))
+  .filter((s) => s.items.length > 0);
+
+const isCurrent = (e: Entry) => (e.end ?? '').toLowerCase() === 'present';
+
+function dateLabel(e: Entry): string {
+  if (isCurrent(e)) return `${e.start} —`;
+  if (e.end && e.end !== e.start) return `${e.start} — ${e.end}`;
+  return e.start;
+}
+---
+
+<Base title="CV" description={pageIntros.cv}>
+  <div class="wrap page rv">
+    <PageHeader title="Curriculum vitae" lead={pageIntros.cv}>
+      {
+        site.cvPdf && (
+          <a class="cv-download" href={url(site.cvPdf)} download>
+            Download CV (PDF)
+          </a>
+        )
+      }
+    </PageHeader>
+
+    <div class="cv-grid" style="margin-top: 48px;">
+      {
+        sections.map((section) => (
+          <section class="cv-section" style="display: contents;">
+            <div class="cv-section-head">
+              <h2 class="cv-section-label">{section.label}</h2>
+              <span class="cv-section-rule" />
+            </div>
+            {section.items.map((entry, i) => (
+              <Fragment>
+                <div class="cv-date">{dateLabel(entry)}</div>
+                <div
+                  class:list={[
+                    'cv-entry',
+                    { 'is-last': i === section.items.length - 1 },
+                  ]}
+                >
+                  <span
+                    class:list={['cv-dot', { 'is-current': isCurrent(entry) }]}
+                    aria-hidden="true"
+                  />
+                  <h3 class="cv-title">{entry.title}</h3>
+                  {entry.organization && (
+                    <span class="cv-org">{entry.organization}</span>
+                  )}
+                  {entry.bullets && entry.bullets.length > 0 && (
+                    <ul class="cv-bullets">
+                      {entry.bullets.map((b) => (
+                        <li>{b}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </Fragment>
+            ))}
+          </section>
+        ))
+      }
+    </div>
+  </div>
+</Base>

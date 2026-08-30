@@ -1,0 +1,19 @@
+---
+import { site } from '../config/site';
+---
+
+<footer class="site-footer">
+  <div class="wrap">
+    {site.footerAddress && <span class="footer-address">{site.footerAddress}</span>}
+    <div class="footer-links">
+      <a href={`mailto:${site.email}`}>Email</a>
+      {
+        site.socials.map((s) => (
+          <a href={s.url} rel="me noopener">
+            {s.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</footer>

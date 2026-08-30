@@ -1,0 +1,103 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import FilterPills from '../../components/FilterPills.astro';
+import Placeholder from '../../components/Placeholder.astro';
+import { pageIntros } from '../../config/site';
+import { postCategories } from '../../config/taxonomy';
+import {
+  readingMinutes,
+  resolveCategories,
+  stampDate,
+  url,
+} from '../../lib/format';
+
+const all = (await getCollection('posts'))
+  .filter((p) => import.meta.env.DEV || !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const [lead, ...rest] = all;
+
+const categories = resolveCategories(
+  postCategories,
+  all.map((p) => p.data.category)
+);
+---
+
+<Base title="Writing" description={pageIntros.writing}>
+  <div class="wrap page rv" data-filter-root>
+    <PageHeader title="Writing" lead={pageIntros.writing}>
+      <FilterPills categories={categories} label="Filter posts by category" />
+    </PageHeader>
+
+    {
+      lead && (
+        <article class="post-lead-row" data-category={lead.data.category ?? ''}>
+          <div class="post-lead-body">
+            <span class="row-stamp">
+              {[
+                'Latest',
+                stampDate(lead.data.date),
+                lead.data.category,
+                `${readingMinutes(lead.body)} min`,
+              ]
+                .filter(Boolean)
+                .join(' · ')}
+            </span>
+            <a
+              class="post-lead-title"
+              href={url(`/writing/${lead.id}`)}
+            >
+              {lead.data.title}
+            </a>
+            <span class="post-lead-desc">{lead.data.description}</span>
+            <span class="read-more">Read</span>
+          </div>
+          <Placeholder
+            class="post-lead-media"
+            src={lead.data.image}
+            alt={lead.data.image ? lead.data.title : ''}
+            caption="post image, 16:9 — optional"
+          />
+        </article>
+      )
+    }
+
+    <div data-filter-list>
+      {
+        rest.map((post, i) => (
+          <article
+            class:list={[
+              'row',
+              'post-row',
+              { 'is-last-visible': i === rest.length - 1 },
+            ]}
+            data-category={post.data.category ?? ''}
+          >
+            <span class="post-date">{stampDate(post.data.date)}</span>
+            <div class="post-row-body">
+              <a class="post-row-title" href={url(`/writing/${post.id}`)}>
+                {post.data.title}
+              </a>
+              <span class="post-row-desc">{post.data.description}</span>
+            </div>
+            <span class="post-cat">{post.data.category}</span>
+          </article>
+        ))
+      }
+    </div>
+
+    <p class="filter-empty" data-filter-empty hidden>
+      No posts in this category yet.
+    </p>
+
+    {
+      all.length === 0 && (
+        <p class="filter-empty">
+          No posts yet — add a Markdown file to <code>src/content/posts/</code>.
+        </p>
+      )
+    }
+  </div>
+</Base>

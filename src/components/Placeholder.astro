@@ -1,0 +1,21 @@
+---
+/** Striped placeholder box, or the real image when one is supplied. */
+interface Props {
+  src?: string | null;
+  alt?: string;
+  caption?: string | null;
+  class?: string;
+}
+const { src, alt = '', caption = null, class: cls = '' } = Astro.props;
+---
+
+<div class={cls}>
+  {
+    src ? (
+      <img src={src} alt={alt} loading="lazy" />
+    ) : (
+      <div class="ph" aria-hidden="true" />
+    )
+  }
+  {!src && caption && <span class="ph-caption">{caption}</span>}
+</div>
