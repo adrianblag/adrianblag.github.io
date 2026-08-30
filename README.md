@@ -261,6 +261,23 @@ git push -u origin main
 The first deploy takes a couple of minutes. After that, every push to `main`
 republishes automatically — watch it under the repo's **Actions** tab.
 
+### If you see a failed "pages build and deployment" run
+
+That is GitHub's *legacy* Jekyll builder, not this project's workflow. GitHub
+auto-enables branch-based Pages on the first push to a `<user>.github.io`
+repo, and that builder runs Jekyll over the **source tree** — where it hits
+the `---` fences at the top of every `.astro` file, reads them as YAML front
+matter, and fails.
+
+It never touches the real site. Once **Settings → Pages → Source** is set to
+**GitHub Actions**, it stops running. If it ever fires again, that setting has
+reverted.
+
+`public/.nojekyll` is a separate, permanent safeguard: it ships inside the
+published output so nothing downstream can strip the `_astro/` directory
+(Jekyll drops underscore-prefixed folders, which would 404 every stylesheet
+and script). Leave it in place.
+
 ### Moving to a custom domain later
 
 Set `site` in `astro.config.mjs` to the new domain, add a `public/CNAME` file
