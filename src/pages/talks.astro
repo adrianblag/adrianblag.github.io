@@ -20,16 +20,16 @@ const categories = resolveCategories(
 );
 ---
 
-<Base title="Talks" description={pageIntros.talks}>
+<Base title="Talks & posters" description={pageIntros.talks}>
   <div class="wrap page rv" data-filter-root>
-    <PageHeader title="Talks" lead={pageIntros.talks}>
-      <FilterPills categories={categories} label="Filter talks by type" />
+    <PageHeader title="Talks &amp; posters" lead={pageIntros.talks}>
+      <FilterPills categories={categories} label="Filter talks and posters by type" />
     </PageHeader>
 
     {
       groups.map((group) => (
         <section class="year-group" data-filter-list data-group>
-          <YearHead year={group.year} count={group.items.length} noun="talks" />
+          <YearHead year={group.year} count={group.items.length} noun="presentations" />
           {group.items.map((talk, i) => {
             const primary = talk.data.links[0]?.url;
             const isLast = i === group.items.length - 1;
@@ -80,7 +80,7 @@ const categories = resolveCategories(
     }
 
     <p class="filter-empty" data-filter-empty hidden>
-      No talks in this category yet.
+      Nothing in this category yet.
     </p>
 
     {
