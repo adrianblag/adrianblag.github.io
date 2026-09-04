@@ -3,6 +3,7 @@ title: "Sample reading list post"
 date: 2025-03-27
 description: "A third placeholder post, here to demonstrate the category filter with more than two categories in play."
 category: "Reading"
+draft: true   # kept as a styling reference; hidden from the build
 ---
 
 A reading list is a good first real post: it is useful to other people, it is

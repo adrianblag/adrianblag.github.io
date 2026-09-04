@@ -3,6 +3,7 @@ title: "Sample post: everything the Markdown renderer supports"
 date: 2025-08-04
 description: "A placeholder post that exercises headings, links, lists, blockquotes, tables and code so you can see how each one is styled before you write your own."
 category: "Research life"
+draft: true   # kept as a styling reference; hidden from the build
 ---
 
 This is a placeholder post. Replace the file, keep the frontmatter shape. The

@@ -199,6 +199,49 @@ compact rows. Reading time is computed from the body.
 `draft: true` keeps a post visible in `npm run dev` but excludes it from
 `npm run build` — from the index, the homepage panel and the generated route.
 
+### Images, figures and PDFs in a post
+
+Two routes, and they behave differently.
+
+**Figures and plots — put the file next to the `.md` and use a relative path.**
+
+```
+src/content/posts/
+  my-post.md
+  figure-1.png        ← lives beside the post
+```
+
+```markdown
+![What the figure shows](./figure-1.png)
+```
+
+Astro processes these at build time: the image is converted to WebP,
+`width`/`height` are written into the tag (so the page does not jump as it
+loads), `loading="lazy"` is added, and the filename is content-hashed for
+cache-busting. A 800x450 PNG came out as
+`/_astro/figure-1.bMfj6jzv_Z1QcQHh.webp`. This is the route to use for
+anything you are rendering yourself — plots, diagrams, screenshots.
+
+**PDFs and anything needing a stable URL — put it in `public/`.**
+
+```
+public/posts/poster-eupvsec-2025.pdf
+```
+
+```markdown
+[Download the poster (PDF)](/posts/poster-eupvsec-2025.pdf)
+```
+
+Files under `public/` are copied to the site verbatim, keeping the exact URL
+you wrote — which is what you want for a PDF you might cite or send to
+someone. The trade-off is that images served this way get no optimisation at
+all: no WebP, no dimensions, no lazy-loading. So use `public/` for
+attachments and stable links, and relative paths for figures.
+
+Either way the styling is already handled: `.prose img` in `global.css` gives
+images room and a hairline border, and links inside a post pick up the
+underline treatment.
+
 ### Dates
 
 Write dates as unquoted `YYYY-MM-DD`. They are parsed as UTC and formatted as

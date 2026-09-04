@@ -3,6 +3,7 @@ title: "Sample project note about something you built"
 date: 2025-06-02
 description: "A shorter placeholder post — the kind of thing you write about a weekend script rather than a paper."
 category: "Projects"
+draft: true   # kept as a styling reference; hidden from the build
 ---
 
 Short posts are fine. This one exists so the Writing index has more than one
