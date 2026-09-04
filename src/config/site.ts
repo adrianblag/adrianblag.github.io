@@ -1,56 +1,62 @@
 /* =========================================================================
-   SITE CONFIG  —  everything here is PLACEHOLDER. Replace with your details.
+   SITE CONFIG
    This is the only file you need to touch to change your name, bio,
    contact details and social links across the whole site.
    ========================================================================= */
 
 export const site = {
   /** Your name. Appears in the header, the page <title> and the footer. */
-  name: 'Your Name', // TODO: replace
+  name: 'Adrián Blanco Aguiar',
 
   /** Short role line under the hero. Keep it to one line. */
-  role: 'Your Role · Your Department · Your Institution', // TODO: replace
+  role: 'Predoctoral Researcher · Computational Biology · CSIC',
 
   /** The one-line thesis statement in the hero. This is the biggest text
    *  on the site — one sentence, no more than ~120 characters reads best. */
   heroStatement:
-    'A one-line statement of what you study and why it matters.', // TODO: replace
+    'I study how to recover the objective a system is optimising from the behaviour it produces.',
 
   /** Two or three sentences under the hero statement. */
   bio:
-    'A short paragraph about your research: the questions your group works on, the methods you use, and the problems you think are still open. Two or three sentences is plenty here — the CV and publication pages carry the detail.', // TODO: replace
+    'I hold a predoctoral contract at the Spanish National Research Council (CSIC), in the Computational Biology group at the Misión Biolóxica de Galicia, where I work on the inverse optimal control problem and inverse reinforcement learning — and on the theoretical and practical gaps between the two. Before that I built statistical models for accelerating photovoltaic system simulations at IECO Desarrollo Digital. Mathematics graduate from the Universidade de Santiago de Compostela, with a Master’s in Statistical Techniques (USC, UVigo, UDC).',
 
   /** Used for the mailto: links in the hero and footer. */
-  email: 'you@example.edu', // TODO: replace
+  email: 'blancoag02@gmail.com',
 
   /** Shown as underlined links next to your email in the hero.
-   *  Add, remove or reorder freely — the layout adapts. */
+   *  Add, remove or reorder freely — the layout adapts.
+   *  TODO: add ORCID and Google Scholar here once you have them. */
   socials: [
-    { label: 'Google Scholar', url: 'https://scholar.google.com/' }, // TODO: replace
-    { label: 'GitHub', url: 'https://github.com/' }, // TODO: replace
-    { label: 'ORCID', url: 'https://orcid.org/' }, // TODO: replace
+    {
+      label: 'LinkedIn',
+      url: 'https://www.linkedin.com/in/adri%C3%A1n-blanco-aguiar-784b0331a',
+    },
+    { label: 'GitHub', url: 'https://github.com/adrianblag' },
   ],
 
-  /** Portrait image. Put the file in `public/` and point here, e.g.
-   *  '/portrait.jpg'. Leave as null to render the striped placeholder box. */
-  avatar: null as string | null,
+  /** Portrait image. Put the file in `public/` and point here.
+   *  Set to null to render the striped placeholder box instead. */
+  avatar: '/portrait.jpg' as string | null,
 
-  /** Caption printed under the portrait (or under the placeholder box).
-   *  Set to null to hide it. */
-  avatarCaption: 'portrait, 3:4' as string | null,
+  /** Caption printed under the striped placeholder box. Only shown when
+   *  `avatar` is null, so it is unused while a real portrait is set. */
+  avatarCaption: null as string | null,
 
   /** CV PDF. Put the file in `public/` and set this to e.g. '/cv.pdf'.
-   *  While it is null the "Download CV (PDF)" button is not rendered. */
+   *  While it is null the "Download CV (PDF)" button is not rendered.
+   *  TODO: deliberately left off — the current CV carries a personal
+   *  details block (date of birth, phone, home address) that should not
+   *  be published. Point this at a trimmed version when you have one. */
   cvPdf: null as string | null,
 
   /** Small mono line on the left of the footer. Set to null to hide it. */
-  footerAddress: 'YOUR INSTITUTION · YOUR BUILDING, YOUR STREET' as
+  footerAddress: 'MISIÓN BIOLÓXICA DE GALICIA (CSIC) · PONTEVEDRA, SPAIN' as
     | string
     | null,
 
   /** Fallback description used for SEO on pages that don't set their own. */
   description:
-    'Personal academic site: publications, talks, writing and CV.', // TODO: replace
+    'Adrián Blanco Aguiar — predoctoral researcher at CSIC working on inverse optimal control and inverse reinforcement learning.',
 } as const;
 
 /* ---------------------------------------------------------------
@@ -58,12 +64,12 @@ export const site = {
    --------------------------------------------------------------- */
 export const pageIntros = {
   publications:
-    'Peer-reviewed papers, preprints and dataset releases. Author copies are linked; ask me for anything that isn’t.', // TODO: replace
+    'Conference proceedings and papers. Ask me for a copy of anything that is not linked.',
   talks:
-    'Keynotes, invited talks and conference presentations. Slides are public; recordings where the host published them.', // TODO: replace
+    'Oral presentations of my work at national and international conferences.',
   writing:
-    'Notes on research practice, side projects, and things I’m reading. Less formal than the papers, on purpose.', // TODO: replace
-  cv: 'Positions, training, and the work that shaped the direction.', // TODO: replace
+    'Notes on research practice, side projects, and things I am reading. Less formal than the papers, on purpose.',
+  cv: 'Positions, training, and the work that shaped the direction.',
 } as const;
 
 /* ---------------------------------------------------------------
