@@ -892,3 +892,26 @@ a.post-lead-title:hover { color: var(--accent); }
 
 /* Breathing room between the Writing page header and the lead post. */
 .post-lead-row { margin-top: 40px; }
+
+/* Institution logo + linked organization name on a CV entry.
+   The logo is decorative (alt=""), since the organization name sits
+   right beside it and would otherwise be announced twice.
+   Kept inline rather than inline-flex so that when the organization name
+   wraps, the underline follows each line of text instead of becoming one
+   full-width rule, and the logo stays on the first line. */
+.cv-org-link { color: inherit; }
+.cv-logo {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 10px;
+}
+a.cv-org-link .cv-org-name {
+  border-bottom: 1px solid var(--rule-underline);
+  padding-bottom: 1px;
+  transition: color 0.25s ease, border-color 0.25s ease;
+}
+a.cv-org-link:hover { color: var(--accent); }
+a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }

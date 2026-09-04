@@ -9,6 +9,10 @@ type Entry = {
   section: string;
   title: string;
   organization?: string;
+  /** Links the organization name, e.g. the institution's homepage. */
+  url?: string;
+  /** Small square logo under public/, e.g. '/logos/csic-mbg.png'. */
+  logo?: string;
   start: string;
   end?: string;
   bullets?: string[];
@@ -65,7 +69,37 @@ function dateLabel(e: Entry): string {
                   />
                   <h3 class="cv-title">{entry.title}</h3>
                   {entry.organization && (
-                    <span class="cv-org">{entry.organization}</span>
+                    <span class="cv-org">
+                      {entry.url ? (
+                        <a class="cv-org-link" href={entry.url}>
+                          {entry.logo && (
+                            <img
+                              class="cv-logo"
+                              src={url(entry.logo)}
+                              alt=""
+                              width="24"
+                              height="24"
+                              loading="lazy"
+                            />
+                          )}
+                          <span class="cv-org-name">{entry.organization}</span>
+                        </a>
+                      ) : (
+                        <span class="cv-org-link">
+                          {entry.logo && (
+                            <img
+                              class="cv-logo"
+                              src={url(entry.logo)}
+                              alt=""
+                              width="24"
+                              height="24"
+                              loading="lazy"
+                            />
+                          )}
+                          <span>{entry.organization}</span>
+                        </span>
+                      )}
+                    </span>
                   )}
                   {entry.bullets && entry.bullets.length > 0 && (
                     <ul class="cv-bullets">

@@ -1,84 +1,94 @@
 {
   "_readme": [
-    "CV timeline data. All values below are PLACEHOLDER — replace them.",
+    "CV timeline data.",
     "`sections` sets the order and headings of the timeline; each entry's",
     "`section` must match one of the section `id`s. Set `end` to \"present\"",
     "for a current role — that entry gets a filled timeline dot. Omit `end`",
-    "entirely for a single-year item (an award, a service role). `bullets`",
-    "and `organization` are both optional."
+    "entirely for a single-year item (an award, a course, a certificate).",
+    "`bullets` and `organization` are both optional. `url` links the",
+    "organization name; `logo` points at a small square image under public/",
+    "(rendered at 24px, so supply roughly 48px for sharp 2x displays)."
   ],
 
   "sections": [
     { "id": "employment", "label": "Appointments" },
     { "id": "education", "label": "Education" },
-    { "id": "awards", "label": "Grants, awards & service" }
+    { "id": "training", "label": "Training & certifications" }
   ],
 
   "entries": [
     {
       "section": "employment",
-      "title": "Sample Current Position",
-      "organization": "Your Institution · Your Group",
-      "start": "2023",
+      "title": "Predoctoral Researcher",
+      "organization": "Spanish National Research Council (CSIC) · Misión Biolóxica de Galicia, Pontevedra",
+      "url": "https://mbg.csic.es/",
+      "logo": "/logos/csic-mbg.png",
+      "start": "2026",
       "end": "present",
       "bullets": [
-        "One line on what you do here: the group you lead, the courses you teach, the systems you build.",
-        "A second line if the role needs it — otherwise delete this."
+        "Awarded a predoctoral contract in the Computational Biology research group.",
+        "Develop mathematical and computational models for the inverse optimal control (IOC) problem and inverse reinforcement learning (IRL).",
+        "Work on bridging the theoretical and practical gaps between IOC and IRL, and on unified frameworks that address the limitations and computational bottlenecks specific to each.",
+        "Apply machine learning and control theory to problems in computational biology."
       ]
     },
     {
       "section": "employment",
-      "title": "Sample Previous Position",
-      "organization": "A Previous Institution · Department",
-      "start": "2021",
-      "end": "2023",
+      "title": "Researcher",
+      "organization": "IECO Desarrollo Digital (ieco.io)",
+      "url": "https://ieco.io/",
+      "logo": "/logos/ieco.png",
+      "start": "2025",
+      "end": "2025",
       "bullets": [
-        "A sentence about the work: the project, the output, the thing that came out of it."
+        "Led the research, development and evaluation of a data-centric framework for accelerating annual photovoltaic system energy yield assessments.",
+        "Optimised the company's Python and pvlib simulation codebase by parallelising and simplifying calculations.",
+        "Delivered a tunable model establishing a new Pareto frontier for the speed–accuracy trade-off, outperforming standard module-level simulations on both.",
+        "Published the resulting work at EU PVSEC 2025 and presented it at EU PVSEC and SGAPEIO XVII."
       ]
     },
     {
-      "section": "employment",
-      "title": "Sample Visiting Role",
-      "organization": "Another Institution · City",
+      "section": "education",
+      "title": "MSc, Statistical Techniques",
+      "organization": "Universidade de Santiago de Compostela, Universidade de Vigo and Universidade da Coruña",
+      "start": "2024",
+      "end": "2026",
+      "bullets": []
+    },
+    {
+      "section": "education",
+      "title": "BSc, Mathematics",
+      "organization": "Universidade de Santiago de Compostela",
       "start": "2020",
-      "end": "2021",
+      "end": "2024",
       "bullets": []
     },
     {
-      "section": "education",
-      "title": "PhD, Your Field",
-      "organization": "Your PhD University · advisor: Advisor Name",
-      "start": "2016",
-      "end": "2020",
-      "bullets": ["Thesis: A placeholder thesis title goes here."]
-    },
-    {
-      "section": "education",
-      "title": "MSc, Your Field · BSc, Your Field",
-      "organization": "Your Earlier University",
-      "start": "2014",
-      "end": "2016",
-      "bullets": []
-    },
-    {
-      "section": "awards",
-      "title": "Sample award or honour",
-      "organization": "Awarding Body",
+      "section": "training",
+      "title": "Machine Learning Specialization",
+      "organization": "DeepLearning.AI and Stanford University · 40 hours",
       "start": "2025",
       "bullets": []
     },
     {
-      "section": "awards",
-      "title": "Sample grant — placeholder project title",
-      "organization": "Funding Agency",
-      "start": "2024",
-      "bullets": ["Amount, duration, or a one-line description if useful."]
+      "section": "training",
+      "title": "Introduction to Python Software and Applications to Statistics and Operations Research",
+      "organization": "Universidade de Santiago de Compostela · 15 hours",
+      "start": "2025",
+      "bullets": []
     },
     {
-      "section": "awards",
-      "title": "Sample service role, e.g. area chair or reviewer",
-      "organization": "Conference or Journal",
+      "section": "training",
+      "title": "Aprende a programar con Python",
+      "organization": "Mastermind · 12 hours",
       "start": "2023",
+      "bullets": []
+    },
+    {
+      "section": "training",
+      "title": "Cambridge English Level 1 Certificate in ESOL International (First) — B2",
+      "organization": "Cambridge University",
+      "start": "2019",
       "bullets": []
     }
   ]
