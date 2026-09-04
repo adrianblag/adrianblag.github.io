@@ -893,21 +893,36 @@ a.post-lead-title:hover { color: var(--accent); }
 /* Breathing room between the Writing page header and the lead post. */
 .post-lead-row { margin-top: 40px; }
 
-/* Institution logo + linked organization name on a CV entry.
-   The logo is decorative (alt=""), since the organization name sits
-   right beside it and would otherwise be announced twice.
-   Kept inline rather than inline-flex so that when the organization name
-   wraps, the underline follows each line of text instead of becoming one
-   full-width rule, and the logo stays on the first line. */
+/* Institution logo(s) + linked organization name on a CV entry.
+   Logos are decorative (alt=""), since the organization name sits right
+   beside them and would otherwise be announced twice.
+   Kept inline rather than inline-flex so a wrapping organization name keeps
+   its underline per line of text instead of becoming one full-width rule,
+   and so several logos flow and wrap like words.
+   Normalised by HEIGHT, not width: these marks run from a 0.88 shield to a
+   6.9:1 wordmark, so a fixed square would shrink the wordmarks to nothing. */
 .cv-org-link { color: inherit; }
+
 .cv-logo {
   display: inline-block;
-  width: 24px;
   height: 24px;
+  width: auto;
+  max-width: 132px;
   object-fit: contain;
   vertical-align: middle;
   margin-right: 10px;
+  /* Desaturated at rest so eight brand palettes don't fight the green-and-
+     cream design; full colour on hover. */
+  filter: grayscale(1);
+  opacity: 0.72;
+  transition: filter 0.3s ease, opacity 0.3s ease;
 }
+.cv-entry:hover .cv-logo,
+.cv-entry:focus-within .cv-logo {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
 a.cv-org-link .cv-org-name {
   border-bottom: 1px solid var(--rule-underline);
   padding-bottom: 1px;
@@ -915,3 +930,9 @@ a.cv-org-link .cv-org-name {
 }
 a.cv-org-link:hover { color: var(--accent); }
 a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
+
+@media (max-width: 640px) {
+  /* Slightly smaller, and a tighter cap so a wide wordmark cannot take up
+     a whole line on its own. */
+  .cv-logo { height: 20px; max-width: 104px; margin-right: 8px; }
+}

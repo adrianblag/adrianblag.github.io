@@ -9,10 +9,10 @@ type Entry = {
   section: string;
   title: string;
   organization?: string;
-  /** Links the organization name, e.g. the institution's homepage. */
+  /** Links the organization name — a verification link where one exists. */
   url?: string;
-  /** Small square logo under public/, e.g. '/logos/csic-mbg.png'. */
-  logo?: string;
+  /** One logo path under public/, or several for a joint award. */
+  logo?: string | string[];
   start: string;
   end?: string;
   bullets?: string[];
@@ -26,6 +26,10 @@ const sections = cv.sections
   .filter((s) => s.items.length > 0);
 
 const isCurrent = (e: Entry) => (e.end ?? '').toLowerCase() === 'present';
+
+/** Normalise `logo` to a list, so one and many render through one path. */
+const logosOf = (e: Entry): string[] =>
+  Array.isArray(e.logo) ? e.logo : e.logo ? [e.logo] : [];
 
 function dateLabel(e: Entry): string {
   if (isCurrent(e)) return `${e.start} —`;
@@ -54,63 +58,53 @@ function dateLabel(e: Entry): string {
               <h2 class="cv-section-label">{section.label}</h2>
               <span class="cv-section-rule" />
             </div>
-            {section.items.map((entry, i) => (
-              <Fragment>
-                <div class="cv-date">{dateLabel(entry)}</div>
-                <div
-                  class:list={[
-                    'cv-entry',
-                    { 'is-last': i === section.items.length - 1 },
-                  ]}
-                >
-                  <span
-                    class:list={['cv-dot', { 'is-current': isCurrent(entry) }]}
-                    aria-hidden="true"
-                  />
-                  <h3 class="cv-title">{entry.title}</h3>
-                  {entry.organization && (
-                    <span class="cv-org">
-                      {entry.url ? (
-                        <a class="cv-org-link" href={entry.url}>
-                          {entry.logo && (
-                            <img
-                              class="cv-logo"
-                              src={url(entry.logo)}
-                              alt=""
-                              width="24"
-                              height="24"
-                              loading="lazy"
-                            />
-                          )}
-                          <span class="cv-org-name">{entry.organization}</span>
-                        </a>
-                      ) : (
-                        <span class="cv-org-link">
-                          {entry.logo && (
-                            <img
-                              class="cv-logo"
-                              src={url(entry.logo)}
-                              alt=""
-                              width="24"
-                              height="24"
-                              loading="lazy"
-                            />
-                          )}
-                          <span>{entry.organization}</span>
-                        </span>
-                      )}
-                    </span>
-                  )}
-                  {entry.bullets && entry.bullets.length > 0 && (
-                    <ul class="cv-bullets">
-                      {entry.bullets.map((b) => (
-                        <li>{b}</li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </Fragment>
-            ))}
+            {section.items.map((entry, i) => {
+              const logos = logosOf(entry);
+              /* Logos are decorative: the organization name sits right
+                 beside them and would otherwise be read out twice. */
+              const marks = logos.map((src) => (
+                <img class="cv-logo" src={url(src)} alt="" height="24" loading="lazy" />
+              ));
+              return (
+                <Fragment>
+                  <div class="cv-date">{dateLabel(entry)}</div>
+                  <div
+                    class:list={[
+                      'cv-entry',
+                      { 'is-last': i === section.items.length - 1 },
+                    ]}
+                  >
+                    <span
+                      class:list={['cv-dot', { 'is-current': isCurrent(entry) }]}
+                      aria-hidden="true"
+                    />
+                    <h3 class="cv-title">{entry.title}</h3>
+                    {entry.organization && (
+                      <span class="cv-org">
+                        {entry.url ? (
+                          <a class="cv-org-link" href={entry.url}>
+                            {marks}
+                            <span class="cv-org-name">{entry.organization}</span>
+                          </a>
+                        ) : (
+                          <span class="cv-org-link">
+                            {marks}
+                            <span>{entry.organization}</span>
+                          </span>
+                        )}
+                      </span>
+                    )}
+                    {entry.bullets && entry.bullets.length > 0 && (
+                      <ul class="cv-bullets">
+                        {entry.bullets.map((b) => (
+                          <li>{b}</li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </Fragment>
+              );
+            })}
           </section>
         ))
       }

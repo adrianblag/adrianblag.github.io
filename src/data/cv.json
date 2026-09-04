@@ -5,9 +5,13 @@
     "`section` must match one of the section `id`s. Set `end` to \"present\"",
     "for a current role — that entry gets a filled timeline dot. Omit `end`",
     "entirely for a single-year item (an award, a course, a certificate).",
-    "`bullets` and `organization` are both optional. `url` links the",
-    "organization name; `logo` points at a small square image under public/",
-    "(rendered at 24px, so supply roughly 48px for sharp 2x displays)."
+    "`bullets` and `organization` are both optional.",
+    "`url` links the organization name — use a verification link where one",
+    "exists, otherwise the institution or course page.",
+    "`logo` is a path under public/, or an array of them for a joint award",
+    "such as an interuniversity degree. Logos are normalised to 24px TALL",
+    "with natural width, so supply roughly 48px tall; a wide wordmark is",
+    "fine and will simply be wider than a square mark."
   ],
 
   "sections": [
@@ -51,6 +55,8 @@
       "section": "education",
       "title": "MSc, Statistical Techniques",
       "organization": "Universidade de Santiago de Compostela, Universidade de Vigo and Universidade da Coruña",
+      "url": "https://eamo.usc.es/pub/mte/",
+      "logo": ["/logos/usc.png", "/logos/uvigo.png", "/logos/udc.png"],
       "start": "2024",
       "end": "2026",
       "bullets": []
@@ -59,6 +65,8 @@
       "section": "education",
       "title": "BSc, Mathematics",
       "organization": "Universidade de Santiago de Compostela",
+      "url": "https://www.usc.gal/",
+      "logo": "/logos/usc.png",
       "start": "2020",
       "end": "2024",
       "bullets": []
@@ -67,27 +75,35 @@
       "section": "training",
       "title": "Machine Learning Specialization",
       "organization": "DeepLearning.AI and Stanford University · 40 hours",
+      "url": "https://coursera.org/verify/specialization/L4THRRQ1E6HY",
+      "logo": "/logos/deeplearning-ai.png",
       "start": "2025",
       "bullets": []
     },
     {
       "section": "training",
       "title": "Introduction to Python Software and Applications to Statistics and Operations Research",
-      "organization": "Universidade de Santiago de Compostela · 15 hours",
-      "start": "2025",
+      "organization": "Máster en Técnicas Estadísticas, USC · 15 hours",
+      "url": "https://eamo.usc.es/pub/mte/",
+      "logo": "/logos/usc.png",
+      "start": "2024",
       "bullets": []
     },
     {
       "section": "training",
       "title": "Aprende a programar con Python",
       "organization": "Mastermind · 12 hours",
+      "url": "https://mastermind.ac/",
+      "logo": "/logos/mastermind.png",
       "start": "2023",
       "bullets": []
     },
     {
       "section": "training",
       "title": "Cambridge English Level 1 Certificate in ESOL International (First) — B2",
-      "organization": "Cambridge University",
+      "organization": "Cambridge English, University of Cambridge",
+      "url": "https://www.cambridgeenglish.org/",
+      "logo": "/logos/cambridge.png",
       "start": "2019",
       "bullets": []
     }
