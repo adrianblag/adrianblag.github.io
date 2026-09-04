@@ -18,7 +18,7 @@ export const site = {
 
   /** Two or three sentences under the hero statement. */
   bio:
-    'I hold a predoctoral contract at the Spanish National Research Council (CSIC), in the Computational Biology group at the Misión Biolóxica de Galicia, where I work on the inverse optimal control problem and inverse reinforcement learning — and on the theoretical and practical gaps between the two. Before that I built statistical models for accelerating photovoltaic system simulations at IECO Desarrollo Digital. Mathematics graduate from the Universidade de Santiago de Compostela, with a Master’s in Statistical Techniques (USC, UVigo, UDC).',
+    'I hold a predoctoral contract at the Spanish National Research Council (CSIC), in the Computational Biology group at the Misión Biolóxica de Galicia, where I work on the inverse optimal control problem and inverse reinforcement learning, bridging the theoretical and practical gaps between the two. Before that I built statistical models for accelerating photovoltaic system simulations at IECO Desarrollo Digital. Mathematics graduate from the Universidade de Santiago de Compostela, with a Master’s in Statistical Techniques (USC, UVigo, UDC).',
 
   /** Used for the mailto: links in the hero and footer. */
   email: 'blancoag02@gmail.com',
@@ -66,7 +66,7 @@ export const pageIntros = {
   publications:
     'Conference proceedings and papers. Ask me for a copy of anything that is not linked.',
   talks:
-    'Oral presentations of my work at national and international conferences.',
+    'Talks and posters presented at national and international conferences.',
   writing:
     'Notes on research practice, side projects, and things I am reading. Less formal than the papers, on purpose.',
   cv: 'Positions, training, and the work that shaped the direction.',
@@ -78,7 +78,7 @@ export const pageIntros = {
 export const nav = [
   { label: 'Home', href: '/' },
   { label: 'Publications', href: '/publications' },
-  { label: 'Talks', href: '/talks' },
+  { label: 'Talks & posters', href: '/talks' },
   { label: 'Writing', href: '/writing' },
   { label: 'CV', href: '/cv' },
 ] as const;
