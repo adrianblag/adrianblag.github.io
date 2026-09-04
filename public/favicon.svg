@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Adrián Blanco Aguiar">
+  <!-- Monogram mark: the site's accent green with the page ground as the
+       letterform, so it reads against both light and dark browser chrome.
+       Square, no radius — the site uses no rounded corners anywhere. -->
+  <rect width="64" height="64" fill="#2f5d45"/>
+  <g fill="none" stroke="#f7faf6" stroke-linecap="butt">
+    <!-- Apex mitres to a point; feet stop clear of the tile edge. -->
+    <path d="M13 50 L32 16 L51 50" stroke-width="6" stroke-linejoin="miter"/>
+    <!-- Crossbar kept lighter than the diagonals, echoing the hairline
+         rules used throughout the site. -->
+    <path d="M19 38 H45" stroke-width="3.4"/>
+  </g>
+</svg>
