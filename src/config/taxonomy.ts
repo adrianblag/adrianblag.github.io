@@ -24,6 +24,8 @@ export const publicationTypes = [
   'Preprint',
   'Thesis',
 ];
+// Only categories actually used by content get a pill, so the unused ones
+// above sit here harmlessly until you publish something that needs them.
 
 /** Matches the `type` field of `src/content/talks/*.md` */
 export const talkTypes = [
