@@ -265,6 +265,18 @@ UTC, so a date never shifts by a day depending on where the site is built.
 - **Fonts** are Newsreader (display/body), Work Sans (UI/nav) and JetBrains
   Mono (meta/dates), loaded with plain Google Fonts `<link>` tags in
   `Base.astro`.
+- **Theming** is one `light-dark()` pair per token in `global.css`, so there
+  is no duplicated dark block to drift out of sync. `color-scheme` decides
+  which half applies: the OS preference by default, or `data-theme` on
+  `<html>` once someone uses the header toggle. That choice is remembered in
+  `localStorage`, and until one is made the site keeps following the OS live.
+  A small synchronous script in `<head>` stamps the attribute before first
+  paint so the page never flashes the wrong theme, and re-stamps it on
+  `astro:after-swap` because Astro's router copies `<html>` attributes from
+  the incoming document. Code blocks ship both Shiki themes and switch with
+  the rest of the palette; CV logos get a pale chip in dark mode, since
+  several of them (USC, Cambridge) are dark on transparent and would
+  otherwise disappear.
 - **Responsive** down to 375px: multi-column rows stack, the hero type scales
   with `clamp()`, the nav wraps, and the CV date column moves above each
   entry while the timeline rule stays continuous.

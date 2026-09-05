@@ -29,6 +29,17 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
 
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: light)"
+      content="#f7faf6"
+    />
+    <meta
+      name="theme-color"
+      media="(prefers-color-scheme: dark)"
+      content="#101711"
+    />
+
     <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
     <link rel="icon" href={url('/favicon.ico')} sizes="32x32" />
     <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
@@ -41,6 +52,70 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
     />
 
     <ClientRouter />
+
+    {/* Must run before first paint, and must not be bundled or deferred,
+        or the page flashes the wrong theme. Kept small and dependency-free. */}
+    <script is:inline>
+      (() => {
+        const KEY = 'theme';
+        const root = document.documentElement;
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const stored = () => {
+          try {
+            const v = localStorage.getItem(KEY);
+            return v === 'light' || v === 'dark' ? v : null;
+          } catch {
+            return null; // private mode, blocked storage
+          }
+        };
+
+        // Sets the attribute the CSS keys off. Must be able to run in <head>,
+        // before <body> exists, so it must not touch the button.
+        const apply = () => {
+          root.dataset.theme = stored() ?? (mq.matches ? 'dark' : 'light');
+        };
+
+        // Separate, because on first load apply() runs before the button has
+        // been parsed — syncing there would silently do nothing and leave
+        // aria-pressed stuck at the server-rendered value.
+        const syncButtons = () => {
+          const pressed = String(root.dataset.theme === 'dark');
+          document
+            .querySelectorAll('[data-theme-toggle]')
+            .forEach((b) => b.setAttribute('aria-pressed', pressed));
+        };
+
+        apply();
+        document.addEventListener('DOMContentLoaded', syncButtons);
+        // Fires on first load and after every view transition.
+        document.addEventListener('astro:page-load', syncButtons);
+
+        // ClientRouter copies <html> attributes from the incoming document,
+        // which has no data-theme, so re-apply on every view transition.
+        document.addEventListener('astro:after-swap', apply);
+
+        // Keep following the OS until the visitor makes an explicit choice.
+        mq.addEventListener('change', () => {
+          if (!stored()) {
+            apply();
+            syncButtons();
+          }
+        });
+
+        // Delegated, so it survives page swaps without re-binding.
+        document.addEventListener('click', (e) => {
+          const btn = e.target.closest && e.target.closest('[data-theme-toggle]');
+          if (!btn) return;
+          const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+          try {
+            localStorage.setItem(KEY, next);
+          } catch {}
+          apply();
+          syncButtons();
+        });
+      })();
+    </script>
   </head>
 
   <body>

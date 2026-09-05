@@ -1,6 +1,7 @@
 ---
 import { site, nav } from '../config/site';
 import { url, isCurrent } from '../lib/format';
+import ThemeToggle from './ThemeToggle.astro';
 
 const here = Astro.url.pathname;
 ---
@@ -19,6 +20,7 @@ const here = Astro.url.pathname;
           </a>
         ))
       }
+      <ThemeToggle />
     </nav>
   </div>
 </header>

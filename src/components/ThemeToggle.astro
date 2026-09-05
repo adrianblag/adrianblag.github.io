@@ -1,0 +1,31 @@
+---
+/**
+ * Light/dark toggle.
+ *
+ * The button itself is inert markup — all behaviour lives in the inline
+ * script in Base.astro, which has to run before first paint to avoid a
+ * flash of the wrong theme. Clicks are handled there by delegation on
+ * `[data-theme-toggle]`, so this works without re-binding after an Astro
+ * view transition.
+ *
+ * `aria-pressed` reflects "dark is on" and is corrected by that script on
+ * load; the server cannot know the visitor's theme.
+ */
+---
+
+<button
+  class="theme-toggle"
+  type="button"
+  data-theme-toggle
+  aria-pressed="false"
+  aria-label="Dark theme"
+  title="Switch theme"
+>
+  <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20.5 14.6A8.5 8.5 0 1 1 9.4 3.5a7 7 0 0 0 11.1 11.1Z" />
+  </svg>
+  <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+    <circle cx="12" cy="12" r="4.2" />
+    <path d="M12 2.4v2.4M12 19.2v2.4M4.2 12H1.8M22.2 12h-2.4M6.5 6.5 4.8 4.8M19.2 19.2l-1.7-1.7M17.5 6.5l1.7-1.7M4.8 19.2l1.7-1.7" />
+  </svg>
+</button>

@@ -1,40 +1,56 @@
 /* =========================================================================
-   DESIGN TOKENS — extracted verbatim from the approved mockup.
-   Change a value here and it changes everywhere.
+   DESIGN TOKENS
+
+   Every colour is a light-dark() pair: the first value is the light theme
+   (extracted verbatim from the approved mockup), the second is the dark one.
+   Which side applies is decided by `color-scheme` below — by the OS when the
+   visitor has expressed no preference, or by data-theme on <html> once they
+   pick one with the header toggle.
+
+   The dark palette inverts the light one using colours already in it: the
+   ground becomes the old ink, the ink becomes the old ground, and the accent
+   lifts to a sage that stays legible on a dark surface.
    ========================================================================= */
 :root {
+  /* No data-theme attribute means follow the operating system. */
+  color-scheme: light dark;
+
   /* Surface */
-  --bg: #f7faf6;
-  --wash: #edf3ea;          /* row hover */
+  --bg: light-dark(#f7faf6, #101711);
+  --wash: light-dark(#edf3ea, #18211a);   /* row hover */
 
   /* Ink */
-  --ink: #101711;           /* headings */
-  --ink-soft: #1a231d;      /* secondary headings, header wordmark */
-  --body: #3a453d;          /* body text */
-  --body-mid: #445045;      /* lead paragraphs */
-  --body-light: #545f57;    /* less important body text */
-  --meta-italic: #6b7a70;   /* italic venue / event lines */
+  --ink: light-dark(#101711, #f2f7f0);        /* headings */
+  --ink-soft: light-dark(#1a231d, #e4ece1);   /* secondary headings, wordmark */
+  --body: light-dark(#3a453d, #c3cfc3);       /* body text */
+  --body-mid: light-dark(#445045, #b9c6ba);   /* lead paragraphs */
+  --body-light: light-dark(#545f57, #a6b3a8); /* less important body text */
+  --meta-italic: light-dark(#6b7a70, #8fa093);/* italic venue / event lines */
 
   /* Muted meta */
-  --muted: #8a9589;
-  --muted-2: #949e94;
-  --muted-3: #9ea89e;
-  --pill-ink: #55605a;
+  --muted: light-dark(#8a9589, #7e8c82);
+  --muted-2: light-dark(#949e94, #8b988f);
+  --muted-3: light-dark(#9ea89e, #86948b);
+  --pill-ink: light-dark(#55605a, #aebbb0);
 
   /* Hairlines */
-  --rule: #e2ebdf;
-  --rule-strong: #dbe4d8;
-  --rule-soft: #e9efe6;
-  --rule-pill: #d5dfd2;
-  --rule-underline: #c3cfc0;
+  --rule: light-dark(#e2ebdf, #1f2a22);
+  --rule-strong: light-dark(#dbe4d8, #26332a);
+  --rule-soft: light-dark(#e9efe6, #1b2520);
+  --rule-pill: light-dark(#d5dfd2, #2b3830);
+  --rule-underline: light-dark(#c3cfc0, #3a483e);
 
   /* Accent */
-  --accent: #2f5d45;
-  --accent-hover: #234737;
+  --accent: light-dark(#2f5d45, #8fc0a3);
+  --accent-hover: light-dark(#234737, #a8d4b8);
 
   /* Placeholder image pattern */
-  --ph-stripe: #eaf0e6;
-  --ph-border: #dfe7dc;
+  --ph-stripe: light-dark(#eaf0e6, #1a231d);
+  --ph-border: light-dark(#dfe7dc, #2a352d);
+
+  /* Pale chip behind brand logos in dark mode — several of them (USC navy,
+     the Cambridge shield) are dark on transparent and vanish otherwise. */
+  --logo-chip: light-dark(transparent, #e9efe6);
 
   /* Type */
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
@@ -45,6 +61,10 @@
   --maxw: 1120px;
   --gutter: 56px;
 }
+
+/* An explicit choice from the header toggle pins one side of every pair. */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
 
 @media (max-width: 900px) { :root { --gutter: 32px; } }
 @media (max-width: 640px) { :root { --gutter: 22px; } }
@@ -66,7 +86,11 @@ html {
 
 body {
   margin: 0;
+  /* Literal first, token second: a browser without light-dark() support keeps
+     the light theme instead of falling back to unstyled black-on-white. */
+  background: #f7faf6;
   background: var(--bg);
+  color: #3a453d;
   color: var(--body);
   font-family: var(--sans);
   font-size: 16px;
@@ -958,6 +982,10 @@ a.post-lead-title:hover { color: var(--accent); }
 
 .cv-logo {
   display: inline-block;
+  /* In dark mode this becomes a pale chip (see --logo-chip); border-box keeps
+     the row height identical, the mark just sits 3px inside. */
+  background: var(--logo-chip);
+  padding: 0;
   height: 24px;
   width: auto;
   max-width: 132px;
@@ -988,4 +1016,73 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
   /* Slightly smaller, and a tighter cap so a wide wordmark cannot take up
      a whole line on its own. */
   .cv-logo { height: 20px; max-width: 104px; margin-right: 8px; }
+}
+
+/* =========================================================================
+   THEME TOGGLE
+   ========================================================================= */
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  margin-left: 2px;
+  color: var(--pill-ink);
+  cursor: pointer;
+  transition: color 0.25s ease;
+  /* Nudged up so the icon sits on the nav's baseline row rather than
+     hanging below it — the nav is baseline-aligned, an icon has no baseline. */
+  transform: translateY(4px);
+}
+.theme-toggle:hover { color: var(--accent); }
+.theme-toggle svg {
+  width: 17px;
+  height: 17px;
+  display: block;
+  /* Hairline stroke, to match the 1px rules used throughout. */
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.25;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Show the icon for the theme the button switches TO. */
+.theme-toggle .icon-sun { display: none; }
+:root[data-theme="dark"] .theme-toggle .icon-sun { display: block; }
+:root[data-theme="dark"] .theme-toggle .icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  /* Only seen before the inline script stamps data-theme, or with JS off. */
+  :root:not([data-theme]) .theme-toggle .icon-sun { display: block; }
+  :root:not([data-theme]) .theme-toggle .icon-moon { display: none; }
+}
+
+@media (max-width: 760px) {
+  /* The header stacks; sit the toggle on the nav row with the links. */
+  .theme-toggle { transform: translateY(3px); }
+}
+
+/* Logo chip padding only applies once there is a chip to pad. */
+:root[data-theme="dark"] .cv-logo { padding: 3px; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .cv-logo { padding: 3px; }
+}
+
+/* Syntax highlighting: Shiki emits both themes, light inline and dark in a
+   custom property. Swap to the dark one with the rest of the palette.
+   (The code block's own background is forced to --wash in .prose pre, so
+   only the token colours need switching here.) */
+:root[data-theme="dark"] .astro-code,
+:root[data-theme="dark"] .astro-code span {
+  color: var(--shiki-dark) !important;
+  font-style: var(--shiki-dark-font-style) !important;
+  font-weight: var(--shiki-dark-font-weight) !important;
+  text-decoration: var(--shiki-dark-text-decoration) !important;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .astro-code,
+  :root:not([data-theme]) .astro-code span {
+    color: var(--shiki-dark) !important;
+  }
 }

@@ -11,7 +11,10 @@ export default defineConfig({
 
   markdown: {
     shikiConfig: {
-      theme: 'github-light',
+      // Both themes are emitted; the light one inline and the dark one in a
+      // --shiki-dark custom property, swapped in global.css alongside the
+      // rest of the palette.
+      themes: { light: 'github-light', dark: 'github-dark' },
       wrap: true,
     },
   },
