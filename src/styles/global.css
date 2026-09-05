@@ -54,7 +54,15 @@
    ========================================================================= */
 *, *::before, *::after { box-sizing: border-box; }
 
-html { -webkit-text-size-adjust: 100%; }
+html {
+  -webkit-text-size-adjust: 100%;
+  /* Reserve the scrollbar gutter on every page, whether or not it scrolls.
+     Without this, a short page (no scrollbar) is centred in the full viewport
+     while a tall one (15px scrollbar) is centred in 15px less, so the header
+     and all centred content jump ~7px sideways on navigation between them.
+     Browsers without support just keep the old behaviour. */
+  scrollbar-gutter: stable;
+}
 
 body {
   margin: 0;
