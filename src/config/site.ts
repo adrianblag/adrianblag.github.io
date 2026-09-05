@@ -42,6 +42,13 @@ export const site = {
    *  `avatar` is null, so it is unused while a real portrait is set. */
   avatarCaption: null as string | null,
 
+  /** Quote shown under the hero portrait, inside its frame.
+   *  Set to null to render the portrait on its own. */
+  quote: {
+    text: 'To live life, you need problems. If you get everything you want the minute you want it, then what’s the point of livin’?',
+    attribution: 'Jake the Dog',
+  } as { text: string; attribution: string } | null,
+
   /** CV PDF. Put the file in `public/` and set this to e.g. '/cv.pdf'.
    *  While it is null the "Download CV (PDF)" button is not rendered.
    *  TODO: deliberately left off — the current CV carries a personal

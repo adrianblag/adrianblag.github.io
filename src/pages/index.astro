@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import Placeholder from '../components/Placeholder.astro';
 import { site } from '../config/site';
 import { stampMonth, url } from '../lib/format';
 
@@ -55,12 +54,37 @@ const notes = [
       </div>
     </div>
 
-    <Placeholder
-      class="hero-portrait"
-      src={site.avatar}
-      alt={site.avatar ? site.name : ''}
-      caption={site.avatarCaption}
-    />
+    <figure class="hero-portrait">
+      <div class="portrait-frame">
+        {
+          site.avatar ? (
+            <img
+              src={url(site.avatar)}
+              alt={site.name}
+              width="900"
+              height="1200"
+            />
+          ) : (
+            <div class="ph" aria-hidden="true" />
+          )
+        }
+      </div>
+      {
+        !site.avatar && site.avatarCaption && (
+          <span class="ph-caption">{site.avatarCaption}</span>
+        )
+      }
+      {
+        site.quote && (
+          <figcaption class="portrait-quote">
+            <p class="portrait-quote-text">
+              &#8220;{site.quote.text}&#8221;
+            </p>
+            <span class="portrait-quote-by">{site.quote.attribution}</span>
+          </figcaption>
+        )
+      }
+    </figure>
   </div>
 
   <div class="panels rv2">

@@ -766,11 +766,56 @@ a.post-lead-title:hover { color: var(--accent); }
 }
 .hero-links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
-.hero-portrait { display: flex; flex-direction: column; gap: 10px; }
+.hero-portrait { display: flex; flex-direction: column; gap: 10px; margin: 0; }
+
+/* Offset hairline edge: a rectangle shifted down and to the right, sitting
+   behind the photo, so the frame is implied rather than drawn around it.
+   z-index: 0 on the wrapper keeps the -1 pseudo-element inside this stacking
+   context, so it can never slip behind an ancestor's background. */
+.portrait-frame { position: relative; z-index: 0; }
+.portrait-frame::after {
+  content: "";
+  position: absolute;
+  inset: 10px -10px -10px 10px;
+  border: 1px solid var(--rule-underline);
+  z-index: -1;
+  pointer-events: none;
+}
 .hero-portrait .ph, .hero-portrait img {
+  display: block;
   width: 100%;
+  height: auto;
   aspect-ratio: 3 / 4;
   object-fit: cover;
+}
+
+/* Quote under the portrait. Deliberately quiet — subordinate to the photo
+   and to the hero statement, a detail found on a second look. */
+.portrait-quote { margin: 12px 0 0; }
+.portrait-quote::before {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 1px;
+  background: var(--accent);
+  margin-bottom: 12px;
+}
+.portrait-quote-text {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--body-light);
+  text-wrap: pretty;
+}
+.portrait-quote-by {
+  display: block;
+  margin-top: 9px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted-2);
 }
 
 @media (max-width: 900px) {
