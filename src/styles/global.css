@@ -1035,13 +1035,19 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
   color: var(--pill-ink);
   cursor: pointer;
   transition: color 0.25s ease;
-  /* Final optical correction. It has to be `position: relative` rather than
+  /* Optical correction, and it has to be `position: relative` rather than
      vertical-align on the icon: the button's baseline IS the icon's baseline,
      so shifting the icon shifts the button by the same amount and the flex
      baseline alignment cancels it out exactly. `top` does not participate in
-     layout, so it is the only lever that actually moves the thing. */
+     layout, so it is the only lever that actually moves the thing.
+
+     Baseline alignment lands the icon's TOP on the cap top of the nav text.
+     The icon is 17px and the cap height is 9px, so its centre ends up 4px
+     below the cap centre — which is what made it look sunk. Lifting it by
+     that 4px centres the icon on the text's visual mass, and incidentally
+     puts its bottom level with the active link's underline. */
   position: relative;
-  top: 0;
+  top: -4px;
 }
 .theme-toggle:hover { color: var(--accent); }
 .theme-toggle svg {
@@ -1068,9 +1074,9 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
 
 /* Logo chip padding only applies once there is a chip to pad. */
 @media (max-width: 760px) {
-  /* Nav text drops to 12px here, lifting its cap centre; the icon is a fixed
-     17px, so it needs a pixel back. */
-  .theme-toggle { top: -1px; }
+  /* Nav text drops to 12px here, so the cap height shrinks and the icon needs
+     to come up a little further still. */
+  .theme-toggle { top: -4.5px; }
 }
 
 :root[data-theme="dark"] .cv-logo { padding: 3px; border-radius: 3px; }
