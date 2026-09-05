@@ -1022,24 +1022,32 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
    THEME TOGGLE
    ========================================================================= */
 .theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 26px;
-  height: 26px;
-  margin-left: 2px;
+  /* A flex item, so this blockifies — but the icon inside stays inline, which
+     gives the button a real first-line baseline for the nav's baseline
+     alignment to use. An inline-flex button holding only SVGs has no text
+     baseline and falls back to its bottom margin edge, which is what parked
+     the icon below the nav text.
+     Vertical padding enlarges the hit area without moving the icon: it shifts
+     the box, not the baseline the icon hangs from. */
+  display: block;
+  padding: 5px 3px;
+  line-height: 1;
   color: var(--pill-ink);
   cursor: pointer;
   transition: color 0.25s ease;
-  /* Nudged up so the icon sits on the nav's baseline row rather than
-     hanging below it — the nav is baseline-aligned, an icon has no baseline. */
-  transform: translateY(4px);
+  /* Final optical correction. It has to be `position: relative` rather than
+     vertical-align on the icon: the button's baseline IS the icon's baseline,
+     so shifting the icon shifts the button by the same amount and the flex
+     baseline alignment cancels it out exactly. `top` does not participate in
+     layout, so it is the only lever that actually moves the thing. */
+  position: relative;
+  top: 0;
 }
 .theme-toggle:hover { color: var(--accent); }
 .theme-toggle svg {
   width: 17px;
   height: 17px;
-  display: block;
+  display: inline-block;
   /* Hairline stroke, to match the 1px rules used throughout. */
   fill: none;
   stroke: currentColor;
@@ -1058,15 +1066,16 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
   :root:not([data-theme]) .theme-toggle .icon-moon { display: none; }
 }
 
+/* Logo chip padding only applies once there is a chip to pad. */
 @media (max-width: 760px) {
-  /* The header stacks; sit the toggle on the nav row with the links. */
-  .theme-toggle { transform: translateY(3px); }
+  /* Nav text drops to 12px here, lifting its cap centre; the icon is a fixed
+     17px, so it needs a pixel back. */
+  .theme-toggle { top: -1px; }
 }
 
-/* Logo chip padding only applies once there is a chip to pad. */
-:root[data-theme="dark"] .cv-logo { padding: 3px; }
+:root[data-theme="dark"] .cv-logo { padding: 3px; border-radius: 3px; }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .cv-logo { padding: 3px; }
+  :root:not([data-theme]) .cv-logo { padding: 3px; border-radius: 3px; }
 }
 
 /* Syntax highlighting: Shiki emits both themes, light inline and dark in a
