@@ -5,14 +5,33 @@ interface Props {
   alt?: string;
   caption?: string | null;
   class?: string;
+  /**
+   * Wrap the image in the offset hairline edge used by the hero portrait.
+   * Applied to real images only: the striped placeholder already draws its
+   * own border, and a second offset rectangle behind it reads as a mistake
+   * rather than a frame.
+   */
+  frame?: boolean;
 }
-const { src, alt = '', caption = null, class: cls = '' } = Astro.props;
+const {
+  src,
+  alt = '',
+  caption = null,
+  class: cls = '',
+  frame = false,
+} = Astro.props;
 ---
 
 <div class={cls}>
   {
     src ? (
-      <img src={src} alt={alt} loading="lazy" />
+      frame ? (
+        <div class="frame">
+          <img src={src} alt={alt} loading="lazy" />
+        </div>
+      ) : (
+        <img src={src} alt={alt} loading="lazy" />
+      )
     ) : (
       <div class="ph" aria-hidden="true" />
     )
