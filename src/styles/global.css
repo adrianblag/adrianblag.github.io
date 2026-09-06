@@ -502,9 +502,15 @@ a.post-lead-title:hover { color: var(--accent); }
   border-bottom: 1px solid currentColor;
   align-self: flex-start;
   padding-bottom: 2px;
+  transition: color 0.25s ease;
 }
+.read-more:hover { color: var(--accent-hover); }
 .post-lead-media { display: flex; flex-direction: column; gap: 8px; }
 .post-lead-media .ph, .post-lead-media img { height: 200px; width: 100%; object-fit: cover; }
+.post-lead-media .frame {
+  /* Proportional, like the portrait's 10px on 300px. */
+  --frame-offset: 12px;
+}
 .post-lead-media .ph-caption { font-size: 10px; }
 
 .post-row {
@@ -550,6 +556,19 @@ a.post-lead-title:hover { color: var(--accent); }
 
 .post-hero { margin-top: 48px; }
 .post-hero .ph, .post-hero img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.post-hero .frame {
+  /* Capped rather than proportional. Strict proportionality is right while
+     images are small, but at ~1008px wide it would give a 33px offset — no
+     longer a hairline edge, just a thick border. */
+  --frame-offset: 14px;
+}
+
+@media (max-width: 640px) {
+  /* The gutter is only 22px here, and the hero runs the full content width,
+     so a 14px offset would nearly touch the viewport edge. */
+  .post-hero .frame { --frame-offset: 8px; }
+  .post-lead-media .frame { --frame-offset: 8px; }
+}
 
 .prose {
   max-width: 68ch;

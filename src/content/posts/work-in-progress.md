@@ -3,6 +3,7 @@ title: "Work in progress"
 date: 2026-09-04
 description: "This section is just getting started. Notes on research practice, side projects and things I am reading will appear here."
 category: "Notes"
+draft: true   # superseded by the first real post; kept for reference
 ---
 
 This part of the site is still being built.

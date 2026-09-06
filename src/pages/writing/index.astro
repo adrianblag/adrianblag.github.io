@@ -52,13 +52,19 @@ const categories = resolveCategories(
               {lead.data.title}
             </a>
             <span class="post-lead-desc">{lead.data.description}</span>
-            <span class="read-more">Read</span>
+            <a class="read-more" href={url(`/writing/${lead.id}`)}>
+              Read
+              {/* The title above links to the same place; name the target so
+                  a screen reader hears two distinct links, not two "Read"s. */}
+              <span class="sr-only"> — {lead.data.title}</span>
+            </a>
           </div>
           <Placeholder
             class="post-lead-media"
             src={lead.data.image}
             alt={lead.data.image ? lead.data.title : ''}
             caption="post image, 16:9 — optional"
+            frame
           />
         </article>
       )
