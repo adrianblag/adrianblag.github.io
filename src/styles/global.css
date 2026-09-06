@@ -48,6 +48,10 @@
   --ph-stripe: light-dark(#eaf0e6, #1a231d);
   --ph-border: light-dark(#dfe7dc, #2a352d);
 
+  /* Ground for <mark> in post bodies. Pale green in light, deep green in
+     dark, both keeping the body text well clear of the AA threshold. */
+  --mark-bg: light-dark(#d6e8dc, #274436);
+
   /* Pale chip behind brand logos in dark mode — several of them (USC navy,
      the Cambridge shield) are dark on transparent and vanish otherwise. */
   --logo-chip: light-dark(transparent, #e9efe6);
@@ -634,6 +638,21 @@ a.post-lead-title:hover { color: var(--accent); }
   text-align: left;
 }
 .prose th { color: var(--ink); font-weight: 600; }
+
+/* Emphasis inside a post body.
+   `<mark>` highlights; `.accent` colours the text. Both pull from the theme
+   tokens, so they invert with the palette instead of being pinned to one
+   green that only works in light mode. */
+.prose mark {
+  background: var(--mark-bg);
+  color: inherit;
+  padding: 0.06em 0.3em;
+  border-radius: 2px;
+}
+.prose .accent,
+.prose mark.accent {
+  color: var(--accent);
+}
 
 .post-back {
   display: inline-block;

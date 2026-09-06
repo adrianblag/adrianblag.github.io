@@ -242,6 +242,25 @@ Either way the styling is already handled: `.prose img` in `global.css` gives
 images room and a hairline border, and links inside a post pick up the
 underline treatment.
 
+### Coloured and highlighted text in a post
+
+Markdown has no syntax for colour, but posts render raw HTML, so:
+
+```markdown
+I am talking about color <mark>green</mark>.
+I am talking about color <span class="accent">green</span>.
+```
+
+`<mark>` gives a pale green highlight; `.accent` colours the text. Both pull
+from the theme tokens, so they invert with the palette — the accent is a deep
+green in light mode and a lighter sage in dark, and the highlight ground
+flips the same way. Measured in dark mode: 6.6:1 for the highlight, 8.9:1 for
+the accent text, both comfortably past WCAG AA.
+
+Avoid `<span style="color: green">`. A hardcoded colour cannot follow the
+theme, and that particular one measures 3.6:1 against the dark background —
+below the 4.5:1 AA threshold for body text.
+
 ### Dates
 
 Write dates as unquoted `YYYY-MM-DD`. They are parsed as UTC and formatted as
