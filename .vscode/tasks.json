@@ -1,0 +1,24 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      // Ctrl+Shift+B starts this. Uses npm.cmd rather than npm, because the
+      // integrated terminal is PowerShell and its execution policy blocks
+      // npm.ps1 on this machine.
+      "label": "Astro dev server",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev"],
+      "windows": { "command": "npm.cmd" },
+      "isBackground": true,
+      "problemMatcher": [],
+      "runOptions": { "instanceLimit": 1 },
+      "group": { "kind": "build", "isDefault": true },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      }
+    }
+  ]
+}

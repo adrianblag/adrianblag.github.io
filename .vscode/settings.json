@@ -1,0 +1,24 @@
+{
+  // Style the built-in Markdown preview to match a rendered post.
+  // Scoped to this workspace, so Markdown in other projects is unaffected.
+  "markdown.styles": [".vscode/markdown-preview.css"],
+
+  // Writing settings for Markdown files only.
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.quickSuggestions": {
+      "other": false,
+      "comments": false,
+      "strings": false
+    },
+    // Prose, not code — no bracket guides or trailing-whitespace trimming
+    // (two trailing spaces are a Markdown line break).
+    "editor.trimAutoWhitespace": false,
+    "files.trimTrailingWhitespace": false
+  },
+
+  // The site is UTF-8 end to end (emoji, accented names, typographic
+  // punctuation); make sure the editor writes it back that way.
+  "files.encoding": "utf8",
+  "files.eol": "\n"
+}

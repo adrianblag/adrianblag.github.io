@@ -18,7 +18,11 @@ pnpm-debug.log*
 # macOS / editors
 .DS_Store
 Thumbs.db
-.vscode/
+# Editor config: keep the shared bits, ignore per-user state.
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/markdown-preview.css
 .idea/
 
 # local tooling config (machine-specific paths)

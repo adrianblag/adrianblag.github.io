@@ -261,6 +261,54 @@ Avoid `<span style="color: green">`. A hardcoded colour cannot follow the
 theme, and that particular one measures 3.6:1 against the dark background —
 below the 4.5:1 AA threshold for body text.
 
+### Previewing a post while you write
+
+Two options, and they are good at different things.
+
+**The real thing — Simple Browser inside VS Code.** Start the dev server
+(`Ctrl+Shift+B`, or `npm.cmd run dev`), then `Ctrl+Shift+P` →
+**Simple Browser: Show** → `http://localhost:4321/writing/your-post/`. Drag
+that tab to a split so it sits beside the Markdown. It hot-reloads on save.
+
+This is the accurate preview: real fonts, real dark mode, the post header
+and hero image, the offset photo frame, your `<mark>` greens — because it is
+the actual page, not a reconstruction.
+
+**The quick one — the built-in Markdown preview** (`Ctrl+Shift+V`). Styled
+by `.vscode/markdown-preview.css`, wired up in `.vscode/settings.json`. It
+needs no dev server and updates on every keystroke, and it matches the real
+post on type, measure, colour, headings, links, blockquotes, tables, code
+and both green utilities, in light and dark.
+
+What it cannot show, because it only renders the Markdown body:
+
+- the post header — title, date, category, reading time
+- the hero image, which comes from the `image:` frontmatter field
+- the site header and footer, and the offset frame around the hero
+- exact code-block token colours (VS Code highlights those itself, rather
+  than with Shiki as the site does)
+
+So: draft in the Markdown preview, check in Simple Browser before publishing.
+
+The styling is scoped to this workspace, so Markdown in your other projects
+is unaffected. Note that Markdown Preview Enhanced, if you use it instead,
+is styled from `~/.mume/style.less`, which is global — it would restyle every
+Markdown file you preview on the machine.
+
+#### Installing the site fonts
+
+Both previews fall back to Georgia / Segoe UI / Consolas unless the three
+site fonts are installed locally. They are free; installing them for your
+user account needs no administrator rights:
+
+- <https://fonts.google.com/specimen/Newsreader>
+- <https://fonts.google.com/specimen/Work+Sans>
+- <https://fonts.google.com/specimen/JetBrains+Mono>
+
+On each page choose **Get font → Download all**, unzip, then select the
+`*-VariableFont*.ttf` files (the variable fonts cover every weight the site
+uses, including Newsreader 300), right-click and choose **Install**.
+
 ### Dates
 
 Write dates as unquoted `YYYY-MM-DD`. They are parsed as UTC and formatted as

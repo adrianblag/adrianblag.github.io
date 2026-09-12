@@ -1,0 +1,219 @@
+/* =========================================================================
+   VS Code Markdown preview — styled to match a rendered post.
+
+   Wired up by `markdown.styles` in .vscode/settings.json, so it applies to
+   this workspace only; Markdown you preview in other projects is untouched.
+
+   The token block below is the same light-dark() pairs as
+   src/styles/global.css. The site picks a side via `color-scheme` on :root;
+   here VS Code puts .vscode-light / .vscode-dark on <body>, so the class
+   sets color-scheme and light-dark() resolves exactly as it does on the web.
+
+   WHAT THIS CANNOT SHOW, because the preview only renders the Markdown body:
+     - the post header (title, date, category, reading time)
+     - the hero image, which comes from the `image:` frontmatter field
+     - the site header, footer and offset photo frames
+   For those, run the dev server and open the real page in Simple Browser —
+   see the README, "Previewing a post while you write".
+   ========================================================================= */
+
+body {
+  color-scheme: light;
+
+  /* Surface */
+  --bg: light-dark(#f7faf6, #101711);
+  --wash: light-dark(#edf3ea, #18211a);
+
+  /* Ink */
+  --ink: light-dark(#101711, #f2f7f0);
+  --body-text: light-dark(#3a453d, #c3cfc3);
+  --body-mid: light-dark(#445045, #b9c6ba);
+  --body-light: light-dark(#545f57, #a6b3a8);
+
+  /* Muted meta */
+  --muted: light-dark(#8a9589, #7e8c82);
+
+  /* Hairlines */
+  --rule-strong: light-dark(#dbe4d8, #26332a);
+  --rule-soft: light-dark(#e9efe6, #1b2520);
+  --rule-underline: light-dark(#c3cfc0, #3a483e);
+
+  /* Accent */
+  --accent: light-dark(#2f5d45, #8fc0a3);
+  --mark-bg: light-dark(#d6e8dc, #274436);
+  --ph-border: light-dark(#dfe7dc, #2a352d);
+
+  /* Type — falls back to Georgia / Segoe UI / Consolas if the three site
+     fonts are not installed locally. See the README for install links. */
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+}
+
+body.vscode-dark,
+body.vscode-high-contrast {
+  color-scheme: dark;
+}
+
+/* ---- the .prose column, reproduced ------------------------------------ */
+body {
+  background: var(--bg);
+  color: var(--body-text);
+  font-family: var(--serif);
+  font-size: 18.5px;
+  line-height: 1.72;
+  max-width: 68ch;
+  margin: 0 auto;
+  padding: 56px 28px 96px;
+  text-wrap: pretty;
+  -webkit-font-smoothing: antialiased;
+}
+
+body > * + * { margin-top: 1.15em; }
+
+/* VS Code's own first-child reset can leave a gap; keep the top tight. */
+body > *:first-child { margin-top: 0; }
+
+h1, h2, h3, h4, h5, h6 { font-weight: 400; }
+
+/* h1 is unusual in a post body — the real title comes from frontmatter —
+   but style it rather than leave it looking unstyled. */
+h1 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: 38px;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-top: 1.6em;
+}
+
+h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 29px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  margin-top: 1.9em;
+  padding-bottom: 0;
+  border-bottom: none; /* VS Code underlines h1/h2 by default */
+}
+
+h3 {
+  font-family: var(--serif);
+  font-weight: 500;
+  font-size: 22px;
+  line-height: 1.3;
+  color: var(--ink);
+  margin-top: 1.7em;
+}
+
+h4, h5, h6 {
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 1.7em;
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule-underline);
+}
+a:hover { border-bottom-color: var(--accent); }
+
+strong { font-weight: 600; color: var(--ink); }
+
+ul, ol { padding-left: 1.35em; }
+li + li { margin-top: 0.5em; }
+li::marker { color: var(--muted); }
+/* list items are flow content, so cancel the sibling rule inside lists */
+li > * + * { margin-top: 0.6em; }
+
+blockquote {
+  margin-left: 0;
+  margin-right: 0;
+  padding: 4px 0 4px 26px;
+  border-left: 2px solid var(--rule-strong);
+  border-right: none;
+  background: none;
+  font-style: italic;
+  color: var(--body-light);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--rule-strong);
+  margin: 2.6em 0;
+  background: none;
+  height: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  margin: 2em 0;
+  border: 1px solid var(--ph-border);
+}
+
+/* ---- emphasis utilities, same as the site ------------------------------ */
+mark {
+  background: var(--mark-bg);
+  color: inherit;
+  padding: 0.06em 0.3em;
+  border-radius: 2px;
+}
+.accent, mark.accent { color: var(--accent); }
+
+/* ---- code -------------------------------------------------------------- */
+code {
+  font-family: var(--mono);
+  font-size: 0.82em;
+  background: var(--wash);
+  border: 1px solid var(--rule-soft);
+  padding: 0.12em 0.36em;
+  color: inherit;
+}
+
+pre {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.65;
+  background: var(--wash) !important;
+  border: 1px solid var(--rule-strong);
+  padding: 18px 20px;
+  overflow-x: auto;
+  /* Token colours come from VS Code's own highlighter here, not Shiki, so
+     the syntax palette differs slightly from the live site. */
+}
+pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+/* ---- tables ------------------------------------------------------------ */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--sans);
+  font-size: 15px;
+  display: block;
+  overflow-x: auto;
+}
+th, td {
+  border: none;
+  border-bottom: 1px solid var(--rule-soft);
+  padding: 10px 12px;
+  text-align: left;
+}
+th { color: var(--ink); font-weight: 600; }
+tr, tbody tr:nth-child(odd) { background: none; }
+
+/* ---- if VS Code ever stops hiding YAML frontmatter, keep it discreet --- */
+body > hr:first-child { display: none; }
