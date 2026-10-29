@@ -64,6 +64,8 @@ const categories = resolveCategories(
             src={lead.data.image}
             alt={lead.data.image ? lead.data.title : ''}
             caption="post image, 16:9 — optional"
+            widths={[420, 840]}
+            sizes="(max-width: 880px) min(420px, 100vw), 360px"
             frame
           />
         </article>

@@ -20,7 +20,10 @@ const here = Astro.url.pathname;
           </a>
         ))
       }
-      <ThemeToggle />
     </nav>
+    <div class="header-actions">
+      <ThemeToggle />
+      <a class="btn btn-sm btn-ghost" href={`mailto:${site.email}`}>Get in touch</a>
+    </div>
   </div>
 </header>

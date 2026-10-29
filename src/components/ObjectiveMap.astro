@@ -1,0 +1,53 @@
+---
+/**
+ * The contour figure behind the hero portrait. Drawn at build time from
+ * src/lib/objective-map.ts; its intro animation lives in global.css under
+ * HOME → Figure. Decorative, so it is hidden from screen readers.
+ */
+import { objectiveMap } from '../lib/objective-map';
+
+const map = objectiveMap();
+---
+
+<svg
+  class="fig-svg"
+  viewBox={`0 0 ${map.width} ${map.height}`}
+  aria-hidden="true"
+  focusable="false"
+>
+  <g class="contours">
+    {
+      map.contours.map((c) => (
+        <path
+          class:list={['c', { hi: c.hi }]}
+          pathLength="1"
+          style={`--d:${c.delay}s`}
+          d={c.d}
+        />
+      ))
+    }
+  </g>
+  <g class="trails">
+    {
+      map.trails.map((t) => (
+        <g>
+          <circle class="start" cx={t.start.x} cy={t.start.y} r="4.2" style={`--d:${t.start.delay}s`} />
+          {t.dots.map((d) => (
+            <circle class="dot" cx={d.x} cy={d.y} r="2" style={`--d:${d.delay}s`} />
+          ))}
+        </g>
+      ))
+    }
+  </g>
+  <g class="optimum" transform={`translate(${map.optimum.x} ${map.optimum.y})`}>
+    <circle class="ring" r="11" />
+    <circle class="core" r="4" />
+    <text
+      class="opt-label"
+      x={map.label.x}
+      y={map.label.y}
+      text-anchor="middle"
+      dominant-baseline="central">J*</text
+    >
+  </g>
+</svg>

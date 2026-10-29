@@ -48,33 +48,37 @@ const publications = defineCollection({
 
 const talks = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/talks' }),
-  schema: z.object({
-    title: z.string(),
-    event: z.string(),
-    location: z.string(),
-    /** free text — see src/config/taxonomy.ts */
-    type: z.string(),
-    date: z.coerce.date(),
-    links: z.array(link).optional().default([]),
-    abstract: z.string().optional(),
-    /** path under `public/`, e.g. '/talks/sigdial.jpg' */
-    image: z.string().optional(),
-    tags: z.array(z.string()).optional().default([]),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      event: z.string(),
+      location: z.string(),
+      /** free text — see src/config/taxonomy.ts */
+      type: z.string(),
+      date: z.coerce.date(),
+      links: z.array(link).optional().default([]),
+      abstract: z.string().optional(),
+      /** an image next to this file, e.g. './sigdial.jpg'. Resized and
+       *  converted to WebP at build time; a wrong path fails the build. */
+      image: image().optional(),
+      tags: z.array(z.string()).optional().default([]),
+    }),
 });
 
 const posts = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/posts' }),
-  schema: z.object({
-    title: z.string(),
-    date: z.coerce.date(),
-    description: z.string(),
-    /** free text — see src/config/taxonomy.ts */
-    category: z.string().optional(),
-    /** path under `public/`, e.g. '/posts/my-post.jpg' (16:9 reads best) */
-    image: z.string().optional(),
-    draft: z.boolean().optional().default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      date: z.coerce.date(),
+      description: z.string(),
+      /** free text — see src/config/taxonomy.ts */
+      category: z.string().optional(),
+      /** an image next to this file, e.g. './my-post.jpg' (16:9 reads best).
+       *  Resized and converted to WebP at build time. */
+      image: image().optional(),
+      draft: z.boolean().optional().default(false),
+    }),
 });
 
 export const collections = { publications, talks, posts };

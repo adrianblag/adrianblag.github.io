@@ -42,21 +42,26 @@ Requires Node 18 or newer (Node 22 LTS or 24 is a good default).
 ```
 src/
   config/
-    site.ts          ← your name, bio, email, socials, CV PDF  ← EDIT THIS
+    site.ts          ← your name, bio, email, socials, skills, CV PDF ← EDIT THIS
     taxonomy.ts      ← the category options for the filter pills ← EDIT THIS
   data/
     cv.json          ← the CV timeline ← EDIT THIS
   content/
     publications/    ← one .md file per paper
-    talks/           ← one .md file per talk
-    posts/           ← one .md file per blog post (body = the post)
+    talks/           ← one .md file per talk, plus its photo
+    posts/           ← one .md file per blog post (body = the post), plus images
+  assets/
+    portrait.jpg     ← the hero portrait (imported in site.ts)
   content.config.ts  ← Zod schemas (validation only — rarely needs editing)
   pages/             ← the routes: /, /publications, /talks, /writing, /cv
-  components/        ← header, footer, filter pills, shared row bits
-  layouts/Base.astro ← <head>, fonts, view transitions, header + footer
+  components/        ← header, footer, filter pills, the contour figure, …
+  layouts/Base.astro ← <head>, fonts, view transitions, scroll reveals
   styles/global.css  ← every design token and every style rule
-  lib/format.ts      ← date formatting, year grouping, small helpers
-public/              ← static files served as-is: portrait, CV PDF, post images
+  lib/
+    format.ts        ← date formatting, year grouping, small helpers
+    cv.ts            ← cv.json typed, shared by the CV page and the homepage
+    objective-map.ts ← draws the contour figure at build time
+public/              ← static files served as-is: logos, favicons, PDFs
 ```
 
 ---
@@ -67,17 +72,25 @@ public/              ← static files served as-is: portrait, CV PDF, post image
 
 One object plus two small ones. Every value is marked `// TODO: replace`.
 
-- `name`, `role`, `heroStatement`, `bio` — the homepage hero.
-- `email`, `socials` — the underlined links in the hero and in the footer.
-  Add or remove entries from `socials` freely; the layout adapts.
-- `avatar` — set to `'/portrait.jpg'` after putting `portrait.jpg` in
-  `public/`. While it is `null` you get the striped placeholder box.
+- `name`, `role`, `heroStatement`, `bio` — the homepage hero. Wrap a word
+  of `heroStatement` in `*asterisks*` to set it in green italics.
+- `email`, `socials` — the **Get in touch** buttons and the underlined links
+  in the hero, the closing contact section and the footer. Add or remove
+  entries from `socials` freely; the layout adapts.
+- `avatar` — the portrait, imported at the top of the file from
+  `src/assets/portrait.jpg`. To change it, replace that file (or point the
+  import at a new one). Images imported from `src/` are resized and
+  converted to WebP at build time. Set it to `null` for the striped
+  placeholder box.
 - `cvPdf` — set to `'/cv.pdf'` after putting `cv.pdf` in `public/`. While it
   is `null` the **Download CV (PDF)** button is simply not rendered, so the
   page never links to a missing file.
 - `footerAddress` — the small mono line in the footer; `null` hides it.
+- `skills` — the **Skills & tools** block on the homepage: a list of
+  groups, each a label and its items. Each group becomes a column.
 - `pageIntros` — the lead paragraph under each page title.
-- `nav` — the header links and their order.
+- `nav` — the header links and their order (kept in the same order as the
+  homepage sections). Your name in the header links back home.
 
 ### 2. `src/config/taxonomy.ts` — the filter pills
 
@@ -97,8 +110,10 @@ buttons while the site is half-populated.
 Plain JSON, in two parts:
 
 - `sections` — sets the order and heading of each block, e.g.
-  `{ "id": "employment", "label": "Appointments" }`. Empty sections are
-  skipped automatically.
+  `{ "id": "employment", "label": "Experience" }`. Empty sections are
+  skipped automatically. The homepage uses the `employment`, `education`
+  and `training` sections: each role with its first two bullets (so put
+  the strongest ones first), every degree, and the first training entry.
 - `entries` — each entry's `section` must match one of those `id`s.
 
 ```json
@@ -170,12 +185,18 @@ location: "Lisbon"
 type: "Keynote"
 date: 2026-05-18
 abstract: "One or two sentences."   # optional
-image: "/talks/sigdial.jpg"         # optional; placeholder box if absent
+image: "./sigdial.jpg"              # optional; the photo, next to this file
 links:
   - { label: "Slides", url: "https://…" }
   - { label: "Video", url: "https://…" }
 ---
 ```
+
+Put the photo next to the talk's Markdown file and point `image:` at it with
+`./`. It is resized and converted to WebP at build time, and a wrong path
+fails the build with a clear message instead of shipping a broken image.
+Without an image the talk gets the striped placeholder box. The two most
+recent talks also appear on the homepage.
 
 ### A post — `src/content/posts/whatever.md`
 
@@ -185,7 +206,7 @@ title: "On reviewing as a form of teaching"
 date: 2026-07-21
 description: "One or two sentences. Shown on the index and used as the page description."
 category: "Research life"   # optional
-image: "/posts/reviewing.jpg"   # optional, 16:9 reads best
+image: ./reviewing.jpg      # optional, next to this file; 16:9 reads best
 draft: false                # optional
 ---
 
@@ -193,8 +214,9 @@ The Markdown body is the post. Headings, links, lists, blockquotes, tables and
 fenced code blocks are all styled.
 ```
 
-The newest post is featured large at the top of `/writing`; the rest become
-compact rows. Reading time is computed from the body.
+The newest post is featured large at the top of `/writing` and on the
+homepage; the rest become compact rows. Reading time is computed from the
+body. The `image:` works like a talk's: the file sits next to the post.
 
 `draft: true` keeps a post visible in `npm run dev` but excludes it from
 `npm run build` — from the index, the homepage panel and the generated route.
@@ -302,7 +324,7 @@ site fonts are installed locally. They are free; installing them for your
 user account needs no administrator rights:
 
 - <https://fonts.google.com/specimen/Newsreader>
-- <https://fonts.google.com/specimen/Work+Sans>
+- <https://fonts.google.com/specimen/Instrument+Sans>
 - <https://fonts.google.com/specimen/JetBrains+Mono>
 
 On each page choose **Get font → Download all**, unzip, then select the
@@ -323,15 +345,36 @@ UTC, so a date never shifts by a day depending on where the site is built.
   client framework. Clicking a pill hides non-matching rows, hides year groups
   that become empty, keeps the `N items` counts in sync, and moves the
   trailing hairline to the last visible row.
+- **The homepage** is an overview of the whole site: experience, education,
+  skills, publications, talks, the latest post and a contact section, each
+  linking to its full page. It is built from the same content files, so
+  there is nothing extra to keep up to date.
+- **The contour figure** in the hero is computed at build time by
+  `src/lib/objective-map.ts` and rendered as plain SVG by
+  `ObjectiveMap.astro`: a landscape of Gaussian hills, its contour lines,
+  and four gradient-ascent paths that climb to the optimum, J*. Edit the
+  `HILLS` and `STARTS` constants there to reshape it.
 - **Navigation** uses Astro's `ClientRouter` (View Transitions) for a fade
   between pages, while every page remains a real route with a real URL. The
-  filter script re-initialises on each navigation via `astro:page-load`.
-- **Motion** is a single fade-and-rise on page load (`.rv` / `.rv2`). All
-  animation and transition is switched off under
+  filter and reveal scripts re-initialise on each navigation via
+  `astro:page-load`.
+- **Motion**: one signature moment, the contour figure drawing itself on
+  the homepage, then a calm fade-and-rise on every page (`.rv`) and
+  homepage sections that fade up once as they first come into view
+  (`.reveal`, ~30 lines of IntersectionObserver in `Base.astro`). It is
+  built to keep scrolling smooth: animations fill `backwards` only, so
+  nothing stays animating (or held on its own GPU layer) once it has
+  played; nothing is tied to the scroll position; hovers move things with
+  transforms rather than padding; and the sticky header is solid rather
+  than a backdrop blur. All of it is switched off under
   `prefers-reduced-motion: reduce`, including the view transitions.
-- **Fonts** are Newsreader (display/body), Work Sans (UI/nav) and JetBrains
-  Mono (meta/dates), loaded with plain Google Fonts `<link>` tags in
-  `Base.astro`.
+- **Images** (the portrait, talk photos, post images) live under `src/` and
+  go through `astro:assets`: each is resized to the sizes it is shown at and
+  converted to WebP, and the browser picks the right one. Logos are tiny
+  and stay in `public/`.
+- **Fonts** are Newsreader (display/body), Instrument Sans (UI/nav) and
+  JetBrains Mono (meta/dates), loaded with plain Google Fonts `<link>` tags
+  in `Base.astro`.
 - **Theming** is one `light-dark()` pair per token in `global.css`, so there
   is no duplicated dark block to drift out of sync. `color-scheme` decides
   which half applies: the OS preference by default, or `data-theme` on
@@ -345,8 +388,9 @@ UTC, so a date never shifts by a day depending on where the site is built.
   several of them (USC, Cambridge) are dark on transparent and would
   otherwise disappear.
 - **Responsive** down to 375px: multi-column rows stack, the hero type scales
-  with `clamp()`, the nav wraps, and the CV date column moves above each
-  entry while the timeline rule stays continuous.
+  with `clamp()`, the header links drop to a row of their own below 960px,
+  the contour figure moves under the hero text, and the CV date column moves
+  above each entry while the timeline rule stays continuous.
 
 ---
 

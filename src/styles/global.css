@@ -1,11 +1,10 @@
 /* =========================================================================
    DESIGN TOKENS
 
-   Every colour is a light-dark() pair: the first value is the light theme
-   (extracted verbatim from the approved mockup), the second is the dark one.
-   Which side applies is decided by `color-scheme` below — by the OS when the
-   visitor has expressed no preference, or by data-theme on <html> once they
-   pick one with the header toggle.
+   Every colour is a light-dark() pair: the first value is the light theme,
+   the second the dark one. Which side applies is decided by `color-scheme`
+   below — by the OS when the visitor has expressed no preference, or by
+   data-theme on <html> once they pick one with the header toggle.
 
    The dark palette inverts the light one using colours already in it: the
    ground becomes the old ink, the ink becomes the old ground, and the accent
@@ -43,10 +42,16 @@
   /* Accent */
   --accent: light-dark(#2f5d45, #8fc0a3);
   --accent-hover: light-dark(#234737, #a8d4b8);
+  --on-accent: light-dark(#f7faf6, #101711);  /* text on a solid accent button */
 
   /* Placeholder image pattern */
   --ph-stripe: light-dark(#eaf0e6, #1a231d);
   --ph-border: light-dark(#dfe7dc, #2a352d);
+
+  /* The contour figure in the homepage hero: the lines, and the three
+     innermost ones around J*. */
+  --map: light-dark(#d3dfcd, #233328);
+  --map-hi: light-dark(#97b6a1, #4c7a5f);
 
   /* Ground for <mark> in post bodies. Pale green in light, deep green in
      dark, both keeping the body text well clear of the AA threshold. */
@@ -58,12 +63,15 @@
 
   /* Type */
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
-  --sans: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
 
   /* Layout */
-  --maxw: 1120px;
+  --maxw: 1160px;
   --gutter: 56px;
+
+  /* Motion */
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 /* An explicit choice from the header toggle pins one side of every pair. */
@@ -108,7 +116,7 @@ a:hover { color: var(--accent-hover); }
 
 img { max-width: 100%; height: auto; display: block; }
 
-h1, h2, h3, h4, p, ul, ol, figure { margin: 0; }
+h1, h2, h3, h4, p, ul, ol, figure, blockquote { margin: 0; }
 
 button { font: inherit; color: inherit; background: none; border: none; padding: 0; }
 
@@ -181,29 +189,113 @@ button { font: inherit; color: inherit; background: none; border: none; padding:
   color: var(--muted-2);
 }
 
+/* Offset hairline edge: a rectangle shifted down and to the right, sitting
+   behind the image, so the frame is implied rather than drawn around it.
+   Shared by the hero portrait, talk thumbnails and post images; the offset
+   is a variable because it has to stay proportional — 10px reads the same
+   on a 200px portrait as 6px does on a 112px thumb.
+   z-index: 0 on the wrapper keeps the -1 pseudo-element inside this stacking
+   context, so it can never slip behind an ancestor's background.
+   The hover moves the edge with a transform rather than a larger inset, so
+   it runs on the GPU and never repaints what is behind the image. */
+.frame {
+  --frame-offset: 10px;
+  position: relative;
+  z-index: 0;
+}
+.frame::after {
+  content: "";
+  position: absolute;
+  inset: var(--frame-offset) calc(-1 * var(--frame-offset))
+         calc(-1 * var(--frame-offset)) var(--frame-offset);
+  border: 1px solid var(--rule-underline);
+  z-index: -1;
+  pointer-events: none;
+  transition: transform 0.5s var(--ease), border-color 0.5s ease;
+}
+.frame:hover::after {
+  transform: translate(4px, 4px);
+  border-color: var(--accent);
+}
+
+/* =========================================================================
+   BUTTONS & LINKS
+   ========================================================================= */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 20px;
+  border: 1px solid var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+  font: 500 14px/1 var(--sans);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  transition: background-color 0.25s ease, border-color 0.25s ease,
+    color 0.25s ease;
+}
+.btn:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+  color: var(--on-accent);
+}
+.btn-ghost { background: transparent; color: var(--accent); }
+.btn-ghost:hover { background: var(--accent); color: var(--on-accent); }
+.btn-sm { padding: 9px 14px; font-size: 12.5px; }
+
+/* Arrows that nudge forward on hover (buttons and "All →" links). */
+.arr { display: inline-block; transition: transform 0.3s var(--ease); }
+a:hover > .arr { transform: translateX(4px); }
+
+/* A hairline underline that draws in from the left on hover. */
+.link {
+  color: var(--ink-soft);
+  padding-bottom: 3px;
+  background:
+    linear-gradient(var(--accent), var(--accent)) 0 100% / 0 1px no-repeat,
+    linear-gradient(var(--rule-underline), var(--rule-underline)) 0 100% / 100% 1px no-repeat;
+  transition: background-size 0.4s var(--ease), color 0.25s ease;
+}
+.link:hover { color: var(--accent); background-size: 100% 1px, 100% 1px; }
+
 /* =========================================================================
    HEADER
+   Solid rather than a translucent blur: a backdrop-filter has to re-blur
+   everything scrolling underneath it on every frame. The hairline appears
+   once the page has scrolled (.is-scrolled, set from Base.astro).
    ========================================================================= */
+.scroll-sentinel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 24px;
+  pointer-events: none;
+}
+
 .site-header {
   position: sticky;
   top: 0;
   z-index: 10;
   background: var(--bg);
-  border-bottom: 1px solid var(--rule);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease;
 }
+.site-header.is-scrolled { border-bottom-color: var(--rule); }
 
 .site-header .wrap {
-  padding-top: 24px;
-  padding-bottom: 24px;
   display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 40px;
+  align-items: center;
+  gap: 36px;
+  padding-top: 18px;
+  padding-bottom: 18px;
 }
 
 .wordmark {
   font-family: var(--serif);
   font-size: 19px;
+  line-height: 1;
   color: var(--ink-soft);
   white-space: nowrap;
 }
@@ -212,30 +304,40 @@ button { font: inherit; color: inherit; background: none; border: none; padding:
 .site-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 34px;
-  font-size: 13px;
+  gap: 8px 28px;
+  margin-left: auto;
+  font-size: 12.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
 .site-nav a {
-  padding-bottom: 3px;
+  padding-block: 4px;
   border-bottom: 1px solid transparent;
   color: var(--pill-ink);
   transition: color 0.25s ease, border-color 0.25s ease;
 }
-.site-nav a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+.site-nav a:hover,
 .site-nav a[aria-current="page"] { color: var(--accent); border-bottom-color: var(--accent); }
 
-@media (max-width: 760px) {
+.header-actions { display: flex; align-items: center; gap: 18px; }
+
+/* Below this the links no longer fit beside the name, so they drop to a
+   row of their own rather than disappearing. */
+@media (max-width: 960px) {
   .site-header .wrap {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
-    padding-top: 20px;
-    padding-bottom: 18px;
+    flex-wrap: wrap;
+    column-gap: 12px;
+    row-gap: 10px;
+    padding-top: 14px;
+    padding-bottom: 12px;
   }
-  .site-nav { gap: 20px; font-size: 12px; }
+  .site-nav { order: 3; width: 100%; margin-left: 0; }
+  .header-actions { margin-left: auto; gap: 10px; }
+}
+@media (max-width: 640px) {
+  .wordmark { font-size: 17px; }
+  .site-nav { gap: 6px 18px; font-size: 11px; letter-spacing: 0.06em; }
 }
 
 /* =========================================================================
@@ -244,19 +346,19 @@ button { font: inherit; color: inherit; background: none; border: none; padding:
 .site-footer { border-top: 1px solid var(--rule); }
 
 .site-footer .wrap {
-  padding-top: 40px;
-  padding-bottom: 56px;
+  padding-top: 32px;
+  padding-bottom: 48px;
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  gap: 40px;
+  gap: 20px 40px;
   flex-wrap: wrap;
 }
 
 .footer-address {
   font-family: var(--mono);
   font-size: 11px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: var(--muted-2);
   text-transform: uppercase;
 }
@@ -366,16 +468,21 @@ button { font: inherit; color: inherit; background: none; border: none; padding:
 
 /* =========================================================================
    SHARED LIST ROW BEHAVIOUR
+   The hover nudge moves the row's contents with a transform, not padding,
+   so it never triggers a relayout.
    ========================================================================= */
 .row {
   display: grid;
   gap: 40px;
   padding: 24px 0;
   border-bottom: 1px solid var(--rule-soft);
-  transition: background-color 0.3s ease, padding-left 0.3s ease;
+  transition: background-color 0.3s ease;
 }
+.row > * { transition: transform 0.35s var(--ease); }
 .row:hover,
-.row:focus-within { background-color: var(--wash); padding-left: 12px; }
+.row:focus-within { background-color: var(--wash); }
+.row:hover > *,
+.row:focus-within > * { transform: translateX(12px); }
 
 .row-title {
   font-family: var(--serif);
@@ -439,10 +546,7 @@ a.row-title:hover { color: var(--accent); }
 .talk-row { grid-template-columns: 168px 1fr 170px; gap: 36px; padding: 26px 0; }
 .talk-thumb { display: flex; flex-direction: column; gap: 7px; }
 .talk-thumb .ph, .talk-thumb img { height: 112px; width: 100%; object-fit: cover; }
-.talk-thumb .frame {
-  /* Proportional to the portrait's 10px on 300px. */
-  --frame-offset: 6px;
-}
+.talk-thumb .frame { --frame-offset: 6px; }
 .talk-thumb .ph-caption { font-size: 10px; }
 .talk-body { display: flex; flex-direction: column; gap: 8px; }
 .talk-abstract { font-size: 14.5px; line-height: 1.55; color: var(--body-light); }
@@ -468,15 +572,15 @@ a.row-title:hover { color: var(--accent); }
   display: grid;
   grid-template-columns: 1fr 360px;
   gap: 56px;
+  margin-top: 40px;
   padding: 40px 0;
   border-top: 1px solid var(--rule-strong);
   border-bottom: 1px solid var(--rule-strong);
-  transition: background-color 0.3s ease, padding-left 0.3s ease;
+  transition: background-color 0.3s ease;
 }
-.post-lead-row:hover, .post-lead-row:focus-within {
-  background-color: var(--wash);
-  padding-left: 12px;
-}
+.post-lead-row > * { transition: transform 0.35s var(--ease); }
+.post-lead-row:hover, .post-lead-row:focus-within { background-color: var(--wash); }
+.post-lead-row:hover > *, .post-lead-row:focus-within > * { transform: translateX(12px); }
 .post-lead-body { display: flex; flex-direction: column; gap: 14px; }
 .post-lead-title {
   font-family: var(--serif);
@@ -507,10 +611,7 @@ a.post-lead-title:hover { color: var(--accent); }
 .read-more:hover { color: var(--accent-hover); }
 .post-lead-media { display: flex; flex-direction: column; gap: 8px; }
 .post-lead-media .ph, .post-lead-media img { height: 200px; width: 100%; object-fit: cover; }
-.post-lead-media .frame {
-  /* Proportional, like the portrait's 10px on 300px. */
-  --frame-offset: 12px;
-}
+.post-lead-media .frame { --frame-offset: 12px; }
 .post-lead-media .ph-caption { font-size: 10px; }
 
 .post-row {
@@ -547,6 +648,11 @@ a.post-lead-title:hover { color: var(--accent); }
   .post-cat { padding-top: 0; }
   .post-row-title { font-size: 21px; }
 }
+
+/* Trailing hairline is removed from the last *visible* row of each list
+   (set server-side, then kept in sync by the filter script). */
+.row.is-last-visible,
+.post-row.is-last-visible { border-bottom: none; }
 
 /* =========================================================================
    POST DETAIL  (Markdown body)
@@ -743,7 +849,10 @@ a.post-lead-title:hover { color: var(--accent); }
   background: var(--bg);
   border: 1px solid var(--accent);
 }
-.cv-dot.is-current { background: var(--accent); }
+.cv-dot.is-current {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 18%, transparent);
+}
 
 .cv-title { font-family: var(--serif); font-size: 25px; line-height: 1.3; color: var(--ink); }
 .cv-org { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--meta-italic); }
@@ -784,242 +893,6 @@ a.post-lead-title:hover { color: var(--accent); }
   .cv-entry.is-last::after { height: 18px; }
 }
 
-/* =========================================================================
-   HOME
-   ========================================================================= */
-.hero {
-  display: grid;
-  grid-template-columns: 1fr 300px;
-  gap: 72px;
-  align-items: start;
-  padding-top: 88px;
-  padding-bottom: 72px;
-}
-.hero-text { display: flex; flex-direction: column; gap: 28px; }
-
-.eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent);
-}
-
-.hero-statement {
-  font-family: var(--serif);
-  font-weight: 300;
-  font-size: clamp(38px, 8vw, 62px);
-  line-height: 1.06;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  text-wrap: pretty;
-}
-
-.hero-bio {
-  max-width: 60ch;
-  font-family: var(--serif);
-  font-size: 20px;
-  line-height: 1.62;
-  color: var(--body);
-  text-wrap: pretty;
-}
-
-.hero-links { display: flex; flex-wrap: wrap; gap: 26px; font-size: 14px; }
-.hero-links a {
-  padding-bottom: 2px;
-  border-bottom: 1px solid var(--rule-underline);
-  color: var(--ink-soft);
-  transition: border-color 0.25s ease, color 0.25s ease;
-}
-.hero-links a:hover { color: var(--accent); border-bottom-color: var(--accent); }
-
-.hero-portrait { display: flex; flex-direction: column; gap: 10px; margin: 0; }
-
-/* Offset hairline edge: a rectangle shifted down and to the right, sitting
-   behind the image, so the frame is implied rather than drawn around it.
-   Shared by the hero portrait and the talk thumbnails; the offset is a
-   variable because it has to stay proportional — 10px reads the same on a
-   300px portrait as 6px does on a 168px thumb.
-   z-index: 0 on the wrapper keeps the -1 pseudo-element inside this stacking
-   context, so it can never slip behind an ancestor's background. */
-.frame {
-  --frame-offset: 10px;
-  position: relative;
-  z-index: 0;
-}
-.frame::after {
-  content: "";
-  position: absolute;
-  inset: var(--frame-offset) calc(-1 * var(--frame-offset))
-         calc(-1 * var(--frame-offset)) var(--frame-offset);
-  border: 1px solid var(--rule-underline);
-  z-index: -1;
-  pointer-events: none;
-}
-.hero-portrait .ph, .hero-portrait img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 3 / 4;
-  object-fit: cover;
-}
-
-/* Quote under the portrait. Deliberately quiet — subordinate to the photo
-   and to the hero statement, a detail found on a second look. */
-.portrait-quote { margin: 12px 0 0; }
-.portrait-quote::before {
-  content: "";
-  display: block;
-  width: 26px;
-  height: 1px;
-  background: var(--accent);
-  margin-bottom: 12px;
-}
-.portrait-quote-text {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--body-light);
-  text-wrap: pretty;
-}
-.portrait-quote-by {
-  display: block;
-  margin-top: 9px;
-  font-family: var(--mono);
-  font-size: 9.5px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--muted-2);
-}
-
-@media (max-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr;
-    gap: 44px;
-    padding-top: 56px;
-    padding-bottom: 48px;
-  }
-  .hero-portrait { max-width: 280px; }
-  .hero-bio { font-size: 18px; }
-}
-
-.panels { border-top: 1px solid var(--rule); }
-.panels-inner {
-  max-width: var(--maxw);
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-}
-.panel {
-  padding: 48px var(--gutter);
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-.panel:first-child { border-right: 1px solid var(--rule); }
-.panel-label {
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-.panel-list { display: flex; flex-direction: column; }
-.panel-item {
-  display: grid;
-  grid-template-columns: 52px 1fr;
-  gap: 20px;
-  padding: 18px 0;
-  border-bottom: 1px solid var(--rule-soft);
-  transition: background-color 0.25s ease, padding-left 0.25s ease;
-}
-.panel-item:last-child { border-bottom: none; }
-.panel-item:hover { background-color: var(--wash); padding-left: 10px; }
-.panel-year {
-  font-family: var(--mono);
-  font-size: 12px;
-  color: var(--accent);
-  padding-top: 5px;
-}
-.panel-title {
-  font-family: var(--serif);
-  font-size: 19px;
-  line-height: 1.4;
-  color: var(--ink-soft);
-}
-.panel-venue { font-style: italic; color: var(--meta-italic); }
-
-.panel-list.stacked { gap: 22px; }
-.panel-note {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  color: var(--ink-soft);
-  transition: color 0.25s ease;
-}
-.panel-note:hover { color: var(--accent); }
-.panel-note-title { font-family: var(--serif); font-size: 19px; }
-.panel-note-meta {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--muted-2);
-  text-transform: uppercase;
-}
-
-.panel-empty {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 17px;
-  color: var(--meta-italic);
-}
-
-@media (max-width: 800px) {
-  .panels-inner { grid-template-columns: 1fr; }
-  .panel:first-child { border-right: none; border-bottom: 1px solid var(--rule); }
-  .panel { padding: 36px var(--gutter); }
-}
-
-/* =========================================================================
-   PAGE PADDING
-   ========================================================================= */
-.page { padding-top: 72px; padding-bottom: 96px; }
-@media (max-width: 640px) {
-  .page { padding-top: 44px; padding-bottom: 72px; }
-}
-
-/* =========================================================================
-   MOTION — soft fade-and-rise, disabled under prefers-reduced-motion.
-   ========================================================================= */
-@keyframes rise {
-  from { opacity: 0; transform: translateY(14px); }
-  to { opacity: 1; transform: none; }
-}
-
-.rv { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
-.rv2 { animation: rise 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) 0.08s both; }
-
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
-  }
-  .rv, .rv2 { animation: none; opacity: 1; transform: none; }
-  /* Astro View Transitions */
-  ::view-transition-group(*),
-  ::view-transition-old(*),
-  ::view-transition-new(*) { animation: none !important; }
-}
-
-/* Trailing hairline is removed from the last *visible* row of each list
-   (set server-side, then kept in sync by the filter script). */
-.row.is-last-visible,
-.post-row.is-last-visible { border-bottom: none; }
-
-/* Breathing room between the Writing page header and the lead post. */
-.post-lead-row { margin-top: 40px; }
-
 /* Institution logo(s) + linked organization name on a CV entry.
    Logos are decorative (alt=""), since the organization name sits right
    beside them and would otherwise be announced twice.
@@ -1049,7 +922,9 @@ a.post-lead-title:hover { color: var(--accent); }
   transition: filter 0.3s ease, opacity 0.3s ease;
 }
 .cv-entry:hover .cv-logo,
-.cv-entry:focus-within .cv-logo {
+.cv-entry:focus-within .cv-logo,
+.tl-item:hover .cv-logo,
+.edu-item:hover .cv-logo {
   filter: grayscale(0);
   opacity: 1;
 }
@@ -1068,42 +943,444 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
   .cv-logo { height: 20px; max-width: 104px; margin-right: 8px; }
 }
 
+:root[data-theme="dark"] .cv-logo { padding: 3px; border-radius: 3px; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .cv-logo { padding: 3px; border-radius: 3px; }
+}
+
+/* =========================================================================
+   HOME — hero
+   ========================================================================= */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 400px;
+  gap: 64px;
+  align-items: start;
+  padding-top: 72px;
+  padding-bottom: 88px;
+}
+.hero-text { display: flex; flex-direction: column; gap: 28px; padding-top: 24px; }
+
+.eyebrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11.5px;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.eyebrow::before { content: ""; flex: none; width: 28px; height: 1px; background: currentColor; }
+
+.hero-statement {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(40px, 4.9vw, 62px);
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.hero-statement em { font-style: italic; color: var(--accent); }
+
+.hero-bio {
+  max-width: 60ch;
+  font-family: var(--serif);
+  font-size: 19px;
+  line-height: 1.66;
+  color: var(--body);
+  text-wrap: pretty;
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 26px;
+  padding-top: 4px;
+  font-size: 14px;
+}
+
+/* ---- Figure: the contour map, with the portrait pinned to it ---------- */
+.plate { position: relative; }
+.map { position: relative; aspect-ratio: 480 / 560; }
+
+.fig-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.fig-svg .c { fill: none; stroke: var(--map); stroke-width: 1.1; }
+.fig-svg .c.hi { stroke: var(--map-hi); }
+.fig-svg .dot { fill: var(--accent); }
+.fig-svg .start { fill: var(--bg); stroke: var(--accent); stroke-width: 1.3; }
+.fig-svg .ring { fill: none; stroke: var(--accent); stroke-width: 1.3; }
+.fig-svg .core { fill: var(--accent); }
+/* A halo in the page colour, as on a printed map, so contour lines passing
+   behind the label never cut through it. */
+.fig-svg .opt-label {
+  font: italic 400 19px var(--serif);
+  fill: var(--ink);
+  paint-order: stroke;
+  stroke: var(--bg);
+  stroke-width: 6px;
+  stroke-linejoin: round;
+}
+
+.map-portrait { position: absolute; left: 0; bottom: 0; width: 52%; }
+.map-portrait img,
+.map-portrait .ph { width: 100%; aspect-ratio: 3 / 4; object-fit: cover; }
+/* The offset edge is filled with the page colour here, so it reads as a
+   card lying on the map rather than lines showing through. */
+.map-portrait.frame::after { background: var(--bg); }
+
+/* Quote under the figure. Deliberately quiet — a detail found on a second
+   look. */
+.portrait-quote { margin-top: 30px; max-width: 46ch; }
+.portrait-quote::before {
+  content: "";
+  display: block;
+  width: 26px;
+  height: 1px;
+  background: var(--accent);
+  margin-bottom: 12px;
+}
+.portrait-quote p {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--body-light);
+  text-wrap: pretty;
+}
+.portrait-quote span {
+  display: block;
+  margin-top: 8px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted-2);
+}
+
+/* =========================================================================
+   HOME — overview sections
+   ========================================================================= */
+.home-row { padding-block: 64px; border-top: 1px solid var(--rule); }
+.split { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 64px; }
+
+.sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 36px; }
+.sec-num { font-family: var(--mono); font-weight: 500; font-size: 11px; letter-spacing: 0.08em; color: var(--accent); }
+.sec-head h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.sec-rule { flex: 1; height: 1px; background: var(--rule-strong); align-self: center; }
+.more {
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--accent);
+}
+
+.mini-label {
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ---- Experience timeline; its rule draws itself once in view ---------- */
+.timeline { position: relative; padding-left: 28px; }
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 3.5px;
+  top: 10px;
+  bottom: 30px;
+  width: 1px;
+  background: var(--rule-strong);
+  transform-origin: top;
+}
+.tl-item { position: relative; display: flex; flex-direction: column; gap: 7px; padding-bottom: 34px; }
+.tl-item::before {
+  content: "";
+  position: absolute;
+  left: -28px;
+  top: 7px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background: var(--bg);
+}
+.tl-item.current::before {
+  background: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 18%, transparent);
+}
+.tl-date { font-family: var(--mono); font-weight: 500; font-size: 11.5px; letter-spacing: 0.04em; color: var(--accent); }
+.tl-item h3, .edu-item h3 { font-family: var(--serif); font-weight: 400; font-size: 24px; line-height: 1.25; color: var(--ink); }
+
+.entry-org { font-family: var(--serif); font-style: italic; font-size: 16px; line-height: 1.5; color: var(--meta-italic); }
+.entry-org .cv-logo { height: 20px; margin-right: 8px; vertical-align: -4px; }
+.entry-bullets {
+  list-style: none;
+  padding: 0;
+  margin-top: 4px;
+  display: grid;
+  gap: 7px;
+  max-width: 64ch;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--body-light);
+}
+.entry-bullets li { position: relative; padding-left: 16px; }
+.entry-bullets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.78em;
+  width: 7px;
+  height: 1px;
+  background: var(--accent);
+}
+
+/* ---- Education and training ------------------------------------------ */
+.edu-list { display: grid; gap: 28px; }
+.edu-item { display: flex; flex-direction: column; gap: 6px; }
+.edu-item h3 { font-size: 21px; }
+
+.home-training {
+  display: grid;
+  gap: 8px;
+  margin-top: 32px;
+  padding-top: 22px;
+  border-top: 1px solid var(--rule);
+}
+.home-training p { font-family: var(--serif); font-size: 17px; line-height: 1.45; color: var(--ink-soft); }
+.home-training small { font-size: 13px; color: var(--body-light); }
+
+/* ---- Skills & tools ---------------------------------------------------- */
+.skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
+.skill-group { display: flex; flex-direction: column; gap: 16px; }
+.tags { display: flex; flex-wrap: wrap; gap: 8px; list-style: none; padding: 0; }
+.tags li {
+  padding: 7px 12px;
+  border: 1px solid var(--rule-pill);
+  font-size: 13.5px;
+  color: var(--ink-soft);
+  transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
+}
+.tags li:hover { border-color: var(--accent); color: var(--accent); background: var(--wash); }
+
+/* ---- Publications ------------------------------------------------------ */
+.home-pubs { display: grid; gap: 24px; }
+.home-pub {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 26px;
+  margin: -26px;
+  transition: background-color 0.3s ease;
+}
+.home-pub:hover { background: var(--wash); }
+.home-pub-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 1.3;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+a.home-pub-title:hover { color: var(--accent); }
+.home-pub .pub-authors { font-size: 14.5px; color: var(--body-light); }
+.home-pub .taglinks { flex-direction: row; gap: 18px; margin-top: 6px; }
+
+/* ---- Talks ------------------------------------------------------------- */
+.home-talks { display: grid; gap: 4px; }
+.home-talk {
+  display: grid;
+  grid-template-columns: 112px minmax(0, 1fr);
+  gap: 20px;
+  padding: 16px 12px 16px 0;
+  color: inherit;
+  transition: background-color 0.3s ease;
+}
+.home-talk:hover { background: var(--wash); color: inherit; }
+/* The hover nudge is a transform (no relayout), not a padding change. */
+.home-talk > * { transition: transform 0.35s var(--ease); }
+.home-talk:hover > * { transform: translateX(12px); }
+.home-talk-thumb { align-self: start; }
+.home-talk-thumb .frame { --frame-offset: 6px; }
+.home-talk-thumb img,
+.home-talk-thumb .ph { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
+.home-talk h3 { font-family: var(--serif); font-weight: 400; font-size: 18px; line-height: 1.35; color: var(--ink); margin-top: 6px; }
+.home-talk:hover h3 { color: var(--accent); }
+.home-talk p { font-family: var(--serif); font-style: italic; font-size: 14px; line-height: 1.5; color: var(--meta-italic); margin-top: 4px; }
+
+/* ---- Writing ----------------------------------------------------------- */
+.home-post { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 56px; align-items: center; }
+.home-post-body { display: flex; flex-direction: column; gap: 14px; }
+.home-post-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(30px, 4vw, 40px);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.home-post-title:hover { color: var(--accent); }
+.home-post-desc { font-size: 15.5px; line-height: 1.65; max-width: 52ch; }
+.home-post-media .frame { --frame-offset: 12px; }
+.home-post-media img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+
+/* ---- Contact ----------------------------------------------------------- */
+.home-contact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 40px;
+  align-items: end;
+  padding-block: 80px;
+  border-top: 1px solid var(--rule);
+}
+.home-contact h2 {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(40px, 6vw, 72px);
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.home-contact h2 em { color: var(--accent); }
+.contact-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 24px; font-size: 14px; }
+
+/* ---- Responsive -------------------------------------------------------- */
+@media (max-width: 1000px) {
+  .hero { grid-template-columns: 1fr; gap: 48px; padding-top: 48px; }
+  .plate { max-width: 440px; }
+  .split { grid-template-columns: 1fr; gap: 56px; }
+  .home-post { grid-template-columns: 1fr; gap: 28px; }
+  .home-post-media { max-width: 520px; }
+}
+@media (max-width: 760px) {
+  .hero-bio { font-size: 17.5px; }
+  .home-row { padding-block: 48px; }
+  .sec-head { flex-wrap: wrap; row-gap: 10px; }
+  .sec-rule { display: none; }
+  .more { margin-left: auto; }
+  .skills { grid-template-columns: 1fr; gap: 28px; }
+  .home-pub { padding: 14px; margin: -14px; }
+  .home-talk { grid-template-columns: 92px minmax(0, 1fr); gap: 16px; }
+  .home-contact { grid-template-columns: 1fr; padding-block: 56px; }
+}
+
+/* =========================================================================
+   PAGE PADDING
+   ========================================================================= */
+.page { padding-top: 72px; padding-bottom: 96px; }
+@media (max-width: 640px) {
+  .page { padding-top: 44px; padding-bottom: 72px; }
+}
+
+/* =========================================================================
+   MOTION
+   One signature on the homepage (the contour map drawing itself), a calm
+   entrance on every page, and sections that fade up once as they come into
+   view. Animations fill `backwards` only and their keyframes end on the
+   element's plain style, so once they have played nothing is left
+   animating, or held on its own GPU layer, while the page scrolls; nothing
+   is tied to the scroll position. Everything is skipped under
+   prefers-reduced-motion.
+   ========================================================================= */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } }
+@keyframes fade { from { opacity: 0; } }
+/* The dash only exists while drawing; the line ends as a plain stroke. */
+@keyframes draw {
+  from { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+  to { stroke-dasharray: 1 1; stroke-dashoffset: 0; }
+}
+@keyframes pop { from { opacity: 0; transform: scale(0); } }
+@keyframes ping { from { opacity: 0; transform: scale(0.3); } 40% { opacity: 1; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Every inner page */
+  .rv { animation: rise 0.6s var(--ease) backwards; }
+
+  /* Homepage hero */
+  .hero-text > * { animation: rise 0.8s var(--ease) backwards; }
+  .hero-text > :nth-child(2) { animation-delay: 0.08s; }
+  .hero-text > :nth-child(3) { animation-delay: 0.16s; }
+  .hero-text > :nth-child(4) { animation-delay: 0.24s; }
+  .map-portrait { animation: rise 0.9s var(--ease) 0.1s backwards; }
+  .portrait-quote { animation: fade 1s ease 2.4s backwards; }
+
+  /* The figure: the paths are observed first, then the objective appears
+     around them (each element's --d comes from ObjectiveMap.astro). */
+  .fig-svg .c { animation: draw 1.7s cubic-bezier(0.4, 0.2, 0.2, 1) var(--d) backwards; }
+  .fig-svg .dot,
+  .fig-svg .start {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: pop 0.5s cubic-bezier(0.2, 0.8, 0.3, 1.4) var(--d) backwards;
+  }
+  .fig-svg .optimum { animation: fade 0.6s ease 2.2s backwards; }
+  .fig-svg .ring {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: ping 1.4s var(--ease) 2.2s backwards;
+  }
+
+  /* Fade up once on first view (.is-in is added by the script in
+     Base.astro). Only hidden when that script runs (.js on <html>). */
+  .js .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.8s var(--ease) calc(var(--i, 0) * 70ms),
+      transform 0.8s var(--ease) calc(var(--i, 0) * 70ms),
+      background-color 0.3s ease;
+  }
+  .js .reveal.is-in { opacity: 1; transform: none; }
+  .js .timeline::before { transform: scaleY(0); transition: transform 1.4s var(--ease) 0.15s; }
+  .js .timeline.is-in::before { transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Astro View Transitions */
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) { animation: none !important; }
+}
+
 /* =========================================================================
    THEME TOGGLE
    ========================================================================= */
 .theme-toggle {
-  /* A flex item, so this blockifies — but the icon inside stays inline, which
-     gives the button a real first-line baseline for the nav's baseline
-     alignment to use. An inline-flex button holding only SVGs has no text
-     baseline and falls back to its bottom margin edge, which is what parked
-     the icon below the nav text.
-     Vertical padding enlarges the hit area without moving the icon: it shifts
-     the box, not the baseline the icon hangs from. */
-  display: block;
-  padding: 5px 3px;
-  line-height: 1;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
   color: var(--pill-ink);
   cursor: pointer;
-  transition: color 0.25s ease;
-  /* Optical correction, and it has to be `position: relative` rather than
-     vertical-align on the icon: the button's baseline IS the icon's baseline,
-     so shifting the icon shifts the button by the same amount and the flex
-     baseline alignment cancels it out exactly. `top` does not participate in
-     layout, so it is the only lever that actually moves the thing.
-
-     Baseline alignment lands the icon's TOP on the cap top of the nav text.
-     The icon is 17px and the cap height is 9px, so its centre ends up 4px
-     below the cap centre — which is what made it look sunk. Lifting it by
-     that 4px centres the icon on the text's visual mass, and incidentally
-     puts its bottom level with the active link's underline. */
-  position: relative;
-  top: -4px;
+  transition: color 0.25s ease, transform 0.5s var(--ease);
 }
-.theme-toggle:hover { color: var(--accent); }
+.theme-toggle:hover { color: var(--accent); transform: rotate(-18deg); }
 .theme-toggle svg {
   width: 17px;
   height: 17px;
-  display: inline-block;
   /* Hairline stroke, to match the 1px rules used throughout. */
   fill: none;
   stroke: currentColor;
@@ -1120,18 +1397,6 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
   /* Only seen before the inline script stamps data-theme, or with JS off. */
   :root:not([data-theme]) .theme-toggle .icon-sun { display: block; }
   :root:not([data-theme]) .theme-toggle .icon-moon { display: none; }
-}
-
-/* Logo chip padding only applies once there is a chip to pad. */
-@media (max-width: 760px) {
-  /* Nav text drops to 12px here, so the cap height shrinks and the icon needs
-     to come up a little further still. */
-  .theme-toggle { top: -4.5px; }
-}
-
-:root[data-theme="dark"] .cv-logo { padding: 3px; border-radius: 3px; }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .cv-logo { padding: 3px; border-radius: 3px; }
 }
 
 /* Syntax highlighting: Shiki emits both themes, light inline and dark in a

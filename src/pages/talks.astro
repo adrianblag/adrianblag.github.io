@@ -43,6 +43,8 @@ const categories = resolveCategories(
                   src={talk.data.image}
                   alt={talk.data.image ? talk.data.title : ''}
                   caption="talk image — optional"
+                  widths={[168, 336, 440]}
+                  sizes="(max-width: 560px) 220px, (max-width: 880px) 132px, 168px"
                   frame
                 />
                 <div class="talk-body">

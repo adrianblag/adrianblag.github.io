@@ -1,7 +1,10 @@
 ---
 /** Striped placeholder box, or the real image when one is supplied. */
+import { Image } from 'astro:assets';
+
 interface Props {
-  src?: string | null;
+  /** An image from the `image:` frontmatter field (or any import from src/). */
+  src?: ImageMetadata | null;
   alt?: string;
   caption?: string | null;
   class?: string;
@@ -12,6 +15,12 @@ interface Props {
    * rather than a frame.
    */
   frame?: boolean;
+  /** Widths to generate, in px: roughly 1x and 2x the largest size the
+   *  image is shown at. The browser picks one using `sizes`. */
+  widths: number[];
+  /** Mirrors the CSS width, e.g. '(max-width: 640px) 100vw, 420px'. */
+  sizes: string;
+  loading?: 'lazy' | 'eager';
 }
 const {
   src,
@@ -19,6 +28,9 @@ const {
   caption = null,
   class: cls = '',
   frame = false,
+  widths,
+  sizes,
+  loading = 'lazy',
 } = Astro.props;
 ---
 
@@ -27,10 +39,10 @@ const {
     src ? (
       frame ? (
         <div class="frame">
-          <img src={src} alt={alt} loading="lazy" />
+          <Image src={src} alt={alt} widths={widths} sizes={sizes} loading={loading} decoding="async" />
         </div>
       ) : (
-        <img src={src} alt={alt} loading="lazy" />
+        <Image src={src} alt={alt} widths={widths} sizes={sizes} loading={loading} decoding="async" />
       )
     ) : (
       <div class="ph" aria-hidden="true" />

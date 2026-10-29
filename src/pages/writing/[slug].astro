@@ -42,6 +42,9 @@ const { Content } = await render(post);
       src={post.data.image}
       alt={post.data.image ? post.data.title : ''}
       caption="post image, 16:9 — optional"
+      widths={[640, 1008, 1600]}
+      sizes="(max-width: 1120px) 100vw, 1008px"
+      loading="eager"
       frame
     />
 

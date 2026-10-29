@@ -50,6 +50,16 @@ export function groupByYear<T>(
     .map(([y, list]) => ({ year: y, items: list }));
 }
 
+/** HTML for a config string where *asterisks* mark emphasis, e.g. the hero
+ *  statement. Everything else is escaped, so the string stays plain text. */
+export function emphasize(text: string): string {
+  return text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>');
+}
+
 /** Accepts a bare DOI ("10.1000/xyz") or a full URL and returns a URL. */
 export function doiUrl(doi: string): string {
   return /^https?:\/\//.test(doi) ? doi : `https://doi.org/${doi}`;

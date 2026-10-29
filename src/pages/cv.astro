@@ -3,39 +3,7 @@ import Base from '../layouts/Base.astro';
 import PageHeader from '../components/PageHeader.astro';
 import { site, pageIntros } from '../config/site';
 import { url } from '../lib/format';
-import cv from '../data/cv.json';
-
-type Entry = {
-  section: string;
-  title: string;
-  organization?: string;
-  /** Links the organization name — a verification link where one exists. */
-  url?: string;
-  /** One logo path under public/, or several for a joint award. */
-  logo?: string | string[];
-  start: string;
-  end?: string;
-  bullets?: string[];
-};
-
-const entries = cv.entries as Entry[];
-
-/** Sections in the order declared in cv.json; empty ones are skipped. */
-const sections = cv.sections
-  .map((s) => ({ ...s, items: entries.filter((e) => e.section === s.id) }))
-  .filter((s) => s.items.length > 0);
-
-const isCurrent = (e: Entry) => (e.end ?? '').toLowerCase() === 'present';
-
-/** Normalise `logo` to a list, so one and many render through one path. */
-const logosOf = (e: Entry): string[] =>
-  Array.isArray(e.logo) ? e.logo : e.logo ? [e.logo] : [];
-
-function dateLabel(e: Entry): string {
-  if (isCurrent(e)) return `${e.start} —`;
-  if (e.end && e.end !== e.start) return `${e.start} — ${e.end}`;
-  return e.start;
-}
+import { cvSections as sections, dateLabel, isCurrentRole as isCurrent, logosOf } from '../lib/cv';
 ---
 
 <Base title="CV" description={pageIntros.cv}>

@@ -15,7 +15,7 @@
   ],
 
   "sections": [
-    { "id": "employment", "label": "Appointments" },
+    { "id": "employment", "label": "Experience" },
     { "id": "education", "label": "Education" },
     { "id": "training", "label": "Training & certifications" }
   ],

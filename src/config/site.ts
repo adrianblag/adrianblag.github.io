@@ -4,6 +4,11 @@
    contact details and social links across the whole site.
    ========================================================================= */
 
+// The hero portrait. Images imported from src/ are resized and converted to
+// WebP at build time; to change it, replace the file (or point this import
+// at a new one).
+import portrait from '../assets/portrait.jpg';
+
 export const site = {
   /** Your name. Appears in the header, the page <title> and the footer. */
   name: 'Adrián Blanco Aguiar',
@@ -12,9 +17,10 @@ export const site = {
   role: 'Predoctoral Researcher · Computational Biology · CSIC',
 
   /** The one-line thesis statement in the hero. This is the biggest text
-   *  on the site — one sentence, no more than ~120 characters reads best. */
+   *  on the site — one sentence, no more than ~120 characters reads best.
+   *  Wrap a word in *asterisks* to set it in green italics. */
   heroStatement:
-    'I study how to recover the objective a system is optimising from the behaviour it produces.',
+    'I study how to recover the *objective* a system is optimising from the *behaviour* it produces.',
 
   /** Two or three sentences under the hero statement. */
   bio:
@@ -34,9 +40,9 @@ export const site = {
     { label: 'GitHub', url: 'https://github.com/adrianblag' },
   ],
 
-  /** Portrait image. Put the file in `public/` and point here.
+  /** Portrait image, imported at the top of this file.
    *  Set to null to render the striped placeholder box instead. */
-  avatar: '/portrait.jpg' as string | null,
+  avatar: portrait as ImageMetadata | null,
 
   /** Caption printed under the striped placeholder box. Only shown when
    *  `avatar` is null, so it is unused while a real portrait is set. */
@@ -67,6 +73,36 @@ export const site = {
 } as const;
 
 /* ---------------------------------------------------------------
+   SKILLS & TOOLS — the tag groups on the homepage.
+   Add, remove or rename groups and items freely; each group becomes
+   a column (they stack on phones).
+   --------------------------------------------------------------- */
+export const skills = [
+  {
+    label: 'Research',
+    items: [
+      'Inverse optimal control',
+      'Inverse reinforcement learning',
+      'Control theory',
+      'Computational biology',
+    ],
+  },
+  {
+    label: 'Statistics & ML',
+    items: [
+      'Statistical modelling',
+      'Machine learning',
+      'Cluster analysis',
+      'Photovoltaic system simulation',
+    ],
+  },
+  {
+    label: 'Programming',
+    items: ['Python', 'pvlib', 'Parallel computing', 'Performance optimisation'],
+  },
+] as const;
+
+/* ---------------------------------------------------------------
    SECTION INTROS — the lead paragraph under each page title.
    --------------------------------------------------------------- */
 export const pageIntros = {
@@ -80,12 +116,13 @@ export const pageIntros = {
 } as const;
 
 /* ---------------------------------------------------------------
-   NAVIGATION — the header links, in order.
+   NAVIGATION — the header links, in order. Kept in the same order
+   as the sections on the homepage; your name in the header links
+   back home.
    --------------------------------------------------------------- */
 export const nav = [
-  { label: 'Home', href: '/' },
+  { label: 'CV', href: '/cv' },
   { label: 'Publications', href: '/publications' },
   { label: 'Talks & posters', href: '/talks' },
   { label: 'Writing', href: '/writing' },
-  { label: 'CV', href: '/cv' },
 ] as const;

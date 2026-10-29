@@ -47,7 +47,7 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Work+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,300;1,6..72,400&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
 
@@ -72,8 +72,11 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
 
         // Sets the attribute the CSS keys off. Must be able to run in <head>,
         // before <body> exists, so it must not touch the button.
+        // Also marks <html> with .js, which lets the scroll reveals hide
+        // content only when the script that shows it again can run.
         const apply = () => {
           root.dataset.theme = stored() ?? (mq.matches ? 'dark' : 'light');
+          root.classList.add('js');
         };
 
         // Separate, because on first load apply() runs before the button has
@@ -92,7 +95,8 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
         document.addEventListener('astro:page-load', syncButtons);
 
         // ClientRouter copies <html> attributes from the incoming document,
-        // which has no data-theme, so re-apply on every view transition.
+        // which has no data-theme (or .js), so re-apply on every view
+        // transition.
         document.addEventListener('astro:after-swap', apply);
 
         // Keep following the OS until the visitor makes an explicit choice.
@@ -120,6 +124,9 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
 
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    {/* Marks the top of the page; once it scrolls away the header gets
+        its hairline. */}
+    <div class="scroll-sentinel" aria-hidden="true"></div>
     <div class="site">
       <Header />
       <main class="site-main" id="main">
@@ -127,5 +134,47 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
       </main>
       <Footer />
     </div>
+
+    <script>
+      /* One-shot scroll reveals (.reveal → .is-in) and the header hairline.
+         IntersectionObserver only calls back when an element crosses the
+         edge of the screen, so nothing here runs while the page is simply
+         scrolling. Set up again on every page, including after a view
+         transition; the previous page's observers are dropped first. */
+      let observers: IntersectionObserver[] = [];
+
+      function init() {
+        observers.forEach((o) => o.disconnect());
+
+        const reveal = new IntersectionObserver(
+          (entries) => {
+            let i = 0; // staggers items that arrive together
+            for (const entry of entries) {
+              if (!entry.isIntersecting) continue;
+              const el = entry.target as HTMLElement;
+              el.style.setProperty('--i', String(i++));
+              el.classList.add('is-in');
+              reveal.unobserve(el);
+            }
+          },
+          { rootMargin: '0px 0px -6% 0px' }
+        );
+        document
+          .querySelectorAll('.reveal, .timeline')
+          .forEach((el) => reveal.observe(el));
+
+        const header = document.querySelector('.site-header');
+        const hairline = new IntersectionObserver(([entry]) =>
+          header?.classList.toggle('is-scrolled', !entry.isIntersecting)
+        );
+        const sentinel = document.querySelector('.scroll-sentinel');
+        if (sentinel) hairline.observe(sentinel);
+
+        observers = [reveal, hairline];
+      }
+
+      // Fires on the first load and after every view transition.
+      document.addEventListener('astro:page-load', init);
+    </script>
   </body>
 </html>

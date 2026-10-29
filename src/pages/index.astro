@@ -1,136 +1,354 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import { site } from '../config/site';
-import { stampMonth, url } from '../lib/format';
+import ObjectiveMap from '../components/ObjectiveMap.astro';
+import Placeholder from '../components/Placeholder.astro';
+import { site, skills } from '../config/site';
+import { cvSection, dateLabel, isCurrentRole, logosOf, type CvEntry } from '../lib/cv';
+import { doiUrl, emphasize, readingMinutes, stampDate, url } from '../lib/format';
 
-/* ---- "Selected work": featured publications, newest first, else the
-        three most recent. ---------------------------------------------- */
+/* The homepage is an overview of everything, each section linking to its
+   full page. All of it comes from the same content as those pages. */
+
+/* ---- CV: roles with their first two bullets, degrees, latest training -- */
+const experience = cvSection('employment');
+const education = cvSection('education');
+const training = cvSection('training');
+const roles = experience.items.slice(0, 3);
+const when = (e: CvEntry) => (isCurrentRole(e) ? `${e.start} — present` : dateLabel(e));
+
+/* ---- Publications: featured, newest first, else the two most recent ---- */
 const pubs = (await getCollection('publications')).sort(
-  (a, b) => b.data.year - a.data.year
+  (a, b) =>
+    b.data.year - a.data.year ||
+    (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0)
 );
 const featured = pubs.filter((p) => p.data.featured);
-const selected = (featured.length > 0 ? featured : pubs).slice(0, 3);
+const selected = (featured.length > 0 ? featured : pubs).slice(0, 2);
 
-/* ---- "Notes & talks": posts and talks interleaved by date. ----------- */
-const posts = (await getCollection('posts')).filter(
-  (p) => import.meta.env.DEV || !p.data.draft
-);
-const talks = await getCollection('talks');
+/** PDF and DOI first, then any other links — as on the publications page. */
+function pubLinks(data: (typeof pubs)[number]['data']) {
+  const out: { label: string; url: string }[] = [];
+  if (data.pdf) out.push({ label: 'PDF', url: data.pdf });
+  if (data.doi) out.push({ label: 'DOI', url: doiUrl(data.doi) });
+  return [...out, ...data.links];
+}
 
-const notes = [
-  ...posts.map((p) => ({
-    title: p.data.title,
-    date: p.data.date,
-    meta: [stampMonth(p.data.date), p.data.category ?? 'Note'],
-    href: url(`/writing/${p.id}`),
-  })),
-  ...talks.map((t) => ({
-    title: t.data.title,
-    date: t.data.date,
-    meta: [stampMonth(t.data.date), t.data.event],
-    href: url('/talks'),
-  })),
-]
-  .sort((a, b) => b.date.getTime() - a.date.getTime())
-  .slice(0, 3);
+/* ---- Talks: the two most recent ---------------------------------------- */
+const talks = (await getCollection('talks'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 2);
+
+/* ---- Writing: the newest post (drafts only show in `npm run dev`) ------ */
+const [latest] = (await getCollection('posts'))
+  .filter((p) => import.meta.env.DEV || !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+/* ---- Section numbers, so they stay in sequence if one is empty ---------- */
+const present = {
+  experience: roles.length > 0,
+  education: education.items.length > 0,
+  skills: skills.length > 0,
+  publications: selected.length > 0,
+  talks: talks.length > 0,
+  writing: Boolean(latest),
+};
+let n = 0;
+const num = Object.fromEntries(
+  Object.entries(present).map(([key, on]) => [key, on ? String(++n).padStart(2, '0') : ''])
+) as Record<keyof typeof present, string>;
 ---
 
 <Base description={site.description}>
-  <div class="wrap hero rv">
+  <section class="wrap hero">
     <div class="hero-text">
       <p class="eyebrow">{site.role}</p>
-      <h1 class="hero-statement">{site.heroStatement}</h1>
+      <h1 class="hero-statement" set:html={emphasize(site.heroStatement)} />
       <p class="hero-bio">{site.bio}</p>
-      <div class="hero-links">
-        <a href={`mailto:${site.email}`}>{site.email}</a>
+      <div class="hero-actions">
+        <a class="btn" href={`mailto:${site.email}`}>
+          Get in touch <span class="arr" aria-hidden="true">→</span>
+        </a>
         {
           site.socials.map((s) => (
-            <a href={s.url} rel="me noopener">
-              {s.label}
+            <a class="link" href={s.url} rel="me noopener">
+              {s.label} ↗
             </a>
           ))
         }
       </div>
     </div>
 
-    <figure class="hero-portrait">
-      <div class="frame">
-        {
-          site.avatar ? (
-            <img
-              src={url(site.avatar)}
-              alt={site.name}
-              width="900"
-              height="1200"
-            />
-          ) : (
-            <div class="ph" aria-hidden="true" />
-          )
-        }
+    <figure class="plate">
+      <div class="map">
+        <ObjectiveMap />
+        <div class="map-portrait frame">
+          {
+            site.avatar ? (
+              <Image
+                src={site.avatar}
+                alt={site.name}
+                widths={[240, 480]}
+                sizes="(max-width: 1000px) 229px, 208px"
+                loading="eager"
+                fetchpriority="high"
+              />
+            ) : (
+              <div class="ph" aria-hidden="true" />
+            )
+          }
+        </div>
       </div>
-      {
-        !site.avatar && site.avatarCaption && (
-          <span class="ph-caption">{site.avatarCaption}</span>
-        )
-      }
       {
         site.quote && (
           <figcaption class="portrait-quote">
-            <p class="portrait-quote-text">
-              &#8220;{site.quote.text}&#8221;
-            </p>
-            <span class="portrait-quote-by">{site.quote.attribution}</span>
+            <p>&#8220;{site.quote.text}&#8221;</p>
+            <span>{site.quote.attribution}</span>
           </figcaption>
         )
       }
     </figure>
-  </div>
+  </section>
 
-  <div class="panels rv2">
-    <div class="panels-inner">
-      <section class="panel">
-        <h2 class="panel-label">Selected work</h2>
-        <div class="panel-list">
-          {
-            selected.map((pub) => (
-              <a class="panel-item" href={url('/publications')}>
-                <span class="panel-year">{pub.data.year}</span>
-                <span class="panel-title">
-                  {pub.data.title}{' '}
-                  <span class="panel-venue">{pub.data.venue}</span>
-                </span>
-              </a>
-            ))
-          }
-          {
-            selected.length === 0 && (
-              <p class="panel-empty">Publications will appear here.</p>
-            )
-          }
+  {
+    (present.experience || present.education) && (
+      <div class="wrap home-row">
+        <div class="split">
+          {present.experience && (
+            <section class="home-sec" aria-labelledby="h-experience">
+              <div class="sec-head reveal">
+                <span class="sec-num">{num.experience}</span>
+                <h2 id="h-experience">{experience.label}</h2>
+                <span class="sec-rule" />
+                <a class="more" href={url('/cv')}>Full CV <span class="arr" aria-hidden="true">→</span></a>
+              </div>
+              <div class="timeline">
+                {roles.map((role) => (
+                  <article class:list={['tl-item', 'reveal', { current: isCurrentRole(role) }]}>
+                    <span class="tl-date">{when(role)}</span>
+                    <h3>{role.title}</h3>
+                    {role.organization && (
+                      <p class="entry-org">
+                        {logosOf(role).map((src) => (
+                          <img class="cv-logo" src={url(src)} alt="" height="20" loading="lazy" />
+                        ))}
+                        {role.organization}
+                      </p>
+                    )}
+                    {role.bullets && role.bullets.length > 0 && (
+                      <ul class="entry-bullets">
+                        {role.bullets.slice(0, 2).map((b) => <li>{b}</li>)}
+                      </ul>
+                    )}
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {present.education && (
+            <section class="home-sec" aria-labelledby="h-education">
+              <div class="sec-head reveal">
+                <span class="sec-num">{num.education}</span>
+                <h2 id="h-education">{education.label}</h2>
+                <span class="sec-rule" />
+              </div>
+              <div class="edu-list">
+                {education.items.map((degree) => (
+                  <div class="edu-item reveal">
+                    <span class="tl-date">{when(degree)}</span>
+                    <h3>{degree.title}</h3>
+                    {degree.organization && (
+                      <p class="entry-org">
+                        {logosOf(degree).map((src) => (
+                          <img class="cv-logo" src={url(src)} alt="" height="20" loading="lazy" />
+                        ))}
+                        {logosOf(degree).length > 1 && <br />}
+                        {degree.organization}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+              {training.items[0] && (
+                <div class="home-training reveal">
+                  <span class="mini-label">{training.label}</span>
+                  <p>{training.items[0].title}</p>
+                  <small>
+                    {[training.items[0].organization, training.items[0].start].filter(Boolean).join(' · ')}
+                    {training.items.length > 1 && (
+                      <Fragment>
+                        {' · '}
+                        <a href={url('/cv')}>{training.items.length - 1} more on the CV</a>
+                      </Fragment>
+                    )}
+                  </small>
+                </div>
+              )}
+            </section>
+          )}
+        </div>
+      </div>
+    )
+  }
+
+  {
+    present.skills && (
+      <section class="wrap home-sec home-row" aria-labelledby="h-skills">
+        <div class="sec-head reveal">
+          <span class="sec-num">{num.skills}</span>
+          <h2 id="h-skills">Skills &amp; tools</h2>
+          <span class="sec-rule" />
+        </div>
+        <div class="skills">
+          {skills.map((group) => (
+            <div class="skill-group reveal">
+              <span class="mini-label">{group.label}</span>
+              <ul class="tags">
+                {group.items.map((item) => <li>{item}</li>)}
+              </ul>
+            </div>
+          ))}
         </div>
       </section>
+    )
+  }
 
-      <section class="panel">
-        <h2 class="panel-label">Notes &amp; talks</h2>
-        <div class="panel-list stacked">
-          {
-            notes.map((note) => (
-              <a class="panel-note" href={note.href}>
-                <span class="panel-note-title">{note.title}</span>
-                <span class="panel-note-meta">
-                  {note.meta.filter(Boolean).join(' · ')}
-                </span>
-              </a>
-            ))
-          }
-          {
-            notes.length === 0 && (
-              <p class="panel-empty">Posts and talks will appear here.</p>
-            )
-          }
+  {
+    (present.publications || present.talks) && (
+      <div class="wrap home-row">
+        <div class="split">
+          {present.publications && (
+            <section class="home-sec" aria-labelledby="h-publications">
+              <div class="sec-head reveal">
+                <span class="sec-num">{num.publications}</span>
+                <h2 id="h-publications">Publications</h2>
+                <span class="sec-rule" />
+                <a class="more" href={url('/publications')}>All <span class="arr" aria-hidden="true">→</span></a>
+              </div>
+              <div class="home-pubs">
+                {selected.map((pub) => {
+                  const links = pubLinks(pub.data);
+                  return (
+                    <article class="home-pub reveal">
+                      <span class="row-stamp">{pub.data.year} · {pub.data.venueType}</span>
+                      {links[0] ? (
+                        <a class="home-pub-title" href={links[0].url}>{pub.data.title}</a>
+                      ) : (
+                        <h3 class="home-pub-title">{pub.data.title}</h3>
+                      )}
+                      <span class="pub-authors">
+                        {pub.data.authors.map((a, i) => (
+                          <Fragment>
+                            {i > 0 && ', '}
+                            {a.isYou ? <span class="you">{a.name}</span> : a.name}
+                          </Fragment>
+                        ))}
+                      </span>
+                      <span class="row-venue">
+                        {[pub.data.venue, pub.data.note].filter(Boolean).join(' · ')}
+                      </span>
+                      {links.length > 0 && (
+                        <div class="taglinks">
+                          {links.map((l) => (
+                            <a href={l.url}>
+                              {l.label}
+                              <span class="sr-only"> — {pub.data.title}</span>
+                            </a>
+                          ))}
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
+          {present.talks && (
+            <section class="home-sec" aria-labelledby="h-talks">
+              <div class="sec-head reveal">
+                <span class="sec-num">{num.talks}</span>
+                <h2 id="h-talks">Talks &amp; posters</h2>
+                <span class="sec-rule" />
+                <a class="more" href={url('/talks')}>All <span class="arr" aria-hidden="true">→</span></a>
+              </div>
+              <div class="home-talks">
+                {talks.map((talk) => (
+                  <a class="home-talk reveal" href={url('/talks')}>
+                    <Placeholder
+                      class="home-talk-thumb"
+                      src={talk.data.image}
+                      widths={[112, 224]}
+                      sizes="(max-width: 760px) 92px, 112px"
+                      frame
+                    />
+                    <div>
+                      <span class="row-stamp">{stampDate(talk.data.date)} · {talk.data.type}</span>
+                      <h3>{talk.data.title}</h3>
+                      <p>{[talk.data.event, talk.data.location].join(' · ')}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
+      </div>
+    )
+  }
+
+  {
+    latest && (
+      <section class="wrap home-sec home-row" aria-labelledby="h-writing">
+        <div class="sec-head reveal">
+          <span class="sec-num">{num.writing}</span>
+          <h2 id="h-writing">Writing</h2>
+          <span class="sec-rule" />
+          <a class="more" href={url('/writing')}>All posts <span class="arr" aria-hidden="true">→</span></a>
+        </div>
+        <article class="home-post reveal">
+          <div class="home-post-body">
+            <span class="row-stamp">
+              {['Latest', stampDate(latest.data.date), latest.data.category, `${readingMinutes(latest.body)} min`]
+                .filter(Boolean)
+                .join(' · ')}
+            </span>
+            <a class="home-post-title" href={url(`/writing/${latest.id}`)}>{latest.data.title}</a>
+            <p class="home-post-desc">{latest.data.description}</p>
+            <a class="more" href={url(`/writing/${latest.id}`)}>
+              Read <span class="arr" aria-hidden="true">→</span>
+              <span class="sr-only"> — {latest.data.title}</span>
+            </a>
+          </div>
+          {latest.data.image && (
+            <Placeholder
+              class="home-post-media"
+              src={latest.data.image}
+              widths={[440, 880]}
+              sizes="(max-width: 1000px) min(520px, 100vw), 420px"
+              frame
+            />
+          )}
+        </article>
       </section>
+    )
+  }
+
+  <section class="wrap home-contact" aria-labelledby="h-contact">
+    <h2 id="h-contact" class="reveal">Get in <em>touch</em></h2>
+    <div class="contact-actions reveal">
+      <a class="btn" href={`mailto:${site.email}`}>
+        {site.email} <span class="arr" aria-hidden="true">→</span>
+      </a>
+      {
+        site.socials.map((s) => (
+          <a class="link" href={s.url} rel="me noopener">
+            {s.label} ↗
+          </a>
+        ))
+      }
     </div>
-  </div>
+  </section>
 </Base>

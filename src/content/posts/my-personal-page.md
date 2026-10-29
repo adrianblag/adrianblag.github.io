@@ -3,7 +3,7 @@ title: My personal page
 date: 2026-09-06
 description: An introduction to my personal page and where I plan to take it.
 category: Notes
-image: /posts/my-personal-page.jpg
+image: ./my-personal-page.jpg
 draft: false
 ---
 I don't have a fancy intro to this post, so I will keep it simple. I just wanted a place to post my progress in life, as well as a **place to post my ideas and thoughts**. I don't aim to make of this a very sophisticated page, nor a simple and soulless generic one. I wanted my merits to be neatly exposed in a simple yet fancy showcase, making it easy and enjoyable to discover my persona, both in the profesional and personal way. These reasons gave birth to this project.

@@ -46,7 +46,7 @@ body {
   /* Type — falls back to Georgia / Segoe UI / Consolas if the three site
      fonts are not installed locally. See the README for install links. */
   --serif: "Newsreader", Georgia, "Times New Roman", serif;
-  --sans: "Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
 }
 
