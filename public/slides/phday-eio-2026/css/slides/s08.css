@@ -1,0 +1,81 @@
+/* S8 — L3 · Explain: SINDy on samples of a black-box policy (schematic) */
+.s08-grid {
+  display: grid; grid-template-columns: 500px 680px 1fr; column-gap: 44px;
+  flex: 1 1 auto; min-height: 0; margin-top: 0;
+}
+.s08-colA, .s08-colB, .s08-colC { display: flex; flex-direction: column; min-width: 0; }
+.s08-colC { gap: 26px; padding-top: 4px; }
+.s08-cap { font-size: 25px; color: var(--ink-2); margin-top: 10px; padding-left: 0; }
+.s08-cap .katex { font-size: 1.05em; }
+
+/* ---- A: black box + scatter ---- */
+.s08-scatter { overflow: visible; }
+.s08-box { fill: var(--surface); stroke: color-mix(in srgb, var(--c-learn) 70%, transparent); stroke-width: 2.5; }
+.s08-box-glow { filter: drop-shadow(0 0 14px color-mix(in srgb, var(--c-learn) 35%, transparent)); }
+.s08-nn line { stroke: var(--ink-3); stroke-width: 1.2; opacity: .55; }
+.s08-nn circle { fill: var(--surface-2); stroke: var(--ink-3); stroke-width: 1.5; }
+.s08-box-t1 { font-size: 26px; fill: var(--ink); font-weight: 600; }
+.s08-box-t2 { font-size: 22px; fill: var(--ink-3); }
+.s08-axis { stroke: var(--line-2); stroke-width: 2; fill: none; }
+.s08-axlab { font-size: 24px; font-weight: 600; }
+.s08-axlab.x { fill: var(--c-mech); }
+.s08-axlab.u { fill: var(--c-learn); }
+.s08-arrow { stroke: var(--ink-3); stroke-width: 2.5; fill: none; }
+.s08-arrowhead { fill: var(--ink-3); }
+.s08-dot { fill: color-mix(in srgb, var(--c-learn) 30%, transparent); stroke: var(--c-learn); stroke-width: 1.6; }
+.s08-illus { font-size: 20px; fill: var(--ink-3); letter-spacing: .04em; }
+.s08-illus-box { fill: none; stroke: var(--line-2); stroke-width: 1.2; }
+.s08-hill { fill: none; stroke: var(--c-learn); stroke-width: 4; stroke-linecap: round;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-learn) 55%, transparent)); }
+.s08-hill-lab { font-size: 26px; fill: var(--ink); font-weight: 600; }
+
+/* ---- B: library ---- */
+.s08-eq { margin-top: -10px; }
+.s08-eq .katex-display { margin: 0.08em 0; }
+.s08-eq .katex { font-size: 1.0em; }
+.s08-lib { margin-top: 6px; overflow: visible; }
+.s08-lib text { font-size: 22px; fill: var(--ink-2); }
+.s08-lib .lab-big { font-size: 24px; fill: var(--ink-2); font-weight: 600; }
+.s08-lib .lab-poly { font-size: 26px; fill: var(--ink); text-anchor: middle; font-style: italic; }
+.s08-lib .lab-grid { font-size: 21px; fill: var(--ink-3); text-anchor: middle; }
+.s08-bracket { stroke: var(--ink-3); stroke-width: 1.5; fill: none; }
+.s08-glyph-bg { fill: var(--surface-2); stroke: var(--line); }
+.s08-glyph { fill: none; stroke: var(--c-mech); stroke-width: 2.4; }
+.s08-cell { fill: var(--c-mech); }
+.s08-strip-frame { fill: none; stroke: var(--line-2); stroke-width: 1.2; }
+.s08-zero { stroke: var(--line-2); stroke-width: 1.5; }
+.s08-thr { stroke: var(--c-warn); stroke-width: 1.6; stroke-dasharray: 6 6; opacity: .9; }
+.s08-thr-lab { font-size: 22px !important; fill: var(--ink-2) !important; font-style: italic; }   /* amber stays on the lines; text in ink */
+.s08-bar { fill: var(--ink-3); }
+.s08-lib.won .s08-bar.win { fill: var(--c-learn); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-learn) 55%, transparent)); }
+.s08-bar { transition: fill .5s ease; }
+.s08-col.win .s08-glyph { stroke-width: 3; }
+.s08-zero-dot { fill: var(--ink-3); }
+.s08-states { position: relative; height: 70px; margin-top: 6px; }
+.s08-state { position: absolute; left: 0; right: 0; top: 0; font-size: 24px; color: var(--ink-2); line-height: 1.3; }
+.s08-state b { color: var(--ink); }
+
+/* ---- C: law + closed loop ---- */
+.s08-law { padding: 22px 26px 16px 26px; border-color: color-mix(in srgb, var(--c-learn) 40%, var(--line)); }
+.s08-law-h { font-size: 25px; color: var(--ink-2); line-height: 1.3; }
+.s08-law-h b { color: var(--ink); }
+.s08-law-eq .katex-display { margin: 0.25em 0 0.1em 0; }
+.s08-law-eq .katex { font-size: 1.12em; }
+.s08-phase { overflow: visible; }
+.s08-pp-frame { fill: var(--surface); stroke: var(--line); }
+.s08-pp-ax { stroke: var(--line-2); stroke-width: 1.6; }
+.s08-pp-vec { stroke: var(--ink-3); stroke-width: 1.4; opacity: .55; }
+.s08-pp-traj { fill: none; stroke: var(--c-mech); stroke-width: 2.4; stroke-linecap: round; }
+.s08-pp-eq { fill: var(--surface); stroke: var(--c-warn); stroke-width: 2.5;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-warn) 55%, transparent)); }
+.s08-pp-q { font-size: 26px; fill: var(--ink); font-weight: 700; font-family: var(--font-head); }
+.s08-pp-lab { font-size: 22px; fill: var(--ink-3); font-style: italic; }
+.s08-cl { padding-left: 24px; }   /* clearance for the dashed link in the gutter */
+.s08-cl-txt { font-size: 24px; color: var(--ink-2); margin-top: 8px; line-height: 1.35; }
+.s08-cl-txt .katex { font-size: 1.04em; }
+.s08-gap { margin-top: 6px; }
+
+/* step 4: link from the surviving coefficient to the law card */
+.s08-link { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; pointer-events: none; overflow: visible; }
+.s08-link path { fill: none; stroke: var(--c-learn); stroke-width: 2.5; stroke-dasharray: 8 7; opacity: .85; }
+.s08-link path.head { fill: var(--c-learn); stroke: none; opacity: .85; }

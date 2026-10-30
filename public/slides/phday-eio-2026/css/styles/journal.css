@@ -1,0 +1,43 @@
+/* STYLE "journal" — editorial / scientific-journal look: warm paper, serif type, ink colours, hairlines. */
+@font-face { font-family: "Fraunces"; src: url("../../fonts/styles/fraunces-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: block; }
+@font-face { font-family: "Fraunces"; src: url("../../fonts/styles/fraunces-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: block; unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "Fraunces"; src: url("../../fonts/styles/fraunces-latin-wght-italic.woff2") format("woff2"); font-weight: 100 900; font-style: italic; font-display: block; }
+@font-face { font-family: "Source Serif 4"; src: url("../../fonts/styles/source-serif-4-latin-wght-normal.woff2") format("woff2"); font-weight: 200 900; font-display: block; }
+@font-face { font-family: "Source Serif 4"; src: url("../../fonts/styles/source-serif-4-latin-ext-wght-normal.woff2") format("woff2"); font-weight: 200 900; font-display: block; unicode-range: U+0100-024F, U+1E00-1EFF; }
+@font-face { font-family: "Source Serif 4"; src: url("../../fonts/styles/source-serif-4-latin-wght-italic.woff2") format("woff2"); font-weight: 200 900; font-style: italic; font-display: block; }
+@font-face { font-family: "IBM Plex Mono"; src: url("../../fonts/styles/ibm-plex-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; font-display: block; }
+
+:root[data-style="journal"], :root[data-style="journal"][data-theme] {
+  color-scheme: light;
+  --font-text: "Source Serif 4", Georgia, serif;
+  --font-head: "Fraunces", Georgia, serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+  --bg: #f6f1e6; --bg-glow-1: transparent; --bg-glow-2: transparent;
+  --surface: #fffcf5; --surface-2: #efe8d8;
+  --ink: #1f1c17; --ink-2: #4b463c; --ink-3: #6f685b;
+  --line: rgba(31, 28, 23, 0.14); --line-2: rgba(31, 28, 23, 0.30); --grid: rgba(31, 28, 23, 0.08);
+  --shadow: none;
+  --c-mech: #285b8f; --c-learn: #b5561f; --c-inv: #7a3b8f; --c-now: #2a7552;
+  --c-theta: #6a6a66; --c-y: #1e7471; --c-bad: #ad2f2f; --c-warn: #9a6b0c; --c-glow: rgba(40, 91, 143, 0.25);
+  --cat-1: #2b66a8; --cat-2: #1f8a66; --cat-3: #cc5a22; --cat-ref: #8c8577;
+  --m-new: #b03d72; --m-base: #8c8577; --ms-frame: rgba(176, 61, 114, 0.45);
+  --seq-0: #f3eddf; --seq-1: #dbe6d3; --seq-2: #b9d4b3; --seq-3: #8dbb8d; --seq-4: #5e9c6c; --seq-5: #3b7d52; --seq-6: #22603d;
+  --seq-ink-dark: #1f1c17; --seq-ink-light: #fffcf5;
+  --b-intro: #285b8f; --b-plan: #7a3b8f; --b-now: #2a7552; --b-next: #b03d72; --b-close: #9a6b0c;
+}
+[data-style="journal"] .reveal-viewport::before {
+  background:
+    linear-gradient(90deg, transparent 0 calc(5.7% - 1px), rgba(31,28,23,0.10) calc(5.7% - 1px) 5.7%, transparent 5.7%),
+    radial-gradient(1200px 800px at 50% 0%, rgba(255,255,255,0.55), transparent 70%);
+}
+[data-style="journal"] .reveal h1, [data-style="journal"] .reveal h2, [data-style="journal"] .reveal h3 { font-weight: 560; letter-spacing: -0.01em; font-variation-settings: "opsz" 96; }
+[data-style="journal"] .reveal h2.title { font-size: 60px; max-width: 1660px; }
+[data-style="journal"] .slide-tag { font-family: var(--font-mono); font-weight: 500; letter-spacing: 0.12em; font-size: 18px; }
+[data-style="journal"] .slide-tag::before { width: 22px; height: 1.5px; }
+[data-style="journal"] .card { border-radius: 4px; border-color: var(--line-2); box-shadow: none; }
+[data-style="journal"] .badge, [data-style="journal"] .pill { border-radius: 3px; }
+[data-style="journal"] .hud-chip, [data-style="journal"] .hud-chip .lit { border-radius: 3px; font-family: var(--font-mono); font-weight: 500; }
+[data-style="journal"] .hud-chip .lit { box-shadow: none; }
+[data-style="journal"] .hud-progress { font-family: var(--font-mono); }
+[data-style="journal"] .hud-progress .seg.cur i { box-shadow: none; }
+[data-style="journal"] .reveal [style*="drop-shadow"], [data-style="journal"] .reveal svg * { filter: none !important; }

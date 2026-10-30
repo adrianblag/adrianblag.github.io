@@ -1,0 +1,101 @@
+/* S6 — L2 · Infer: bilevel IOC (schematic) */
+.s06-stage { position: relative; width: 1700px; height: 668px; flex: none; }
+.s06-stage > * { position: absolute; }
+.s06-boxes, .s06-over { left: 0; top: 0; overflow: visible; }
+.s06-over { pointer-events: none; z-index: 4; }
+
+/* boxes */
+.s06-outbox { fill: color-mix(in srgb, var(--c-inv) 5%, transparent); stroke: color-mix(in srgb, var(--c-inv) 75%, transparent); stroke-width: 2.5; }
+.s06-inbox { fill: color-mix(in srgb, var(--c-now) 7%, transparent); stroke: var(--c-now); stroke-width: 3;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--c-now) 30%, transparent)); }
+.s06-flash { fill: none; stroke: var(--c-now); stroke-width: 10; opacity: 0;
+  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--c-now) 80%, transparent)); }
+
+/* inner container (moves at step 2) */
+.s06-inner { left: 30px; top: 186px; width: 1100px; height: 470px; z-index: 1; }
+.s06-inner > * { position: absolute; }
+.s06-inbg { left: 0; top: 0; overflow: visible; }
+
+/* tabs sitting on the box borders */
+.s06-tab {
+  font-family: var(--font-head); font-size: 23px; font-weight: 600; letter-spacing: 0.03em; white-space: nowrap;
+  padding: 5px 18px; border-radius: 999px; color: var(--ink); z-index: 2;
+}
+.s06-tab-out { left: 40px; top: -11px; background: color-mix(in srgb, var(--c-inv) 22%, var(--bg)); border: 1.5px solid var(--c-inv); }
+.s06-tab-in  { right: 24px; top: -20px; background: color-mix(in srgb, var(--c-now) 20%, var(--bg)); border: 1.5px solid var(--c-now); }
+.s06-brick {
+  left: 22px; top: -22px; z-index: 2; display: flex; align-items: center; gap: 12px;
+  padding: 4px 18px 4px 10px; border-radius: 12px; background: color-mix(in srgb, var(--c-now) 20%, var(--bg));
+  border: 1.5px solid var(--c-now); font-family: var(--font-head); font-size: 23px; font-weight: 600; color: var(--ink);
+  letter-spacing: 0.02em; transition: box-shadow 0.25s ease;
+}
+.s06-brick svg rect { fill: color-mix(in srgb, var(--c-now) 35%, transparent); stroke: var(--c-now); stroke-width: 2.5; }
+.s06-brick svg path { fill: none; stroke: var(--c-now); stroke-width: 2.2; }
+.s06-brick.is-solving { box-shadow: 0 0 26px color-mix(in srgb, var(--c-now) 80%, transparent); }
+
+/* equations */
+.s06-oeq { left: 36px; top: 38px; }
+.s06-ieq { left: 34px; top: 36px; }
+.s06-oeq .katex-display, .s06-ieq .katex-display { margin: 0; }
+.s06-oeq .katex { font-size: 1.04em; }
+.s06-ieq .katex { font-size: 0.97em; }
+.s06-olegend { left: 1236px; top: 50px; width: 440px; display: flex; flex-direction: column; gap: 6px; font-size: 25px; color: var(--ink-2); }
+.s06-olegend .katex { color: var(--ink); }
+.s06-klabel { left: 36px; top: 140px; font-size: 24px; color: var(--ink-2); }
+.s06-delta { left: 694px; top: 136px; font-size: 26px; color: var(--ink); white-space: nowrap; }
+.s06-delta .katex { font-size: 1em; }
+
+/* kernel strips */
+.s06-kern { left: 30px; top: 186px; overflow: visible; }
+.s06-kern .lab { font-size: 25px; fill: var(--ink); font-weight: 600; }
+.s06-kern .cap { font-size: 22px; fill: var(--ink-2); }
+.s06-kern .track { fill: var(--line); }
+.s06-kern .ghost { opacity: 0.16; }
+.s06-kern .rule { stroke: var(--line-2); stroke-width: 1.5; }
+.s06-kern .sum-lab { font-size: 25px; fill: var(--ink); font-weight: 600; }
+.s06-k1 { fill: var(--cat-1); } .s06-k2 { fill: var(--cat-3); } .s06-k3 { fill: var(--cat-2); }
+
+/* simplex */
+.s06-simplex { left: 682px; top: 176px; overflow: visible; }
+.s06-simplex .tri { fill: color-mix(in srgb, var(--c-inv) 6%, transparent); stroke: var(--line-2); stroke-width: 2; }
+.s06-simplex .gl { stroke: var(--grid); stroke-width: 1.5; }
+.s06-simplex .vtx { stroke: var(--bg); stroke-width: 2; }
+.s06-simplex .vlab { font-size: 25px; fill: var(--ink); font-weight: 600; }
+.s06-simplex .delta { font-size: 30px; fill: var(--ink-2); font-style: italic; }
+.s06-simplex .wdot { fill: var(--c-inv); stroke: var(--bg); stroke-width: 2.5;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-inv) 75%, transparent)); }
+.s06-simplex .wlab { font-size: 28px; fill: var(--ink); font-style: italic; font-weight: 600; }
+.s06-simplex .crumb { fill: var(--bg); stroke: var(--c-inv); stroke-width: 2; }
+.s06-simplex .trail { fill: none; stroke: color-mix(in srgb, var(--c-inv) 70%, transparent); stroke-width: 2; stroke-dasharray: 5 6; }
+.s06-simplex .ring { fill: none; stroke: var(--c-inv); stroke-width: 2; }
+
+/* data panel */
+.s06-data { left: 1172px; top: 160px; overflow: visible; }
+.s06-data .ax { stroke: var(--line-2); stroke-width: 2; fill: none; }
+.s06-data .axlab { font-size: 24px; fill: var(--ink-3); font-style: italic; }
+.s06-data .eb { stroke: var(--ink-2); stroke-width: 2; }
+.s06-data .pt { fill: var(--ink); stroke: var(--bg); stroke-width: 2; }
+.s06-data .curve { fill: none; stroke: var(--c-y); stroke-width: 3.5; stroke-linecap: round;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-y) 45%, transparent)); }
+.s06-data .lab { font-size: 23px; fill: var(--ink-2); }
+.s06-data .lab-y { fill: var(--ink); }
+.s06-data .mtrack { fill: var(--line); }
+.s06-data .mbar { fill: var(--c-inv); }
+.s06-data .mlab { font-size: 24px; fill: var(--ink-2); }
+
+/* step-3 overlay */
+.s06-over .circ { fill: none; stroke: var(--c-bad); stroke-width: 4;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-bad) 55%, transparent)); }
+.s06-over .circ2 { fill: none; stroke: var(--c-bad); stroke-width: 2.5; stroke-dasharray: 7 6; }
+.s06-over .link { fill: none; stroke: var(--c-bad); stroke-width: 3; }
+.s06-over .head { fill: var(--c-bad); }
+
+/* bottom row */
+.s06-bottom { display: flex; align-items: center; gap: 44px; margin-top: 14px; }
+.s06-badge {
+  display: inline-flex; align-items: center; gap: 14px; padding: 9px 24px 9px 16px; border-radius: 999px; flex: none;
+  background: color-mix(in srgb, var(--c-bad) 12%, var(--surface)); border: 2px solid color-mix(in srgb, var(--c-bad) 70%, transparent);
+  font-size: 27px; box-shadow: 0 0 22px color-mix(in srgb, var(--c-bad) 22%, transparent);
+}
+.s06-badge svg path { fill: none; stroke: var(--c-bad); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.s06-gap { flex: 1 1 auto; }

@@ -1,0 +1,20 @@
+/* Backup divider (90-backup-divider.html): big title + an index of the four backup slides */
+.b0-frame { justify-content: center; align-items: center; gap: 70px; padding-bottom: 72px; }
+.b0-head { display: flex; flex-direction: column; align-items: center; }
+.b0-head .slide-tag { margin-bottom: 18px; }
+.reveal h2.b0-title { font-size: 132px; margin: 0; letter-spacing: -0.03em; max-width: none; }
+.b0-cards { display: grid; grid-template-columns: repeat(4, 370px); gap: 30px; }
+.b0-card {
+  position: relative; box-sizing: border-box; height: 200px; padding: 26px 28px;
+  display: flex; flex-direction: column; gap: 14px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 22px; box-shadow: var(--shadow);
+}
+.b0-card::before {
+  content: ""; position: absolute; left: 28px; right: 28px; top: -1px; height: 3px; border-radius: 2px; background: var(--kc);
+}
+.b0-id { font-family: var(--font-head); font-size: 50px; font-weight: 700; line-height: 1; color: var(--kc); letter-spacing: -0.01em; }
+.b0-t { font-size: 27px; line-height: 1.3; color: var(--ink); }
+
+/* cards are internal links (jump straight to a backup during Q&A) */
+.reveal a.b0-card { text-decoration: none; color: inherit; cursor: pointer; transition: border-color .25s ease, background .25s ease; }
+.reveal a.b0-card:hover { border-color: color-mix(in srgb, var(--kc) 60%, var(--line)); background: color-mix(in srgb, var(--kc) 6%, var(--surface)); }

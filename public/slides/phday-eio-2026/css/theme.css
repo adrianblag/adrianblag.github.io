@@ -1,0 +1,316 @@
+/* ==========================================================================
+   PhDay-EIO 2026 deck — design system
+   Canvas: 1920 x 1080. Published with the light "journal" look only
+   (css/styles/journal.css, which also supplies the fonts); the dark tokens
+   below are base values that journal overrides.
+   Every colour is a token: never hard-code hex values in slide CSS/JS.
+   ========================================================================== */
+
+/* ---------- tokens: dark (default) ---------- */
+:root {
+  color-scheme: dark;
+  --font-text: "Inter", system-ui, "Segoe UI", sans-serif;
+  --font-head: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, Consolas, monospace;
+
+  --bg:        #0a0f1e;   /* slide background */
+  --bg-glow-1: rgba(70, 120, 255, 0.16);
+  --bg-glow-2: rgba(170, 110, 255, 0.12);
+  --surface:   #111a2f;   /* cards, chart surface */
+  --surface-2: #17223b;   /* raised elements, chips */
+  --ink:       #e9edf6;   /* primary text */
+  --ink-2:     #b3bccd;   /* secondary text */
+  --ink-3:     #7d889f;   /* muted: axes, captions */
+  --line:      rgba(255, 255, 255, 0.10);   /* hairlines, borders */
+  --line-2:    rgba(255, 255, 255, 0.18);   /* axes, stronger borders */
+  --grid:      rgba(255, 255, 255, 0.06);   /* chart gridlines */
+  --shadow:    0 18px 50px rgba(0, 0, 0, 0.45);
+
+  /* semantic roles (story colours) */
+  --c-mech:  #5aa9ff;   /* mechanistic / known model, state x */
+  --c-learn: #ff9f45;   /* learned / data-driven, control u */
+  --c-inv:   #b38cff;   /* inverse problems */
+  --c-now:   #3fdc98;   /* current work (the "brick") */
+  --c-theta: #9aa8bf;   /* parameters theta */
+  --c-y:     #34d6c4;   /* observables y */
+  --c-bad:   #ff5f6d;   /* infeasible, failure, warning red */
+  --c-warn:  #ffc24b;   /* attention / highlight */
+  --c-glow:  rgba(90, 169, 255, 0.55);
+
+  /* CHART CATEGORICAL COLOURS — validated with the dataviz validator (--pairs all, dark surface #0a0f1e):
+     only these three hues are categorical; a 4th series must be the neutral reference grey + marker shape + label. */
+  --cat-1: #3987e5;   /* blue */
+  --cat-2: #199e70;   /* aqua */
+  --cat-3: #d95926;   /* orange */
+  --cat-ref: #8a93a6; /* neutral reference series (not a hue): hollow marker + direct label */
+
+  /* enzymes in the LPN3B pathway (e1 blue, e2 orange, e3 aqua; S_{i+1} takes the colour of e_i) */
+  --c-e1: var(--cat-1);
+  --c-e2: var(--cat-3);
+  --c-e3: var(--cat-2);
+  --c-s1: var(--cat-ref);
+  --c-s2: var(--cat-1);
+  --c-s3: var(--cat-3);
+  --c-s4: var(--cat-2);
+
+  /* methods in HPC multistart charts */
+  --m-ms:     var(--cat-1);   /* CasADi MS */
+  --m-cvp:    var(--cat-2);   /* CasADi CVP */
+  --m-acados: var(--cat-3);   /* ACADOS */
+  --m-fd:     var(--cat-ref); /* FiniteDiff CVP: reference series (hollow diamond + label) */
+  /* method-search charts: separate protocol, separate encoding */
+  --m-new:    #d55181;  /* new direct transcription (magenta) */
+  --m-base:   #8a93a6;  /* baselines (hollow markers) */
+  --ms-frame: rgba(213, 81, 129, 0.50);
+
+  /* sequential ramp (success %, one hue: green), 0 -> 6 = low -> high */
+  --seq-0: #142033; --seq-1: #123a3a; --seq-2: #145444; --seq-3: #18714f;
+  --seq-4: #1f8f5c; --seq-5: #2cb36f; --seq-6: #46d68a;
+  --seq-ink-dark: #0a0f1e;   /* text on light cells */
+  --seq-ink-light: #e9edf6;  /* text on dark cells */
+
+  /* block colours (progress bar, slide tags) */
+  --b-intro: #5aa9ff;
+  --b-plan:  #b38cff;
+  --b-now:   #3fdc98;
+  --b-next:  #e48fc1;
+  --b-close: #ffc24b;
+  --logo-plate: #ffffff;   /* official logos always sit on white, in both themes */
+}
+
+/* ---------- tokens: light ---------- */
+:root[data-theme="light"] {
+  color-scheme: light;
+  --bg:        #f6f7fb;
+  --bg-glow-1: rgba(70, 120, 255, 0.07);
+  --bg-glow-2: rgba(170, 110, 255, 0.06);
+  --surface:   #ffffff;
+  --surface-2: #eef1f7;
+  --ink:       #0e1526;
+  --ink-2:     #465169;
+  --ink-3:     #5c6780;
+  --line:      rgba(14, 21, 38, 0.10);
+  --line-2:    rgba(14, 21, 38, 0.22);
+  --grid:      rgba(14, 21, 38, 0.07);
+  --shadow:    0 14px 40px rgba(20, 30, 60, 0.12);
+
+  --c-mech:  #1f6fd6;
+  --c-learn: #c4570f;
+  --c-inv:   #6c4ee0;
+  --c-now:   #0e9a62;
+  --c-theta: #5d6b82;
+  --c-y:     #0c9486;
+  --c-bad:   #d32f45;
+  --c-warn:  #a86f00;
+  --c-glow:  rgba(31, 111, 214, 0.35);
+
+  /* validated (--pairs all, light surface #f6f7fb); aqua/orange < 3:1 -> always direct-label them */
+  --cat-1: #2a78d6; --cat-2: #1baf7a; --cat-3: #eb6834; --cat-ref: #7b8291;
+  --m-new:    #c2457a;
+  --m-base:   #8a93a6;
+  --ms-frame: rgba(194, 69, 122, 0.40);
+
+  --seq-0: #eef3f1; --seq-1: #cfe9dc; --seq-2: #a6dcc0; --seq-3: #73c79d;
+  --seq-4: #40ad78; --seq-5: #1b8f5a; --seq-6: #0b6e43;
+  --seq-ink-dark: #0e1526;
+  --seq-ink-light: #ffffff;
+
+  --b-intro: #1f6fd6; --b-plan: #6c4ee0; --b-now: #0e9a62; --b-next: #b8558f; --b-close: #c98500;
+}
+
+/* ---------- page & reveal base ---------- */
+html, body { background: var(--bg); }
+.reveal-viewport { background: var(--bg); }
+.reveal {
+  font-family: var(--font-text);
+  font-size: 34px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.35;
+}
+.reveal .slides { text-align: left; }
+.reveal .slides > section, .reveal .slides > section > section {
+  padding: 0;
+  box-sizing: border-box;
+  width: 1920px; height: 1080px;
+}
+.reveal .slides section {
+  /* background lives on the viewport so slides cross-fade cleanly */
+}
+.reveal-viewport::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none;
+  background:
+    radial-gradient(1100px 700px at 8% -10%, var(--bg-glow-1), transparent 60%),
+    radial-gradient(900px 700px at 105% 110%, var(--bg-glow-2), transparent 60%);
+}
+.reveal ::selection { background: var(--c-glow); }
+.reveal .katex { font-size: 1.08em; }
+.reveal .katex-display { margin: 0.35em 0; text-align: left; }
+.reveal .katex-display > .katex { text-align: left; }
+
+/* ---------- slide frame ---------- */
+.frame {                       /* every slide body goes inside .frame */
+  position: absolute; inset: 0;
+  padding: 72px 110px 120px 110px;
+  display: flex; flex-direction: column;
+}
+.slide-tag {
+  font-family: var(--font-head);
+  font-size: 20px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--tag-c, var(--ink-3));
+  display: inline-flex; align-items: center; gap: 14px;
+  height: 30px; margin-bottom: 14px;   /* fixed height: the schematic pill must not shift the title */
+  flex-shrink: 0;
+}
+.slide-tag::before { content: ""; width: 34px; height: 3px; border-radius: 2px; background: var(--tag-c, var(--ink-3)); }
+/* header eyebrow removed from all slides (user request); kept in the DOM so layouts do not shift */
+.slide-tag { visibility: hidden; }
+section[data-block="intro"] { --tag-c: var(--b-intro); }
+section[data-block="plan"]  { --tag-c: var(--b-plan); }
+section[data-block="now"]   { --tag-c: var(--b-now); }
+section[data-block="next"]  { --tag-c: var(--b-next); }
+section[data-block="close"] { --tag-c: var(--b-close); }
+section[data-block="backup"]{ --tag-c: var(--ink-3); }
+.schematic-tag {
+  font-family: var(--font-text); font-size: 18px; line-height: 1; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--ink-3); border: 1px solid var(--line-2); border-radius: 999px; padding: 4px 12px; margin-left: 6px;
+}
+
+.reveal h1, .reveal h2, .reveal h3 {
+  font-family: var(--font-head); color: var(--ink); text-transform: none;
+  letter-spacing: -0.015em; margin: 0; line-height: 1.08; font-weight: 600; text-shadow: none;
+}
+.reveal h1 { font-size: 84px; }
+.reveal h2.title { font-size: 60px; margin-bottom: 34px; max-width: 1500px; flex-shrink: 0; }
+.reveal h3 { font-size: 36px; font-weight: 600; }
+.reveal p { margin: 0 0 0.5em 0; }
+.reveal strong, .reveal b { font-weight: 650; color: var(--ink); }
+.reveal em { color: var(--ink-2); }
+.reveal i, .reveal em { font-style: italic; }   /* reveal reset.css sets font: inherit on i/em */
+.reveal small, .small { font-size: 24px; color: var(--ink-2); }
+.muted { color: var(--ink-3); }
+.ink2 { color: var(--ink-2); }
+.mono { font-family: var(--font-mono); }
+
+/* bullet lists: clean, no default bullets */
+.reveal ul.pts { list-style: none; margin: 0; padding: 0; }
+.reveal ul.pts > li { position: relative; padding-left: 34px; margin: 0 0 18px 0; }
+.reveal ul.pts > li::before {
+  content: ""; position: absolute; left: 4px; top: 0.55em; width: 12px; height: 12px; border-radius: 3px;
+  background: var(--tag-c, var(--ink-3)); transform: rotate(45deg) scale(0.8);
+}
+
+/* citations / footnotes */
+.cite { position: absolute; left: 110px; bottom: 74px; font-size: 19px; color: var(--ink-3); letter-spacing: 0.01em; }
+.cite i { color: var(--ink-3); }
+.footnote { font-size: 21px; color: var(--ink-3); }
+
+/* cards & callouts */
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; padding: 28px 32px; box-shadow: var(--shadow); }
+.callout { border-left: 4px solid var(--tag-c, var(--c-mech)); padding: 10px 0 10px 22px; color: var(--ink); }
+.gap-note { font-size: 23px; color: var(--ink-2); font-style: italic; }
+.gap-note b { font-style: normal; color: var(--c-inv); font-weight: 600; letter-spacing: 0.02em; }
+.badge {
+  display: inline-flex; align-items: center; gap: 10px; padding: 8px 18px; border-radius: 999px;
+  background: var(--surface-2); border: 1px solid var(--line-2); font-size: 24px; color: var(--ink);
+}
+.pill { display: inline-block; padding: 2px 12px; border-radius: 999px; font-size: 0.8em; border: 1px solid var(--line-2); color: var(--ink-2); }
+
+/* semantic text colours */
+.t-mech { color: var(--c-mech); } .t-learn { color: var(--c-learn); } .t-inv { color: var(--c-inv); }
+.t-now { color: var(--c-now); } .t-theta { color: var(--c-theta); } .t-y { color: var(--c-y); }
+.t-bad { color: var(--c-bad); } .t-warn { color: var(--c-warn); }
+
+/* layout helpers */
+.row { display: flex; gap: 48px; align-items: flex-start; }
+.col { display: flex; flex-direction: column; gap: 18px; }
+.grow { flex: 1 1 0; min-width: 0; }
+.center { align-items: center; justify-content: center; }
+.stage { position: relative; flex: 1 1 auto; min-height: 0; }   /* area for SVG/D3 visuals */
+svg text { font-family: var(--font-text); fill: var(--ink-2); }
+svg .axis path, svg .axis line { stroke: var(--line-2); }
+svg .axis text { fill: var(--ink-3); font-size: 20px; }
+svg .grid line { stroke: var(--grid); }
+
+/* ---------- generic step reveals (handled by deck.js) ----------
+   <div data-step="2">…</div>          appears at step 2 (rise + fade)
+   data-anim="fade|rise|left|scale|none"   reveal style
+   data-until="4"                         disappears from step 4 on
+   ----------------------------------------------------------------- */
+[data-step] { opacity: 0; transform: translateY(16px); transition: opacity 0.55s ease, transform 0.6s cubic-bezier(.2,.8,.2,1), filter 0.55s ease; }
+[data-step][data-anim="fade"]  { transform: none; }
+[data-step][data-anim="left"]  { transform: translateX(-26px); }
+[data-step][data-anim="scale"] { transform: scale(0.94); }
+[data-step][data-anim="none"]  { transform: none; transition: none; }
+[data-step].is-on { opacity: 1; transform: none; }
+[data-step].is-off-after { opacity: 0 !important; transform: none; }
+.dim-on-next.is-dimmed { opacity: 0.35 !important; }
+section.deck-instant [data-step], section.deck-instant [data-step] *,
+section.deck-instant *::before, section.deck-instant *::after { transition: none !important; }
+html.is-static *, html.is-static *::before, html.is-static *::after { transition: none !important; animation-play-state: paused !important; }
+.step-trigger { display: none !important; }
+
+/* ---------- HUD (injected per slide by build.py) ---------- */
+.hud { position: absolute; inset: 0; pointer-events: none; z-index: 5; }
+.hud-progress {
+  position: absolute; left: 110px; right: 110px; bottom: 34px; height: 22px;
+  display: flex; gap: 10px; align-items: center;
+  font-family: var(--font-head); font-size: 18px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+}
+.hud-progress .seg { flex: 1 1 0; display: flex; flex-direction: column; gap: 6px; opacity: 0.75; }
+.hud-progress .seg i { display: block; height: 4px; border-radius: 3px; background: var(--line-2); }
+.hud-progress .seg.done { opacity: 0.9; }
+.hud-progress .seg.done i { background: var(--ink-3); }
+.hud-progress .seg.cur { opacity: 1; color: var(--ink); }
+.hud-progress .seg.cur i { background: var(--seg-c); box-shadow: 0 0 14px var(--seg-c); }
+.hud-progress .seg[data-seg="intro"] { --seg-c: var(--b-intro); flex-grow: 0.6; }
+.hud-progress .seg[data-seg="plan"]  { --seg-c: var(--b-plan);  flex-grow: 1.6; }
+.hud-progress .seg[data-seg="now"]   { --seg-c: var(--b-now);   flex-grow: 1.3; }
+.hud-progress .seg[data-seg="next"]  { --seg-c: var(--b-next);  flex-grow: 0.5; }
+
+.hud-tr { position: absolute; top: 40px; right: 70px; display: flex; gap: 22px; align-items: flex-start; }
+.hud-stair.ph { visibility: hidden; }   /* placeholder keeps the chips at a fixed position */
+.hud-chips { display: flex; gap: 10px; }
+.hud-chip {
+  position: relative; font-family: var(--font-head); font-size: 18px; letter-spacing: 0.05em; text-transform: uppercase;
+  padding: 6px 14px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--ink-3); background: transparent;
+  white-space: nowrap;
+}
+.hud-chip .lit {
+  position: absolute; inset: -1px; border-radius: 999px; display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--chip-c) 18%, var(--bg)); border: 1px solid var(--chip-c); color: var(--ink);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--chip-c) 45%, transparent);
+}
+.hud-chip[data-chip="nc"] { --chip-c: var(--c-bad); }
+.hud-chip[data-chip="ip"] { --chip-c: var(--c-warn); }
+.hud-chip[data-chip="ni"] { --chip-c: var(--c-inv); }
+.hud-chip .lit:not([data-step]) { opacity: 1; }
+.hud-chip .proved {   /* green check badge on the NON-CONVEX chip: proved for LPN3B (S12 on) */
+  position: absolute; top: -10px; right: -10px; width: 24px; height: 24px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--c-now); color: var(--bg); font-size: 15px; font-weight: 800; letter-spacing: 0;
+  box-shadow: 0 0 12px color-mix(in srgb, var(--c-now) 60%, transparent);
+}
+.hud-chip .proved:not([data-step]) { opacity: 1; }
+.hud-chip .proved[data-step] { transform: scale(0.4); }
+.hud-chip .proved.is-on { transform: none; }
+
+.hud-stair { width: 92px; height: 54px; }
+.hud-stair rect { fill: var(--line-2); rx: 2; }
+.hud-stair rect.cur { fill: var(--c-inv); filter: drop-shadow(0 0 6px var(--c-inv)); }
+.hud-stair rect.g { fill: var(--line-2); }
+.hud-stair rect.g.cur { fill: var(--c-now); filter: drop-shadow(0 0 6px var(--c-now)); }
+
+/* slide number */
+.reveal .slide-number {
+  background: transparent; color: var(--ink-3); font-family: var(--font-head); font-size: 18px; right: 40px; bottom: 30px;
+}
+
+/* print (PDF backup): reveal wraps each slide in .pdf-page, so the 1080px height rule above no longer matches */
+html.print-pdf .reveal .slides .pdf-page > section { height: 1080px !important; width: 1920px !important; }
+@media print {
+  .reveal-viewport::before { display: none; }
+}
+
+/* web version: reveal.js navigation arrows in the deck's muted ink */
+.reveal .controls { color: var(--ink-3); }

@@ -521,11 +521,11 @@ a.row-title:hover { color: var(--accent); }
   text-transform: uppercase;
   color: var(--accent);
 }
-.taglinks a {
+.taglinks a:not(.btn) {
   border-bottom: 1px solid currentColor;
   padding-bottom: 2px;
 }
-.taglinks a:hover { color: var(--accent-hover); }
+.taglinks a:not(.btn):hover { color: var(--accent-hover); }
 
 /* =========================================================================
    PUBLICATIONS

@@ -1,0 +1,115 @@
+/* S16 — What comes next: method-search dumbbell inside its own protocol frame.
+   Colours: --m-new (new method), --m-base (baselines), --ms-frame (frame). Never the HPC method colours. */
+
+.s16-ms {
+  position: relative;
+  border: 2px solid var(--ms-frame);
+  border-radius: 26px;
+  background:
+    radial-gradient(900px 260px at 0% 0%, color-mix(in srgb, var(--m-new) 9%, transparent), transparent 70%),
+    color-mix(in srgb, var(--m-new) 3%, transparent);
+  padding: 18px 34px 12px 34px;
+  display: flex; flex-direction: column; gap: 12px;
+  margin-top: -8px;
+}
+
+/* header: protocol stamp + methodology */
+.s16-head {
+  display: flex; flex-direction: column; gap: 6px;
+  font-size: 24px; color: var(--ink-2); line-height: 1.3;
+  padding-bottom: 12px; border-bottom: 1px solid var(--line);
+}
+.s16-head b { color: var(--ink); font-weight: 600; }
+.s16-proto { display: flex; align-items: center; gap: 16px; }
+.s16-stamp {
+  font-family: var(--font-head); font-size: 19px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink); padding: 4px 14px; border-radius: 999px; white-space: nowrap;
+  border: 1.5px solid var(--m-new); background: color-mix(in srgb, var(--m-new) 16%, transparent);
+}
+.s16-meth { display: flex; align-items: center; gap: 12px; flex-wrap: nowrap; }
+.s16-mi { display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+.s16-sep { color: var(--ink-3); }
+.s16-ico { width: 26px; height: 26px; flex: none; fill: none; stroke: var(--ink-3); stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+
+/* new-method line (legend for magenta) */
+.s16-new { display: flex; align-items: flex-start; gap: 14px; font-size: 24px; color: var(--ink-2); line-height: 1.32; }
+.s16-new b { color: var(--ink); font-weight: 650; }
+.s16-key { width: 26px; height: 26px; flex: none; margin-top: 3px; }
+.s16-key circle { fill: var(--m-new); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--m-new) 60%, transparent)); }
+.s16-key-base circle { fill: none; stroke: var(--m-base); stroke-width: 2.5; filter: none; }
+
+/* body: chart + side column */
+.s16-body { display: flex; gap: 30px; align-items: flex-start; }
+.s16-chart { flex: none; width: 1150px; display: flex; flex-direction: column; }
+.s16-chead { display: flex; align-items: center; gap: 10px; font-size: 22px; color: var(--ink-2); margin: 0 0 2px 0; }
+.s16-chead .s16-key { margin-top: 0; }
+.s16-chead .katex { font-size: 1.05em; }
+.s16-svg { display: block; width: 1150px; height: 372px; overflow: visible; }
+.s16-xlab { font-size: 21px; color: var(--ink-2); margin: 2px 0 0 170px; }
+.s16-xlab .katex { font-size: 1.05em; color: var(--ink-2); }
+.s16-faster { color: var(--ink-2); font-weight: 600; margin-right: 10px; }
+
+/* chart marks */
+.s16-grid line { stroke: var(--grid); stroke-width: 1; }
+.s16-grid line.maj { stroke: var(--line); }
+.s16-axis line { stroke: var(--line-2); stroke-width: 1.5; }
+.s16-axis text { fill: var(--ink-3); font-size: 20px; text-anchor: middle; }
+.s16-pl { fill: var(--ink); font-family: var(--font-head); font-size: 27px; font-weight: 600; }
+.s16-pn { fill: var(--ink-2); font-size: 21px; }
+.s16-band { fill: color-mix(in srgb, var(--m-new) 10%, transparent); stroke: var(--ms-frame); stroke-width: 1.5; opacity: 0; }
+.s16-conn { stroke-width: 3; stroke-linecap: round; }
+.s16-wb line { stroke: var(--m-base); stroke-width: 2; }
+.s16-wn line { stroke: var(--m-new); stroke-width: 2; }
+.s16-bm { fill: var(--bg); stroke: var(--m-base); stroke-width: 2.5; }
+.s16-nm { fill: var(--m-new); stroke: var(--bg); stroke-width: 2; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--m-new) 65%, transparent)); }
+.s16-lab { font-size: 22px; }
+.s16-lab .v { fill: var(--ink-2); }
+.s16-lab .vn { fill: var(--ink); font-weight: 650; }
+.s16-lab .mn { fill: var(--ink-2); font-size: 22px; }
+.s16-ratio { fill: var(--ink-2); font-size: 21px; font-weight: 600; text-anchor: middle; font-variant-numeric: tabular-nums; }
+.s16-brace { fill: none; stroke: var(--ink-2); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* side column */
+.s16-side { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 20px; padding-top: 62px; }
+.s16-bignum {
+  font-family: var(--font-head); font-size: 80px; font-weight: 700; line-height: 1; color: var(--ink); letter-spacing: -0.02em;
+  text-shadow: 0 0 26px color-mix(in srgb, var(--m-new) 45%, transparent);
+}
+.s16-bigsub { font-size: 27px; color: var(--ink); margin-top: 8px; }
+.s16-bigsub .katex { font-size: 1.04em; }
+.s16-bigmesh { font-size: 21px; color: var(--ink-3); margin-top: 4px; line-height: 1.3; }
+
+.s16-badge {
+  display: flex; align-items: center; gap: 16px;
+  padding: 14px 18px 14px 14px; border-radius: 18px;
+  background: var(--surface); border: 1px solid var(--line-2); box-shadow: var(--shadow);
+}
+.s16-shield { width: 58px; height: 66px; flex: none; }
+.s16-sh { fill: color-mix(in srgb, var(--c-now) 16%, transparent); stroke: var(--c-now); stroke-width: 3; stroke-linejoin: round; }
+.s16-chk { fill: none; stroke: var(--c-now); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+section.s16-caught .s16-shield { filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-now) 50%, transparent)); }
+.s16-btxt { line-height: 1.28; }
+.s16-b1 { font-size: 23px; color: var(--ink); font-weight: 600; }
+.s16-b2 { font-size: 22px; color: var(--ink-2); margin-top: 4px; }
+.s16-b3 { font-size: 20px; color: var(--ink-2); margin-top: 2px; }
+.s16-nw { white-space: nowrap; }
+.s16-b2 i { font-family: "KaTeX_Math", var(--font-text); }
+.s16-ss { position: relative; font-family: var(--font-mono); font-size: 0.92em; font-weight: 500; white-space: nowrap; }
+.s16-ss::after {
+  content: ""; position: absolute; left: -2px; right: -2px; top: 54%; height: 3px; border-radius: 2px;
+  background: var(--c-bad); transform: scaleX(0); transform-origin: left center;
+  transition: transform 0.6s cubic-bezier(.6,0,.2,1) 0.45s;
+}
+section.s16-caught .s16-ss::after { transform: scaleX(1); }
+/* instant renders (jumps, ?static screenshots, PDF): the generic deck-instant rule does not reach pseudo-elements */
+section.deck-instant .s16-ss::after, section.s16-instant .s16-ss::after { transition: none !important; }
+
+/* next line (outside the method-search frame: back to the thesis) */
+.s16-next { display: flex; align-items: center; gap: 22px; margin-top: 16px; font-size: 30px; color: var(--ink); }
+.s16-nx { color: var(--b-next); font-weight: 700; font-family: var(--font-head); margin-right: 4px; }
+.s16-bil { width: 139px; height: 66px; flex: none; overflow: visible; }
+.s16-bo { fill: color-mix(in srgb, var(--c-inv) 8%, transparent); stroke: var(--c-inv); stroke-width: 2.5; stroke-dasharray: 7 5; }
+.s16-bt { fill: var(--c-inv); font-family: var(--font-head); font-size: 22px; font-weight: 700; }
+.s16-bi { fill: color-mix(in srgb, var(--c-now) 14%, transparent); stroke: var(--c-now); stroke-width: 2.5; transition: filter 0.5s ease; }
+.s16-bi.is-hot { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-now) 60%, transparent)); }
+.s16-bd { fill: var(--m-new); stroke: var(--bg); stroke-width: 2; }

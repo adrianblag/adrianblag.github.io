@@ -31,7 +31,10 @@ const categories = resolveCategories(
         <section class="year-group" data-filter-list data-group>
           <YearHead year={group.year} count={group.items.length} noun="presentations" />
           {group.items.map((talk, i) => {
-            const primary = talk.data.links[0]?.url;
+            // The title opens the slides when there are any, else the first link.
+            const slides = talk.data.slides;
+            const primary = slides ?? talk.data.links[0]?.url;
+            const newTab = slides ? { target: '_blank', rel: 'noopener' } : {};
             const isLast = i === group.items.length - 1;
             return (
               <article
@@ -52,7 +55,7 @@ const categories = resolveCategories(
                     {stampDate(talk.data.date)} · {talk.data.type}
                   </span>
                   {primary ? (
-                    <a class="row-title" href={primary}>
+                    <a class="row-title" href={primary} {...newTab}>
                       {talk.data.title}
                     </a>
                   ) : (
@@ -68,6 +71,12 @@ const categories = resolveCategories(
                   )}
                 </div>
                 <div class="taglinks">
+                  {slides && (
+                    <a class="btn btn-sm btn-ghost" href={slides} {...newTab}>
+                      Slides <span class="arr" aria-hidden="true">↗</span>
+                      <span class="sr-only"> — {talk.data.title} (opens in a new tab)</span>
+                    </a>
+                  )}
                   {talk.data.links.map((l) => (
                     <a href={l.url}>
                       {l.label}

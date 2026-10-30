@@ -61,6 +61,10 @@ const talks = defineCollection({
       /** an image next to this file, e.g. './sigdial.jpg'. Resized and
        *  converted to WebP at build time; a wrong path fails the build. */
       image: image().optional(),
+      /** where the slides are, shown as a "Slides" button that opens in a
+       *  new tab: a deck or PDF under public/slides/ (e.g.
+       *  '/slides/sigdial-2026/index.html') or any URL */
+      slides: z.string().optional(),
       tags: z.array(z.string()).optional().default([]),
     }),
 });

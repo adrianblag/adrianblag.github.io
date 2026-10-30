@@ -1,0 +1,70 @@
+/* S9 — L4 · Interact: two players sharing a substrate (schematic) */
+.reveal h2.title.s09-title { max-width: none; }      /* keep the long title on one line */
+.s09-grid { display: grid; grid-template-columns: 680px 1fr; column-gap: 44px; flex: 1 1 auto; min-height: 0; }
+.s09-left, .s09-right { min-width: 0; display: flex; flex-direction: column; }
+.s09-cells, .s09-br { overflow: visible; }
+
+/* players: cell 1 = cat-2 (aqua), cell 2 = cat-3 (orange); shared pool = state x (blue) */
+.s09-p1 { --pc: var(--cat-2); }
+.s09-p2 { --pc: var(--cat-3); }
+.s09-cell { fill: color-mix(in srgb, var(--pc) 15%, var(--surface)); stroke: var(--pc); stroke-width: 3;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--pc) 35%, transparent)); }
+.s09-nuc { fill: color-mix(in srgb, var(--pc) 35%, transparent); stroke: none; }
+.s09-cell-t { font-size: 26px; fill: var(--ink); font-weight: 600; text-anchor: middle; }
+.s09-ghost { fill: none; stroke: var(--ink-3); stroke-width: 1.6; stroke-dasharray: 5 5; }
+.s09-ghost-l { stroke: var(--ink-3); stroke-width: 1.2; stroke-dasharray: 3 5; opacity: .7; }
+.s09-ghost-t { font-size: 21px; fill: var(--ink-3); font-style: italic; text-anchor: middle; }
+.s09-pool { fill: color-mix(in srgb, var(--c-mech) 12%, var(--surface)); stroke: var(--c-mech); stroke-width: 2.5; }
+.s09-sub { fill: var(--c-mech); opacity: .8; }
+.s09-pool-t { font-size: 23px; fill: var(--ink-2); text-anchor: middle; }
+.s09-pool-t tspan.x { fill: var(--c-mech); font-style: italic; font-weight: 600; }
+.s09-up { fill: none; stroke: var(--pc); stroke-width: 3; }
+.s09-uph { fill: var(--pc); }
+.s09-up-t { font-size: 24px; fill: var(--ink); font-style: italic; text-anchor: middle; }
+/* gauges */
+.s09-g-bg { fill: none; stroke: var(--line-2); stroke-width: 12; stroke-linecap: round; }
+.s09-g-val { fill: none; stroke: var(--pc); stroke-width: 12; stroke-linecap: round; }
+.s09-g-tick { stroke: var(--ink-3); stroke-width: 1.5; }
+.s09-g-needle { stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
+.s09-g-pivot { fill: var(--ink); }
+.s09-g-t { font-size: 28px; fill: var(--ink); font-weight: 600; text-anchor: middle; font-style: italic; }
+.s09-fwd { stroke: var(--ink-3); stroke-width: 2.5; fill: none; }
+.s09-fwdh { fill: var(--ink-3); }
+/* inverse (purple) */
+.s09-rev { stroke: var(--c-inv); stroke-width: 3; fill: none; stroke-linecap: round;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-inv) 50%, transparent)); }
+.s09-revh { fill: var(--c-inv); }
+.s09-inv-t { font-size: 24px; fill: var(--c-inv); font-weight: 600; text-anchor: middle; }
+.s09-inv-cap { font-size: 23px; fill: var(--c-inv); text-anchor: middle; font-style: italic; }
+.s09-spark-bg { fill: var(--surface); stroke: color-mix(in srgb, var(--c-inv) 45%, var(--line)); stroke-width: 1.5; }
+.s09-spark { fill: none; stroke: var(--pc); stroke-width: 2.5; }
+.s09-spark-d { fill: var(--surface); stroke: var(--pc); stroke-width: 2; }
+.s09-spark-ax { stroke: var(--line-2); stroke-width: 1.2; }
+
+/* right column */
+.s09-eq { margin-top: -6px; }
+.s09-eq .katex-display { margin: 0.05em 0; }
+.s09-eq .katex { font-size: 1.04em; }
+.s09-nash { margin-top: 4px; }
+.s09-nash .katex { font-size: 1.04em; }
+.s09-row { display: flex; gap: 34px; align-items: flex-start; margin-top: 16px; }
+.s09-pts { flex: 1 1 0; min-width: 0; padding-top: 8px; }
+.s09-pts ul.pts > li { font-size: 27px; line-height: 1.32; margin-bottom: 20px; }
+.s09-pts li.s09-inv::before { background: var(--c-inv); }
+.s09-cases { display: flex; gap: 12px; flex-wrap: wrap; margin-left: 34px; }
+.s09-cases .pill { font-size: 22px; padding: 4px 14px; }
+/* best-response diagram */
+.s09-ax { stroke: var(--line-2); stroke-width: 2; fill: none; }
+.s09-axt { font-size: 24px; fill: var(--ink-2); font-style: italic; }
+.s09-brc { fill: none; stroke: var(--pc); stroke-width: 3.5; stroke-linecap: round; }
+.s09-brt { font-size: 22px; fill: var(--ink-2); }
+.s09-zz { fill: none; stroke: var(--ink-3); stroke-width: 1.6; stroke-dasharray: 4 5; }
+.s09-nashp { fill: var(--ink); stroke: var(--bg); stroke-width: 2;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--ink) 55%, transparent)); }
+.s09-nasht { font-size: 23px; fill: var(--ink); font-weight: 600; }
+.s09-marl { fill: var(--bg); stroke: var(--ink-2); stroke-width: 2.5; }
+.s09-trail { fill: var(--ink-2); }
+.s09-dev { stroke: var(--c-warn); stroke-width: 2.5; stroke-dasharray: 6 5; fill: none; }
+.s09-devt { font-size: 22px; fill: var(--c-warn); font-weight: 600; }
+.s09-gap { margin-top: 4px; }
+.s09-zz0 { fill: var(--bg); stroke: var(--ink-3); stroke-width: 2; }

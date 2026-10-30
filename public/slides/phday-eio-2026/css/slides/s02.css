@@ -1,0 +1,153 @@
+/* S2 — Cells switch enzymes on just in time (hero, driven by DATA.lpn3b) */
+.s02-top { display: flex; gap: 40px; align-items: flex-start; height: 506px; margin-top: 2px; }
+.s02-path { width: 760px; height: 500px; flex: 0 0 760px; overflow: visible; margin-top: 4px; }
+.s02-plotcol { width: 900px; flex: 0 0 900px; display: flex; flex-direction: column; gap: 2px; }
+.s02-plot { width: 900px; height: 470px; overflow: visible; }
+
+/* ---------- pathway ---------- */
+.s02-edges line { stroke: var(--line-2); stroke-width: 4; stroke-linecap: round; }
+.s02-arrhead { fill: var(--ink-3); }
+.s02-flow {
+  stroke-width: 6; stroke-linecap: round; stroke-dasharray: 2 16; opacity: 0;
+  transition: opacity .35s ease;
+  animation: s02-flow 0.9s linear infinite;
+}
+.s02-flow[data-e="1"] { stroke: var(--c-e1); color: var(--c-e1); }
+.s02-flow[data-e="2"] { stroke: var(--c-e2); color: var(--c-e2); }
+.s02-flow[data-e="3"] { stroke: var(--c-e3); color: var(--c-e3); }
+.s02-flow.is-on { opacity: 1; filter: drop-shadow(0 0 6px currentColor); }
+@keyframes s02-flow { to { stroke-dashoffset: -18; } }
+
+.s02-enz rect { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 2.5; transition: fill .3s ease, stroke .3s ease, filter .3s ease; }
+.s02-enz text { fill: var(--ink-3); font-size: 28px; font-weight: 650; text-anchor: middle; transition: fill .3s ease; }
+.s02-enz .s02-link { stroke: var(--line-2); stroke-width: 2; stroke-dasharray: 3 5; }
+.s02-enz { --ec: var(--ink-3); }
+.s02-enz[data-e="1"] { --ec: var(--c-e1); }
+.s02-enz[data-e="2"] { --ec: var(--c-e2); }
+.s02-enz[data-e="3"] { --ec: var(--c-e3); }
+section.s02-live .s02-enz rect { stroke: color-mix(in srgb, var(--ec) 60%, transparent); }
+section.s02-live .s02-enz text { fill: var(--ink-2); }
+.s02-enz.is-on rect {
+  fill: color-mix(in srgb, var(--ec) 30%, var(--surface));
+  stroke: var(--ec); stroke-width: 3.5;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--ec) 75%, transparent));
+}
+.s02-enz.is-on text { fill: var(--ink); }
+.s02-enz.is-on .s02-link { stroke: var(--ec); }
+
+.s02-tank-wall { fill: none; stroke: var(--c-s1); stroke-width: 3; }
+.s02-tank .s02-liq { fill: color-mix(in srgb, var(--c-s1) 40%, transparent); }
+.s02-wave { fill: color-mix(in srgb, var(--c-s1) 55%, transparent); }
+section.s02-running .s02-wave { animation: s02-wave 2.4s ease-in-out infinite alternate; }
+@keyframes s02-wave { to { transform: translateX(-16px); } }
+.s02-sym { fill: var(--ink); font-size: 32px; font-weight: 650; text-anchor: middle; }
+.s02-cap { fill: var(--ink-3); font-size: 22px; text-anchor: middle; }
+
+.s02-node circle { fill: none; stroke: var(--line-2); stroke-width: 3; transition: stroke .4s ease; }
+.s02-node .s02-liq { fill: transparent; }
+.s02-node[data-s="2"] { --nc: var(--c-s2); }
+.s02-node[data-s="3"] { --nc: var(--c-s3); }
+.s02-node[data-s="4"] { --nc: var(--c-s4); }
+.s02-node.is-live circle { stroke: var(--nc); }
+.s02-node.is-live .s02-liq { fill: color-mix(in srgb, var(--nc) 45%, transparent); }
+
+.s02-glabel { fill: var(--ink-2); font-size: 24px; }
+.s02-math { font-style: italic; fill: var(--ink); }
+.s02-track { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 2; }
+.s02-seg[data-e="1"] { fill: var(--c-e1); }
+.s02-seg[data-e="2"] { fill: var(--c-e2); }
+.s02-seg[data-e="3"] { fill: var(--c-e3); }
+.s02-gtick { fill: var(--ink-3); font-size: 20px; }
+.s02-clock { fill: var(--ink); font-family: var(--font-mono); font-size: 34px; font-weight: 500; }
+
+/* ---------- time plot ---------- */
+.s02-caption .katex { font-size: 1.05em; }
+.s02-caption { font-size: 24px; color: var(--ink-2); padding-left: 70px; height: 32px; opacity: 0; transition: opacity .6s ease; }
+.s02-caption b { color: var(--ink); font-weight: 600; }
+section.s02-done .s02-caption { opacity: 1; }
+.s02-plot .s02-grid line { stroke: var(--grid); stroke-width: 1.5; }
+.s02-plot .s02-axis line, .s02-plot .s02-axis path { stroke: var(--line-2); stroke-width: 2; }
+.s02-plot .s02-tick { fill: var(--ink-3); font-size: 20px; }
+.s02-plot .s02-axt { fill: var(--ink-3); font-size: 22px; }
+.s02-plot .s02-lane { fill: var(--surface-2); }
+.s02-plot .s02-lanelab { fill: var(--ink-2); font-size: 22px; font-weight: 600; text-anchor: end; }
+.s02-plot .s02-bar[data-e="1"] { fill: var(--c-e1); }
+.s02-plot .s02-bar[data-e="2"] { fill: var(--c-e2); }
+.s02-plot .s02-bar[data-e="3"] { fill: var(--c-e3); }
+.s02-plot .s02-curve { fill: none; stroke-width: 3.5; stroke-linejoin: round; stroke-linecap: round; }
+.s02-plot .s02-curve[data-s="1"] { stroke: var(--c-s1); stroke-width: 3; }
+.s02-plot .s02-curve[data-s="2"] { stroke: var(--c-s2); }
+.s02-plot .s02-curve[data-s="3"] { stroke: var(--c-s3); }
+.s02-plot .s02-curve[data-s="4"] { stroke: var(--c-s4); }
+.s02-plot .s02-target { stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: 8 7; }
+.s02-plot .s02-targetlab { fill: var(--ink-3); font-size: 20px; }
+.s02-plot .s02-swl { stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: 6 6; }
+.s02-plot .s02-tfl { stroke: var(--c-s4); stroke-width: 2; stroke-dasharray: 6 6; opacity: .8; }
+.s02-plot .s02-tflab { fill: var(--ink-2); font-size: 22px; font-style: italic; text-anchor: middle; }
+.s02-plot .s02-hit { fill: var(--bg); stroke: var(--c-s4); stroke-width: 3.5; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-s4) 70%, transparent)); }
+.s02-plot .s02-cursor line { stroke: var(--ink); stroke-width: 2; opacity: .7; }
+.s02-plot .s02-dot { stroke: var(--bg); stroke-width: 2.5; }
+.s02-plot .s02-dot[data-s="1"] { fill: var(--c-s1); }
+.s02-plot .s02-dot[data-s="2"] { fill: var(--c-s2); }
+.s02-plot .s02-dot[data-s="3"] { fill: var(--c-s3); }
+.s02-plot .s02-dot[data-s="4"] { fill: var(--c-s4); }
+.s02-plot .s02-endlab text { fill: var(--ink); font-size: 24px; font-weight: 600; }
+.s02-plot .s02-endlab line { stroke-width: 3; }
+.s02-plot .s02-endlab [data-s="1"] line { stroke: var(--c-s1); }
+.s02-plot .s02-endlab [data-s="2"] line { stroke: var(--c-s2); }
+.s02-plot .s02-endlab [data-s="3"] line { stroke: var(--c-s3); }
+.s02-plot .s02-endlab [data-s="4"] line { stroke: var(--c-s4); }
+.s02-plot .s02-fade { transition: opacity .45s ease; }
+.s02-err { color: var(--c-bad); font-size: 24px; }
+
+/* ---------- bottom row: predicted -> observed, then the big flip ---------- */
+.s02-bottom { display: flex; align-items: stretch; gap: 0; margin-top: 18px; height: 200px; }
+.s02-card {
+  box-sizing: border-box;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 18px;
+  padding: 16px 24px 18px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.s02-pred { width: 500px; flex: 0 0 500px; }
+.s02-obs  { width: 474px; flex: 0 0 474px; }
+.s02-card-h {
+  font-family: var(--font-head); font-size: 21px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3);
+  display: flex; align-items: center; gap: 12px;
+}
+.s02-yr { font-size: 26px; letter-spacing: 0.02em; color: var(--ink); padding: 1px 12px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface-2); }
+.s02-obs .s02-yr { border-color: var(--b-intro); }
+.s02-card-b { font-size: 26px; line-height: 1.32; color: var(--ink); }
+.s02-card-b i { font-style: italic; }   /* reveal's reset.css sets font: inherit on <i>; species names stay italic */
+.s02-ref { color: var(--ink-3); white-space: nowrap; transition: opacity .5s ease .45s; opacity: 0; }
+.s02-card.is-on .s02-ref { opacity: 1; }
+.s02-tl { width: 70px; height: 40px; align-self: center; margin: 0 8px; flex: 0 0 70px; }
+.s02-tl line, .s02-tl path { fill: none; stroke: var(--b-intro); stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+
+.s02-flip {
+  box-sizing: border-box; margin-left: auto; width: 610px; flex: 0 0 610px; border-radius: 22px; padding: 0 26px;
+  border: 2px solid var(--line-2); background: var(--surface);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity .55s ease, transform .6s cubic-bezier(.2,.8,.2,1), border-color .5s ease, box-shadow .5s ease, background .5s ease;
+}
+.s02-flip-row { display: flex; align-items: center; gap: 12px; font-family: var(--font-head); font-size: 38px; font-weight: 600; color: var(--ink); }
+.s02-w { position: relative; display: inline-block; transition: color .5s ease; }
+.s02-w-obj { order: 1; }
+.s02-bigarrow { order: 2; width: 110px; height: 36px; flex: 0 0 110px; }
+.s02-w-beh { order: 3; }
+.s02-bigarrow line, .s02-bigarrow path { fill: none; stroke: var(--ink-2); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; transition: stroke .5s ease; }
+.s02-q { position: absolute; left: 100%; top: 0; color: var(--c-inv); opacity: 0; transition: opacity .4s ease .5s; }
+section.s02-flipped .s02-w-obj { order: 3; }
+section.s02-flipped .s02-w-beh { order: 1; }
+section.s02-flipped .s02-w { color: var(--c-inv); }
+section.s02-flipped .s02-q { opacity: 1; }
+section.s02-flipped .s02-bigarrow line, section.s02-flipped .s02-bigarrow path { stroke: var(--c-inv); }
+section.s02-flipped .s02-flip {
+  border-color: var(--c-inv);
+  background: color-mix(in srgb, var(--c-inv) 10%, var(--surface));
+  box-shadow: 0 0 34px color-mix(in srgb, var(--c-inv) 35%, transparent);
+}
+section.s02-flipped .s02-flip-row { padding-right: 22px; }
+/* instant renders (jumps, going back, ?static screenshots, PDF): no CSS transitions at all */
+section[data-module="s02"].deck-instant * { transition: none !important; }
+.s02-plot .s02-s1lab { fill: var(--ink); font-size: 24px; font-weight: 600; }
+.s02-plot .s02-s1lab tspan.c { fill: var(--ink-3); font-weight: 400; font-size: 20px; }

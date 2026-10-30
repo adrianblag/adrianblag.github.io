@@ -1,0 +1,107 @@
+/* S17 — Take-home & thanks. Logo plates are `var(--logo-plate)` in both themes (official logos need a var(--logo-plate) ground). */
+
+/* ---------- three take-home cards ---------- */
+.s17-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 34px; margin-top: 2px; }
+.s17-card {
+  position: relative; box-sizing: border-box; height: 380px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 22px;
+  padding: 18px 28px 22px; box-shadow: var(--shadow);
+  display: flex; flex-direction: column;
+  transition: border-color .6s ease, box-shadow .6s ease, background .6s ease;
+}
+.s17-card::before {               /* coloured top edge, lit with the card */
+  content: ""; position: absolute; left: 28px; right: 28px; top: -1px; height: 3px; border-radius: 2px;
+  background: var(--kc); opacity: 0; transition: opacity .6s ease;
+}
+.s17-card.is-lit {
+  border-color: color-mix(in srgb, var(--kc) 45%, var(--line));
+  background: color-mix(in srgb, var(--kc) 5%, var(--surface));
+  box-shadow: var(--shadow), 0 0 34px color-mix(in srgb, var(--kc) 16%, transparent);
+}
+.s17-card.is-lit::before { opacity: 1; }
+.s17-icon { height: 170px; flex: 0 0 170px; display: flex; align-items: center; justify-content: center; }
+.s17-icon svg { width: 100%; height: 170px; overflow: visible; opacity: 0.28; filter: grayscale(1); transition: opacity .7s ease, filter .7s ease; }
+.s17-card.is-lit .s17-icon svg { opacity: 1; filter: none; }
+.s17-head { display: flex; align-items: center; gap: 14px; margin-top: 14px; }
+.s17-num {
+  flex: 0 0 auto; width: 40px; height: 40px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 23px; font-weight: 700; color: var(--ink-3);
+  border: 2px solid var(--line-2); transition: color .6s ease, border-color .6s ease, background .6s ease;
+}
+.s17-card.is-lit .s17-num { color: var(--bg); background: var(--kc); border-color: var(--kc); }
+.s17-lead { font-family: var(--font-head); font-size: 31px; font-weight: 650; color: var(--kc); line-height: 1.15; }
+.s17-body { font-size: 26px; line-height: 1.36; color: var(--ink); margin-top: 10px; }
+.s17-nb { white-space: nowrap; color: var(--ink-2); }
+
+/* icon 1: pathway (enzymes and species in the S2 colours) */
+.s17-pw text { font-family: var(--font-text); }
+.s17-tank { fill: none; stroke: var(--c-s1); stroke-width: 3; }
+.s17-liq { fill: color-mix(in srgb, var(--c-s1) 35%, transparent); }
+.s17-sy { fill: var(--ink); font-size: 26px; font-weight: 650; text-anchor: middle; }
+.s17-nd { fill: var(--surface-2); stroke-width: 3; }
+.s17-nd[data-s="2"] { stroke: var(--c-s2); }
+.s17-nd[data-s="3"] { stroke: var(--c-s3); }
+.s17-nd[data-s="4"] { stroke: var(--c-s4); fill: color-mix(in srgb, var(--c-s4) 22%, var(--surface-2)); }
+.s17-ar { stroke-width: 3.5; stroke-linecap: round; }
+.s17-ar[data-e="1"], .s17-ez[data-e="1"] { stroke: var(--c-e1); --ec: var(--c-e1); }
+.s17-ar[data-e="2"], .s17-ez[data-e="2"] { stroke: var(--c-e2); --ec: var(--c-e2); }
+.s17-ar[data-e="3"], .s17-ez[data-e="3"] { stroke: var(--c-e3); --ec: var(--c-e3); }
+.s17-ahd[data-e="1"] { fill: var(--c-e1); }
+.s17-ahd[data-e="2"] { fill: var(--c-e2); }
+.s17-ahd[data-e="3"] { fill: var(--c-e3); }
+.s17-ez rect { fill: color-mix(in srgb, var(--ec) 20%, var(--surface)); stroke: var(--ec); stroke-width: 2.5; }
+.s17-ez line { stroke: var(--ec); stroke-width: 2; stroke-dasharray: 3 5; }
+.s17-ez text { fill: var(--ink); font-size: 23px; font-weight: 650; text-anchor: middle; stroke: none; }
+
+/* icon 2: staircase with the L2 bilevel loop */
+.s17-step { fill: color-mix(in srgb, var(--c-inv) 22%, var(--surface)); stroke: color-mix(in srgb, var(--c-inv) 70%, transparent); stroke-width: 2; }
+.s17-lv { fill: var(--ink-2); font-family: var(--font-head); font-size: 22px; font-weight: 650; }
+.s17-outer { fill: none; stroke: var(--c-inv); stroke-width: 2.5; }
+.s17-inner { fill: color-mix(in srgb, var(--c-now) 8%, transparent); stroke: var(--c-now); stroke-width: 2; stroke-dasharray: 5 4; transition: filter .6s ease; }
+.s17-ground { fill: var(--c-now); }
+.s17-bk { fill: var(--c-now); }
+.s17-bkl { fill: none; stroke: var(--surface); stroke-width: 2; }
+.s17-inbrick { opacity: 0; }
+section.s17-brick-in .s17-inner { stroke-dasharray: none; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-now) 70%, transparent)); }
+section.s17-brick-in .s17-card[data-k="2"] .s17-lv:nth-of-type(2) { fill: var(--ink); }
+
+/* icon 3: the brick (wall + verified check) */
+.s17-bw { fill: color-mix(in srgb, var(--c-now) 32%, var(--surface)); stroke: var(--c-now); stroke-width: 2; }
+.s17-card.is-lit .s17-wall { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--c-now) 40%, transparent)); }
+.s17-check circle { fill: var(--c-now); stroke: var(--surface); stroke-width: 4; }
+.s17-check path { fill: none; stroke: var(--bg); stroke-width: 4.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- let's talk  +  thank you ---------- */
+.s17-mid { display: flex; align-items: center; justify-content: space-between; gap: 40px; margin-top: 22px; height: 148px; }
+.s17-talk { display: flex; flex-direction: column; gap: 14px; }
+.reveal .s17-talk p { margin: 0; }
+.s17-talk-l { font-size: 30px; color: var(--ink); }
+.s17-talk-h { font-family: var(--font-head); font-weight: 650; color: var(--b-close); margin-right: 6px; }
+.s17-mail { display: inline-flex; align-items: center; gap: 16px; font-family: var(--font-head); font-size: 34px; font-weight: 600; color: var(--ink); letter-spacing: 0.01em; }
+.s17-mail svg { width: 40px; height: 30px; }
+.s17-mail svg rect, .s17-mail svg path { fill: none; stroke: var(--b-close); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; }
+.s17-thanks { text-align: right; }
+.s17-ty { font-family: var(--font-head); font-size: 80px; font-weight: 650; line-height: 1; letter-spacing: -0.02em; color: var(--ink); }
+.s17-q { font-family: var(--font-head); font-size: 44px; font-weight: 600; line-height: 1.2; color: var(--b-close); margin-top: 8px; }
+
+/* ---------- funding box (mandatory, static) ---------- */
+.s17-fund {
+  margin-top: auto; display: flex; align-items: center; gap: 30px;
+  padding: 14px 18px; border-radius: 20px; border: 1px solid var(--line); background: var(--surface);
+}
+.s17-plate { flex: 0 0 auto; background: var(--logo-plate); border-radius: 12px; border: 1px solid var(--line); display: flex; align-items: center; }
+.s17-fplate { padding: 7px 10px; }
+.s17-fplate img { display: block; height: 82px; width: auto; }
+.s17-ftext { flex: 1 1 auto; min-width: 0; }
+.reveal .s17-ftext p { margin: 0; font-size: 22px; line-height: 1.36; color: var(--ink-2); }
+.reveal .s17-ftext .s17-comp { margin-top: 6px; color: var(--ink); }
+.s17-lplate { gap: 22px; height: 96px; box-sizing: border-box; padding: 0 24px; }
+.s17-csic { height: 36px; width: auto; display: block; }
+.s17-mbg  { height: 46px; width: auto; display: block; }
+.s17-sep { width: 2px; height: 50px; border-radius: 1px; background: color-mix(in srgb, black 14%, var(--logo-plate)); }
+
+/* light theme: amber text needs more contrast on the near-white background (the mail icon keeps the pure accent) */
+:root[data-theme="light"] .s17-talk-h, :root[data-theme="light"] .s17-q { color: color-mix(in srgb, var(--b-close) 70%, var(--ink)); }
+
+/* instant renders (jumps, ?static, PDF): no transitions, pseudo-elements included (the lit top edge is a ::before) */
+section[data-module="s17"].deck-instant *, section[data-module="s17"].deck-instant *::before { transition: none !important; }

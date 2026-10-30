@@ -1,0 +1,33 @@
+/* S10 — One brick under every level (staircase motif from S4: .s04-* classes live in s04.css) */
+.s10-stage { flex: 0 1 748px; height: 748px; min-height: 0; }   /* may shrink (svg overflows) so the tag/title keep their fixed slot */
+.s10-svg { display: block; overflow: visible; }
+
+.s10-lead { font-size: 32px; fill: var(--ink); }
+.s10-lead-b { font-weight: 650; fill: var(--ink); }
+
+/* the brick */
+.s10-brick { fill: color-mix(in srgb, var(--c-now) 16%, var(--surface)); stroke: var(--c-now); stroke-width: 2.5;
+  filter: drop-shadow(0 0 18px color-mix(in srgb, var(--c-now) 30%, transparent)); }
+.s10-course { stroke: color-mix(in srgb, var(--c-now) 30%, transparent); stroke-width: 2; fill: none; stroke-linecap: round; }
+.s10-brick-t { font-family: var(--font-head); font-size: 38px; font-weight: 700; fill: var(--ink); }
+.s10-glow { fill: none; stroke: var(--c-now); stroke-width: 8; opacity: 0;
+  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--c-now) 85%, transparent)); }
+
+/* calls: one labelled arrow per level */
+.s10-call { stroke: var(--c-now); stroke-width: 3.5; stroke-linecap: round; fill: none; }
+.s10-call-head { fill: var(--c-now); }
+.s10-call-t { font-size: 26px; fill: var(--ink); }
+.s10-call-l { font-family: var(--font-head); font-size: 21px; font-weight: 700; fill: var(--c-inv); letter-spacing: 0.04em; }
+.s10-pulse { fill: var(--c-now); opacity: 0; filter: drop-shadow(0 0 6px var(--c-now)); }
+
+/* difficulty icons inside the brick */
+.s10-dif-t { font-size: 23px; fill: var(--ink); text-anchor: middle; }
+.s10-dif-t .sub { font-size: 19px; }
+.s10-nlp { font-family: var(--font-head); font-size: 30px; font-weight: 700; fill: var(--ink); }
+.s10-nlp-a { fill: var(--c-bad); }
+.s10-dif-sep { stroke: color-mix(in srgb, var(--c-now) 45%, transparent); stroke-width: 2; }
+
+/* the question */
+.s10-q-bar { fill: var(--c-now); }
+.s10-q { font-size: 36px; fill: var(--ink); }
+.s10-q-b { font-weight: 700; fill: var(--c-now); }

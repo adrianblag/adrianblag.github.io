@@ -186,11 +186,21 @@ type: "Keynote"
 date: 2026-05-18
 abstract: "One or two sentences."   # optional
 image: "./sigdial.jpg"              # optional; the photo, next to this file
+slides: "/slides/sigdial-2026/index.html"  # optional; the "Slides" button
 links:
-  - { label: "Slides", url: "https://…" }
   - { label: "Video", url: "https://…" }
 ---
 ```
+
+**Slides.** Put the deck under `public/slides/` — an HTML presentation as a
+folder with its `index.html` (`public/slides/sigdial-2026/`), or a PDF
+(`public/slides/sigdial-2026.pdf`) — and point `slides:` at it. For a
+folder, link the `index.html` itself: GitHub Pages would also serve the bare
+folder URL, but `npm run dev` does not. The talks page shows a **Slides**
+button that opens it in a new tab, and the talk's title links there too. `slides:` also takes any URL. Files in `public/` are
+published exactly as they are, so strip speaker notes and anything private
+first; `public/slides/phday-eio-2026/` is an example of a cleaned reveal.js
+deck.
 
 Put the photo next to the talk's Markdown file and point `image:` at it with
 `./`. It is resized and converted to WebP at build time, and a wrong path

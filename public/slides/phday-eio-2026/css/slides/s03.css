@@ -1,0 +1,28 @@
+/* S3 — Regulation as optimal control */
+.s03-row { align-items: center; padding-bottom: 36px; }           /* centre the content block in the free area */
+.s03-path svg { overflow: visible; }
+.s03-edges line { stroke: var(--ink-3); stroke-width: 3; stroke-linecap: round; }
+.s03-arrhead { fill: var(--ink-3); }
+.s03-nodes circle { fill: var(--surface-2); stroke: var(--c-mech); stroke-width: 2.5; }
+.s03-nodes circle.obs { stroke: var(--c-y); stroke-width: 3.5; filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-y) 55%, transparent)); }
+.s03-nodes text { fill: var(--ink); font-size: 26px; text-anchor: middle; font-weight: 600; }
+.s03-enz rect { fill: color-mix(in srgb, var(--c-learn) 16%, transparent); stroke: var(--c-learn); stroke-width: 2; }
+.s03-enz text { fill: var(--c-learn); font-size: 22px; text-anchor: middle; font-weight: 600; }
+.s03-eye path { fill: none; stroke: var(--c-y); stroke-width: 3; }
+.s03-eye circle { fill: var(--c-y); }
+.s03-eq .katex-display { margin: 0.1em 0; }
+.s03-eq .katex { font-size: 1.26em; }
+.s03-legend { margin-top: -6px; }
+.s03-inst { display: flex; align-items: center; gap: 22px; flex-wrap: wrap; color: var(--ink-3); }
+.s03-inst .katex { font-size: 1.05em; color: var(--ink-2); }
+.s03-but { font-size: 36px; margin-top: 8px; }
+/* step 3: the integrand L itself turns into a red "?" (same box and baseline: never read as a superscript, L^?) */
+.s03-L { position: relative; display: inline-block; transition: color .4s ease; }
+.s03-L::after {
+  content: "?"; position: absolute; left: 0; right: 0; top: 0; text-align: center;
+  font-family: KaTeX_Main, "Times New Roman", serif; font-style: normal; font-size: 1em; color: var(--c-bad);
+  opacity: 0; transition: opacity .4s ease;
+}
+section.s03-unknown .s03-L { color: transparent; }
+section.s03-unknown .s03-L::after { opacity: 1; }
+section.deck-instant .s03-L::after { transition: none; }

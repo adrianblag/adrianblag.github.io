@@ -1,0 +1,88 @@
+/* B3 — Non-identifiability in IOC: the mechanisms (backup).
+   Colours follow the deck code: w inverse purple (--c-inv), u orange (--c-learn), x blue (--c-mech);
+   the constraint-driven arc is highlighted in amber (--c-warn, "attention"). */
+
+section[data-module="b3"] h2.title { margin-bottom: 24px; }
+
+.b3-rows { display: flex; flex-direction: column; gap: 18px; }
+.b3-row {
+  display: grid; grid-template-columns: 50px 1fr 460px; gap: 26px; align-items: center;
+  padding: 14px 26px 14px 22px; border-radius: 18px;
+  background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
+}
+.b3-num {
+  width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 24px; font-weight: 600; color: var(--c-inv);
+  border: 2px solid color-mix(in srgb, var(--c-inv) 70%, transparent);
+  background: color-mix(in srgb, var(--c-inv) 10%, transparent);
+}
+.b3-main { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.b3-h { font-family: var(--font-head); font-size: 30px; font-weight: 600; color: var(--ink); letter-spacing: -0.005em; }
+.b3-f { font-size: 28px; color: var(--ink-2); line-height: 1.35; }
+.b3-f .katex { font-size: 1.12em; color: var(--ink); }
+.b3-disp .katex-display { margin: 0.05em 0 0.1em 0; }
+.b3-disp .katex { font-size: 1.04em; }
+.b3-then { color: var(--ink-3); margin: 0 6px; }
+.b3-sub { font-size: 23px; color: var(--ink-3); line-height: 1.3; max-width: 940px; }
+.b3-sub .katex { font-size: 1.04em; color: var(--ink-2); }
+.b3-lin { font-size: 27px; color: var(--ink-2); }
+.b3-lin .katex { font-size: 1.06em; color: var(--ink); }
+.b3-act { font-size: 27px; color: var(--ink-2); line-height: 1.35; margin-top: 4px; }
+.b3-act b { color: var(--ink); }
+.b3-act .katex { font-size: 1.06em; }
+.b3-sw {
+  display: inline-block; width: 30px; height: 10px; border-radius: 5px; margin-right: 12px; vertical-align: 0.2em;
+  background: color-mix(in srgb, var(--c-warn) 70%, transparent);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--c-warn) 55%, transparent);
+}
+
+/* ---------- glyphs ---------- */
+.b3-g { display: block; overflow: visible; justify-self: end; }
+.b3-ax { stroke: var(--ink-3); stroke-width: 1.6; }
+.b3-axhead { fill: var(--ink-3); }
+.b3-t { fill: var(--ink-2); font-size: 22px; }
+.b3-t.it { font-style: italic; }
+.b3-t.inv { fill: var(--c-inv); }
+.b3-t.u { fill: var(--c-learn); }
+.b3-t.mut { fill: var(--ink-3); font-size: 20px; }
+.b3-t.warn { fill: var(--c-warn); font-size: 22px; font-weight: 600; }
+:root[data-theme="light"] .b3-t.warn { fill: color-mix(in srgb, var(--c-warn) 65%, var(--ink)); }   /* amber text on white needs more contrast */
+.b3-t .sub { font-size: 19px; }
+.b3-t.b3-umax { font-size: 24px; }                 /* u_max: italic orange u (as the axis), smaller "max" subscript */
+.b3-umax .it { font-style: italic; }
+.b3-umax .u { fill: var(--c-learn); }
+
+/* 1 · scaling */
+.b3-bowl { fill: none; stroke: var(--ink-2); stroke-width: 2.5; stroke-linecap: round; }
+.b3-bowl.c { stroke: var(--c-inv); }
+.b3-ustar { stroke: var(--c-learn); stroke-width: 2; stroke-dasharray: 3 5; }
+.b3-udot { fill: var(--c-learn); }
+.b3-then-g { fill: var(--ink-3); font-size: 30px; }
+.b3-simp { fill: color-mix(in srgb, var(--c-inv) 12%, transparent); stroke: var(--c-inv); stroke-width: 2; stroke-linejoin: round; }
+.b3-wdot { fill: var(--c-inv); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c-inv) 60%, transparent)); }
+
+/* 2 · equivalent functionals */
+.b3-path { fill: none; stroke: var(--c-mech); stroke-width: 3; stroke-linecap: round; }
+.b3-p2 { stroke-dasharray: 2 8; opacity: 0.75; }
+.b3-ring { fill: none; stroke: var(--c-inv); stroke-width: 2.5; }
+.b3-end { fill: var(--c-mech); }
+
+/* 3 · constraint-driven arc */
+.b3-bound { stroke: var(--ink-3); stroke-width: 1.6; stroke-dasharray: 6 6; }
+.b3-band {
+  stroke: color-mix(in srgb, var(--c-warn) 45%, transparent); stroke-width: 18; stroke-linecap: round;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-warn) 55%, transparent));
+}
+.b3-traj { fill: none; stroke: var(--c-learn); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* ---------- footer: context chain + disclaimer ---------- */
+.b3-foot { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-top: 26px; }
+.b3-ctx { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; font-size: 22px; color: var(--ink-3); }
+.b3-ctxl { margin-right: 6px; }
+.b3-c { padding: 3px 12px; border-radius: 999px; border: 1px solid var(--line-2); color: var(--ink-2); background: var(--surface-2); }
+.b3-c.on { color: var(--ink); border-color: var(--c-inv); background: color-mix(in srgb, var(--c-inv) 14%, transparent); }
+.b3-ca { color: var(--ink-3); }
+.b3-std {
+  flex: none; font-size: 22px; font-style: italic; color: var(--ink-2);
+  padding: 4px 16px; border-radius: 999px; border: 1px dashed var(--line-2);
+}

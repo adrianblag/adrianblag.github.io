@@ -1,0 +1,122 @@
+/* S11 — Discretise, then optimise */
+.s11-top { display: flex; gap: 44px; align-items: flex-start; height: 380px; }
+
+/* ---- left: u(t) -> PWC (+ PWL inset) ---- */
+.s11-u { width: 490px; flex: 0 0 490px; display: flex; flex-direction: column; }
+.s11-usvg { overflow: visible; display: block; }
+.s11-ucap { position: relative; height: 40px; margin-top: 4px; }
+.s11-ucap > span { position: absolute; left: 56px; top: 0; font-size: 25px; color: var(--ink-2); white-space: nowrap; }
+.s11-ucap .katex { font-size: 1.04em; }
+.s11-ax { stroke: var(--line-2); stroke-width: 2; fill: none; }
+.s11-axt { font-size: 22px; fill: var(--ink-3); }
+.s11-axu { font-size: 26px; fill: var(--c-learn); font-style: italic; font-weight: 600; }
+.s11-grid { stroke: var(--grid); stroke-width: 1.5; }
+.s11-grid.k { stroke: var(--line-2); stroke-dasharray: 3 6; }
+.s11-ughost { fill: none; stroke: var(--c-learn); stroke-width: 2; stroke-dasharray: 5 6; opacity: 0; }
+.s11-ucurve { fill: none; stroke: var(--c-learn); stroke-width: 4; stroke-linejoin: round; stroke-linecap: round;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-learn) 45%, transparent)); }
+.s11-inset-bg { fill: var(--surface); stroke: var(--line-2); stroke-width: 1.4; }
+.s11-inset-ghost { fill: none; stroke: var(--c-learn); stroke-width: 1.5; stroke-dasharray: 4 5; opacity: .45; }
+.s11-inset-pwl { fill: none; stroke: var(--c-learn); stroke-width: 3; stroke-linejoin: round; }
+.s11-inset-dot { fill: var(--surface); stroke: var(--c-learn); stroke-width: 2; }
+.s11-inset-t { font-size: 21px; fill: var(--ink-2); font-weight: 600; letter-spacing: .04em; }
+
+/* ---- right: three transcription panels ---- */
+.s11-panels { flex: 1 1 0; min-width: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+.s11-card {
+  position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+  padding: 16px 20px 14px 20px; box-shadow: var(--shadow); height: 370px; box-sizing: border-box;
+}
+.s11-card:nth-child(2).is-on { transition-delay: .18s; }
+.s11-card:nth-child(3).is-on { transition-delay: .36s; }
+.s11-h { font-size: 28px; color: var(--ink); line-height: 1.2; white-space: nowrap; }
+.s11-h b { font-family: var(--font-head); font-weight: 600; }
+.s11-hs { font-size: 22px; color: var(--ink-3); }
+.s11-mini { display: block; width: 100%; height: auto; margin: 8px 0 6px 0; overflow: visible; }
+.s11-d { font-size: 24px; color: var(--ink-2); line-height: 1.3; }
+.s11-d .katex { font-size: 1.2em; }
+.s11-eq { margin-top: 4px; font-size: 25px; color: var(--ink); }
+.s11-eq .katex { font-size: 1.16em; }
+.s11-later { border-style: dashed; border-color: var(--line-2); background: transparent; box-shadow: none; }
+.s11-dim { opacity: .72; filter: grayscale(1); }
+.s11-tag {
+  position: absolute; right: 16px; bottom: 16px; font-size: 22px; color: var(--c-now); font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--c-now) 60%, transparent); border-radius: 999px; padding: 2px 12px;
+  background: color-mix(in srgb, var(--c-now) 10%, transparent);
+}
+/* mini-panel marks: state x (blue), control u (orange) */
+.s11-m-ax { stroke: var(--line-2); stroke-width: 1.6; }
+.s11-m-grid { stroke: var(--grid); stroke-width: 1.4; }
+.s11-m-lab { font-size: 21px; font-style: italic; font-weight: 600; }
+.s11-m-lab.x { fill: var(--c-mech); }
+.s11-m-lab.u { fill: var(--c-learn); }
+.s11-m-u { fill: none; stroke: var(--c-learn); stroke-width: 2.5; stroke-linejoin: round; }
+.s11-m-x { fill: none; stroke: var(--c-mech); stroke-width: 3; stroke-linecap: round; }
+.s11-m-x0 { fill: var(--c-mech); filter: drop-shadow(0 0 6px color-mix(in srgb, var(--c-mech) 60%, transparent)); }
+.s11-m-node { fill: var(--surface); stroke: var(--c-mech); stroke-width: 2.5; }
+.s11-m-gap { stroke: var(--c-warn); stroke-width: 3.5; stroke-linecap: round; filter: drop-shadow(0 0 5px color-mix(in srgb, var(--c-warn) 60%, transparent)); }
+.s11-m-tf { stroke: var(--c-learn); stroke-width: 2; stroke-dasharray: 4 4; }
+.s11-m-t { font-size: 20px; fill: var(--ink-2); }
+.s11-m-cdot { fill: var(--surface); stroke: var(--c-mech); stroke-width: 2; }
+.s11-m-udot { fill: var(--surface); stroke: var(--c-learn); stroke-width: 2; }
+.s11-m-poly { fill: none; stroke: var(--c-mech); stroke-width: 1.4; opacity: .6; }
+
+/* ---- bottom: pipelines (grid: label | derivatives | integrator | NLP solver) ---- */
+.s11-pipes { --lab: 500px; --lead: 30px; --cols: 400px 290px 250px; --cgap: 46px;
+  margin-top: 26px; display: flex; flex-direction: column; gap: 18px; }
+.s11-pipes-h { display: flex; align-items: baseline; font-size: 23px; color: var(--ink-3); letter-spacing: .02em; }
+.s11-ph-l { flex: 0 0 calc(var(--lab) + var(--lead)); white-space: nowrap; }
+.s11-pipes-h b { color: var(--ink-2); font-weight: 600; }
+.s11-cols { display: grid; grid-template-columns: var(--cols); column-gap: var(--cgap); }
+.s11-cols > span { font-size: 21px; color: var(--ink-3); letter-spacing: .08em; text-transform: uppercase; padding-left: 4px; }
+.s11-pipe { display: flex; align-items: center; height: 72px; }
+.s11-p1 { height: 80px; }
+.s11-p2.is-on { transition-delay: .25s; }
+.s11-p3.is-on { transition-delay: .5s; }
+.s11-pl { flex: 0 0 var(--lab); display: flex; flex-direction: column; justify-content: center; }
+.s11-pn { font-size: 27px; color: var(--ink); white-space: nowrap; display: flex; align-items: center; }
+.s11-pn b { font-weight: 650; }
+.s11-mk { display: inline-block; width: 20px; height: 20px; margin-right: 12px; flex: 0 0 auto; }
+.s11-mk.sq { background: var(--m-cvp); border-radius: 3px; }
+.s11-mk.ci { background: var(--m-ms); border-radius: 50%; }
+.s11-mk.tr { background: var(--m-acados); clip-path: polygon(50% 0, 100% 100%, 0 100%); width: 22px; }
+.s11-mk.di { width: 18px; height: 18px; border: 3px solid var(--m-fd); transform: rotate(45deg); margin: 0 15px 0 4px; box-sizing: border-box; }
+.s11-track { position: relative; margin-left: var(--lead); display: grid; grid-template-columns: var(--cols); column-gap: var(--cgap);
+  align-items: center; justify-items: start; }
+.s11-line {
+  position: absolute; left: -30px; right: -40px; top: 50%; height: 3px; margin-top: -1.5px; border-radius: 2px;
+  transform: scaleX(0); transform-origin: 0 50%; transition: transform 1.0s cubic-bezier(.45,0,.2,1);
+}
+.s11-line.cvp { background: var(--m-cvp); margin-top: -5px; }
+.s11-line.ms { background: var(--m-ms); margin-top: 2px; }
+.s11-line.fd { background: var(--m-fd); }
+.s11-line.acados { background: var(--m-acados); }
+.s11-line::after {   /* flow arrowhead at the end of each line */
+  content: ""; position: absolute; right: -2px; top: 50%; width: 0; height: 0; margin-top: -7px;
+  border-left: 12px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+}
+.s11-line.cvp::after { color: var(--m-cvp); } .s11-line.ms::after { color: var(--m-ms); }
+.s11-line.fd::after { color: var(--m-fd); } .s11-line.acados::after { color: var(--m-acados); }
+.s11-pipe.is-on .s11-line { transform: scaleX(1); }
+.s11-p2.is-on .s11-line { transition-delay: .25s; }
+.s11-p3.is-on .s11-line { transition-delay: .5s; }
+.s11-chip {
+  position: relative; z-index: 1; font-size: 25px; color: var(--ink); white-space: nowrap;
+  background: var(--surface); border: 1.5px solid var(--pc, var(--line-2)); border-radius: 12px; padding: 8px 18px;
+  box-shadow: 0 0 14px color-mix(in srgb, var(--pc, transparent) 22%, transparent);
+  opacity: 0; transform: translateY(8px); transition: opacity .45s ease, transform .5s cubic-bezier(.2,.8,.2,1);
+}
+.s11-chip2 { display: flex; flex-direction: column; line-height: 1.15; padding: 6px 18px 7px 18px; }
+.s11-c2 { grid-column: 2; }
+.s11-pipe.is-on .s11-chip { opacity: 1; transform: none; }
+.s11-pipe.is-on .s11-chip:nth-of-type(1) { transition-delay: calc(var(--d0) + .25s); }
+.s11-pipe.is-on .s11-chip:nth-of-type(2) { transition-delay: calc(var(--d0) + .5s); }
+.s11-pipe.is-on .s11-chip:nth-of-type(3) { transition-delay: calc(var(--d0) + .75s); }
+.s11-p1 { --d0: 0s; --pc: color-mix(in srgb, var(--m-cvp) 50%, var(--m-ms)); }
+.s11-p2 { --d0: .25s; --pc: var(--m-fd); }
+.s11-p3 { --d0: .5s; --pc: var(--m-acados); }
+.s11-cs { color: var(--ink-3); font-size: 21px; }
+.s11-note { font-size: 22px; color: var(--ink-3); font-style: italic; white-space: nowrap; margin: 2px 0 0 34px;
+  opacity: 0; transition: opacity .45s ease; }
+.s11-pipe.is-on .s11-note { opacity: 1; transition-delay: 1.0s; }
+section.deck-instant .s11-line, section.deck-instant .s11-chip, section.deck-instant .s11-note { transition: none !important; }

@@ -1,0 +1,89 @@
+/* S15 — Where do the starts end? Rain plot of the SC final objectives (CasADi CVP) */
+.s15-stage { position: relative; }
+.s15-svg { position: absolute; left: 0; top: 0; width: 1700px; height: 748px; overflow: visible; }
+.s15-svg text { font-family: var(--font-text); }
+
+/* ---------- inset: the four other problems (step 0) ---------- */
+.s15-inset {
+  position: absolute; left: 0; top: 0; width: 820px; height: 138px; box-sizing: border-box;
+  display: flex; align-items: center; gap: 26px; padding: 0 26px 0 28px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 20px;
+  box-shadow: var(--shadow); will-change: transform;
+}
+.s15-inset-txt { flex: 1 1 auto; min-width: 0; }
+.s15-inset-h { font-family: var(--font-head); font-size: 30px; font-weight: 600; color: var(--ink); line-height: 1.15; }
+.s15-inset-s { font-size: 22px; color: var(--ink-2); line-height: 1.3; margin-top: 4px; }
+.s15-inset-s sup { font-size: 0.9em; vertical-align: 0.45em; line-height: 0; }
+.s15-inset-s i { font-style: italic; }
+.s15-inset-r { font-size: 23px; color: var(--ink-2); margin-top: 2px; }
+.s15-spikes { flex: 0 0 auto; display: block; overflow: visible; }
+.s15-mini-base { stroke: var(--line-2); stroke-width: 2; }
+.s15-mini-tick { stroke: var(--line-2); stroke-width: 1.5; }
+.s15-spike { fill: var(--c-now); filter: drop-shadow(0 0 7px color-mix(in srgb, var(--c-now) 60%, transparent)); }
+.s15-mini-lab { font-size: 20px; fill: var(--ink-2); text-anchor: middle; font-weight: 600; }
+
+/* ---------- SC statement (step 1) ---------- */
+.s15-sc { position: absolute; left: 872px; top: 6px; width: 828px; border-left: 4px solid var(--b-now); padding: 6px 0 8px 24px; }
+.s15-sc-h { font-family: var(--font-head); font-size: 20px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-3); }
+.s15-sc-t { font-size: 32px; color: var(--ink); line-height: 1.25; margin-top: 8px; }
+.s15-sc-t q { quotes: "\201C" "\201D"; font-weight: 650; }
+
+/* ---------- take-home (step 2, after the zoom has opened) ---------- */
+.s15-take {
+  position: absolute; left: 1206px; top: 626px; width: 494px; box-sizing: border-box;
+  font-size: 28px; line-height: 1.25; color: var(--ink);
+  border-left: 4px solid var(--c-warn); padding: 6px 0 6px 22px;
+}
+.s15-take.is-on { transition-delay: 5.6s; }
+
+/* ---------- main chart ---------- */
+.s15-axis line.s15-tick { stroke: var(--line-2); stroke-width: 1.5; }
+.s15-axis line.s15-vgrid { stroke: var(--grid); stroke-width: 1.5; }
+.s15-axis line.s15-axline { stroke: var(--line-2); stroke-width: 1.5; }
+.s15-axis text { font-size: 20px; fill: var(--ink-3); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.s15-axis text.s15-axt { font-size: 22px; fill: var(--ink-2); }
+.s15-axis text.s15-axt .s15-em { fill: var(--ink); font-weight: 600; }
+.s15-axis text.s15-axt .s15-sub { font-size: 19px; }
+.s15-lanebase { stroke: var(--line-2); stroke-width: 1.5; }
+.s15-lane-name { font-size: 27px; font-weight: 650; fill: var(--ink); text-anchor: end; }
+.s15-lane-sub { font-size: 21px; fill: var(--ink-2); text-anchor: end; font-variant-numeric: tabular-nums; }
+.s15-lane-sub tspan.s15-n { fill: var(--ink); font-weight: 650; }
+
+.s15-bar { fill: var(--m-cvp); }
+.s15-drop { fill: var(--m-cvp); }
+.s15-rug { stroke: var(--m-cvp); stroke-width: 1.3; opacity: 0.6; }
+
+/* best PWC start: ring + label */
+.s15-best-dot { fill: var(--m-cvp); stroke: var(--bg); stroke-width: 2; }
+.s15-ring { fill: none; stroke: var(--c-warn); stroke-width: 3.5; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-warn) 60%, transparent)); }
+.s15-ring-ln { fill: none; stroke: var(--c-warn); stroke-width: 2; }
+.s15-ring-t1 { font-size: 27px; font-weight: 700; fill: var(--ink); }
+.s15-ring-t2 { font-size: 21px; fill: var(--ink-2); }
+
+/* spread bracket under the PWC lane */
+.s15-br { fill: none; stroke: var(--ink-3); stroke-width: 2; }
+.s15-br-t { font-size: 22px; fill: var(--ink-2); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.s15-br-t .s15-v { fill: var(--ink); font-weight: 650; }
+
+/* best-J lines + "+1.25 %" */
+.s15-bestln { stroke: var(--ink-2); stroke-width: 2; stroke-dasharray: 7 7; fill: none; }
+.s15-bestv { font-size: 22px; fill: var(--ink); font-weight: 650; text-anchor: middle; font-variant-numeric: tabular-nums; }
+.s15-gain { fill: none; stroke: var(--c-warn); stroke-width: 3.5; stroke-linecap: round;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-warn) 50%, transparent)); }
+.s15-gain-h { fill: var(--c-warn); }
+.s15-gain-pill rect { fill: var(--surface-2); stroke: var(--c-warn); stroke-width: 2; }
+.s15-gain-pill text { font-size: 27px; font-weight: 700; fill: var(--ink); text-anchor: middle; font-variant-numeric: tabular-nums; }
+
+/* lens + zoom panel */
+.s15-lens { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-dasharray: 5 5; }
+.s15-lens-ln { fill: none; stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 5; }
+.s15-zpanel { fill: var(--surface); stroke: var(--line-2); stroke-width: 1.5; }
+.s15-z-title { font-size: 21px; fill: var(--ink-2); }
+.s15-z-title .s15-em { fill: var(--ink); font-weight: 650; }
+.s15-z-ann1 { font-size: 27px; font-weight: 700; fill: var(--ink); }
+.s15-z-ann2 { font-size: 22px; fill: var(--ink-2); font-variant-numeric: tabular-nums; }
+.s15-z-ann2 .s15-v { fill: var(--ink); font-weight: 650; }
+.s15-band { fill: color-mix(in srgb, var(--c-warn) 22%, transparent); stroke: var(--c-warn); stroke-width: 1.5; stroke-dasharray: 4 5; }
+.s15-band-ln { fill: none; stroke: var(--c-warn); stroke-width: 2; }
+.s15-zbar { fill: var(--m-cvp); }
+.s15-zbase { stroke: var(--line-2); stroke-width: 1.5; }

@@ -1,0 +1,1569 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-style="journal">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OC, RL and Inverse Inference — PhDay-EIO 2026</title>
+<meta name="description" content="Slides: Optimal control, reinforcement learning and inverse inference for biological dynamical systems. Adrián Blanco Aguiar, VI PhDay-EIO, Vigo, 23 October 2026.">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+
+<link rel="stylesheet" href="vendor/reveal/reset.css">
+<link rel="stylesheet" href="vendor/reveal/reveal.css">
+<link rel="stylesheet" href="vendor/katex/katex.min.css">
+<link rel="stylesheet" href="css/theme.css">
+
+
+<link rel="stylesheet" href="css/styles/journal.css">
+
+
+<link rel="stylesheet" href="css/slides/b0.css">
+<link rel="stylesheet" href="css/slides/b1.css">
+<link rel="stylesheet" href="css/slides/b2.css">
+<link rel="stylesheet" href="css/slides/b3.css">
+<link rel="stylesheet" href="css/slides/b4.css">
+<link rel="stylesheet" href="css/slides/s01.css">
+<link rel="stylesheet" href="css/slides/s01a.css">
+<link rel="stylesheet" href="css/slides/s01b.css">
+<link rel="stylesheet" href="css/slides/s02.css">
+<link rel="stylesheet" href="css/slides/s03.css">
+<link rel="stylesheet" href="css/slides/s04.css">
+<link rel="stylesheet" href="css/slides/s05.css">
+<link rel="stylesheet" href="css/slides/s06.css">
+<link rel="stylesheet" href="css/slides/s07.css">
+<link rel="stylesheet" href="css/slides/s08.css">
+<link rel="stylesheet" href="css/slides/s09.css">
+<link rel="stylesheet" href="css/slides/s10.css">
+<link rel="stylesheet" href="css/slides/s11.css">
+<link rel="stylesheet" href="css/slides/s13.css">
+<link rel="stylesheet" href="css/slides/s14.css">
+<link rel="stylesheet" href="css/slides/s15.css">
+<link rel="stylesheet" href="css/slides/s16.css">
+<link rel="stylesheet" href="css/slides/s17.css">
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+
+<section data-block="intro" data-module="s01" data-hud="none">
+<div class="frame s01-frame">
+  
+  <svg class="s01-bg" viewBox="0 0 1920 1080" aria-hidden="true"></svg>
+
+  
+  <div class="s01-plate s01-plate-l"><img class="s01-phday" src="assets/logos/phday.png" alt="VI PhDay-EIO"></div>
+  <div class="s01-plate s01-plate-r">
+    <img class="s01-csic" src="assets/logos/csic.svg" alt="CSIC">
+    <span class="s01-sep"></span>
+    <img class="s01-mbg" src="assets/logos/mbg.png" alt="Misión Biológica de Galicia (MBG-CSIC)">
+  </div>
+
+  <div class="s01-main">
+    <h1 class="s01-title"><span class="s01-k s01-k-oc">Optimal Control</span>, <span class="s01-k s01-k-rl">Reinforcement Learning</span><br>and <span class="s01-k s01-k-inv">Inverse Inference</span> for<br>Biological Dynamical Systems</h1>
+    <p class="s01-sub">What cells do, why they do it, and how to infer it from data</p>
+    <div class="s01-rule"></div>
+    <p class="s01-author"><b>Adrián Blanco Aguiar</b><span class="s01-dot">·</span><span class="s01-sup">Supervisor: Julio R. Banga</span></p>
+    <p class="s01-aff">Computational Biology Lab, Misión Biolóxica de Galicia (MBG-CSIC), Pontevedra</p>
+    <p class="s01-event"><span class="s01-pin"></span>VI PhDay-EIO · Vigo · 23 October 2026</p>
+  </div>
+
+  
+  <div class="s01-foot">
+    <div class="s01-fplate"><img src="assets/logos/funding_miciu_aei_eu.png" alt="Ministerio de Ciencia, Innovación y Universidades · Cofinanciado por la Unión Europea · Agencia Estatal de Investigación"></div>
+    <p class="s01-ftext">Project DYNAMO-bio (PID2023-146275NB-C22) funded by MICIU/AEI/10.13039/501100011033 and ERDF/EU</p>
+  </div>
+</div>
+</section>
+
+
+<section data-block="intro" data-module="s01a" data-hud="progress" data-steps="3"><div class="hud" aria-hidden="true"><div class="hud-progress"><div class="seg cur" data-seg="intro"><i></i><span>Intro</span></div><div class="seg" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Intro · Optimality</div>
+  <h2 class="title">Why do bees build hexagons?</h2>
+
+  
+  <svg class="s01a-scene" viewBox="0 0 1920 1080" aria-label="Honey bees building a hexagonal honeycomb">
+    <defs>
+      <radialGradient id="s01a-g-honey" cx="42%" cy="38%" r="70%">
+        <stop offset="0" class="s01a-st-h0"/>
+        <stop offset="0.55" class="s01a-st-h1"/>
+        <stop offset="1" class="s01a-st-h2"/>
+      </radialGradient>
+      <radialGradient id="s01a-g-cap" cx="40%" cy="35%" r="75%">
+        <stop offset="0" class="s01a-st-c0"/>
+        <stop offset="1" class="s01a-st-c1"/>
+      </radialGradient>
+      <radialGradient id="s01a-g-wing" cx="30%" cy="50%" r="80%">
+        <stop offset="0" class="s01a-st-w0"/>
+        <stop offset="1" class="s01a-st-w1"/>
+      </radialGradient>
+      <clipPath id="s01a-clip-abd" clipPathUnits="userSpaceOnUse"><ellipse cx="-24" cy="0" rx="31" ry="19.5"/></clipPath>
+    </defs>
+    <g class="s01a-comb">
+      <g class="s01a-cells"></g>
+      <g class="s01a-shadows"></g>
+      <g class="s01a-bees"></g>
+    </g>
+  </svg>
+  <div class="s01a-caption">most honey · least wax?</div>
+
+  
+  <div class="s01a-race" data-step="1">
+    <div class="s01a-race-h">Most honey, least wax</div>
+    <div class="s01a-race-sub">wall length per cell of unit area · shorter = less wax</div>
+    <svg class="s01a-race-svg" viewBox="0 0 750 340" aria-label="Wall length for unit area: triangle 4.56, square 4.00, hexagon 3.72"></svg>
+  </div>
+
+  
+  <div class="s01a-tl" data-step="2" data-anim="fade">
+    <svg class="s01a-tl-svg" viewBox="0 0 750 136" aria-label="Timeline: Varro conjecture, Darwin adaptation, Hales proof">
+      <line class="s01a-tl-line" x1="40" y1="66" x2="712" y2="66"/>
+      <path class="s01a-tl-arrow" d="M700,56 L714,66 L700,76"/>
+      <g class="s01a-tl-node" data-i="0"><g transform="translate(118 66)">
+        <text class="s01a-tl-who" y="-26"><tspan class="s01a-b">Varro</tspan> · 1st c. BC</text>
+        <circle class="s01a-tl-dot" r="10"/>
+        <text class="s01a-tl-what" y="50">conjecture</text>
+      </g></g>
+      <g class="s01a-tl-node" data-i="1"><g transform="translate(376 66)">
+        <text class="s01a-tl-who" y="-26"><tspan class="s01a-b">Darwin</tspan> · 1859</text>
+        <circle class="s01a-tl-dot" r="10"/>
+        <text class="s01a-tl-what" y="50">adaptation</text>
+      </g></g>
+      <g class="s01a-tl-node s01a-tl-win" data-i="2"><g transform="translate(624 66)">
+        <text class="s01a-tl-who" y="-26"><tspan class="s01a-b">Hales</tspan> · 1999</text>
+        <path class="s01a-tl-hex" d="M0,-13 L11.26,-6.5 L11.26,6.5 L0,13 L-11.26,6.5 L-11.26,-6.5 Z"/>
+        <text class="s01a-tl-what" y="50">proof</text>
+      </g></g>
+    </svg>
+  </div>
+
+  
+  <div class="s01a-punch" data-step="3">
+    <div class="s01a-hyp"><span class="s01a-k">Hypothesis:</span> evolution shapes living systems to <span class="s01a-opt">optimise a criterion<svg class="s01a-ul" viewBox="0 0 400 14" preserveAspectRatio="none" aria-hidden="true"><path d="M2,9 C90,3 210,13 398,5"/></svg></span></div>
+    <div class="s01a-thesis"><span class="s01a-k2">This thesis:</span> biological regulation as an optimal-control problem</div>
+  </div>
+
+  <div class="cite s01a-cite" data-step="1" data-anim="fade">Banga &amp; Sager 2025 · Hales 2001</div>
+</div>
+</section>
+
+
+<section data-block="intro" data-module="s01b" data-hud="progress" data-steps="1"><div class="hud" aria-hidden="true"><div class="hud-progress"><div class="seg cur" data-seg="intro"><i></i><span>Intro</span></div><div class="seg" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Intro · Optimality in biology</div>
+  <h2 class="title">Optimality principles at every scale</h2>
+
+  
+  <div class="s01b-stage">
+    <svg class="s01b-axis" viewBox="0 0 40 728" aria-hidden="true">
+      <line class="s01b-axline" x1="20" y1="716" x2="20" y2="474"/>
+      <line class="s01b-axline" x1="20" y1="254" x2="20" y2="16"/>
+      <path class="s01b-arrhead" d="M14.5,19 L20,8 L25.5,19 Z"/>
+      <g transform="translate(27,364) rotate(-90)"><text class="s01b-axlab" x="0" y="0">biological scale</text></g>
+    </svg>
+
+    <ol class="s01b-ladder">
+      <li class="s01b-rung" data-k="0">
+        <svg class="s01b-hex" viewBox="-60 -52 120 104" aria-hidden="true">
+          <path class="s01b-cell" d="M56,0 L28,48.5 L-28,48.5 L-56,0 L-28,-48.5 L28,-48.5 Z"/>
+          <g class="s01b-ico">  
+            <line x1="-6.9" y1="-4" x2="-17.3" y2="-10"/>
+            <line x1="6.9" y1="-4" x2="17.3" y2="-10"/>
+            <line x1="0" y1="8" x2="0" y2="19"/>
+            <circle cx="0" cy="0" r="8"/>
+            <circle cx="-22" cy="-12.7" r="5.5"/>
+            <circle cx="22" cy="-12.7" r="5.5"/>
+            <circle cx="0" cy="24.5" r="5.5"/>
+          </g>
+        </svg>
+        <div class="s01b-name">Molecular</div>
+        <ul class="s01b-ex">
+          <li>Protein folding: native state has the lowest free energy</li>
+          <li>Optimality of the genetic code</li>
+        </ul>
+      </li>
+
+      <li class="s01b-rung s01b-rung-hl" data-k="1">
+        <svg class="s01b-hex" viewBox="-60 -52 120 104" aria-hidden="true">
+          <path class="s01b-cell" d="M56,0 L28,48.5 L-28,48.5 L-56,0 L-28,-48.5 L28,-48.5 Z"/>
+          <g class="s01b-ico">  
+            <circle cx="-26" cy="12" r="5.5"/>
+            <circle cx="0" cy="12" r="5.5"/>
+            <circle cx="26" cy="12" r="5.5"/>
+            <line x1="-19" y1="12" x2="-8.5" y2="12"/>
+            <line x1="7" y1="12" x2="17.5" y2="12"/>
+            <path d="M-12.5,8 L-8,12 L-12.5,16"/>
+            <path d="M13.5,8 L18,12 L13.5,16"/>
+            <rect x="-21" y="-20" width="16" height="11" rx="3.5"/>
+            <rect x="5" y="-20" width="16" height="11" rx="3.5"/>
+            <line class="s01b-lnk" x1="-13" y1="-8" x2="-13" y2="6"/>
+            <line class="s01b-lnk" x1="13" y1="-8" x2="13" y2="6"/>
+          </g>
+        </svg>
+        <div class="s01b-name">Pathway</div>
+        <ul class="s01b-ex">
+          <li><span class="s01b-mark">Optimal control explains temporal gene expression in simple metabolic pathways</span></li>
+          <li>Flux balance analysis predicts optimal growth in bacteria</li>
+        </ul>
+        <div class="s01b-next"><span class="s01b-next-k">next</span>a metabolic-pathway example</div>
+      </li>
+
+      <li class="s01b-rung" data-k="2">
+        <svg class="s01b-hex" viewBox="-60 -52 120 104" aria-hidden="true">
+          <path class="s01b-cell" d="M56,0 L28,48.5 L-28,48.5 L-56,0 L-28,-48.5 L28,-48.5 Z"/>
+          <g class="s01b-ico">  
+            <rect x="-26" y="-13" width="42" height="26" rx="13"/>
+            <path d="M-15,1 C-11,-7 -7,7 -3,-1 C1,-8 4,6 7,0"/>
+            <path d="M16,0 C21,-6 24,6 29,0 C31,-3 33,-2 34,0"/>
+          </g>
+        </svg>
+        <div class="s01b-name">Cell</div>
+        <ul class="s01b-ex">
+          <li>Optimal control explains dynamic allocation of cellular resources</li>
+          <li>Optimal control for proteome adaptation in bacteria</li>
+        </ul>
+      </li>
+
+      <li class="s01b-rung" data-k="3">
+        <svg class="s01b-hex" viewBox="-60 -52 120 104" aria-hidden="true">
+          <path class="s01b-cell" d="M56,0 L28,48.5 L-28,48.5 L-56,0 L-28,-48.5 L28,-48.5 Z"/>
+          <g class="s01b-ico">  
+            <path class="s01b-w1" d="M0,30 L0,8"/>
+            <path class="s01b-w2" d="M0,8 L-15,-6 M0,8 L15,-6"/>
+            <path class="s01b-w3" d="M-15,-6 L-25,-24 M-15,-6 L-7,-26 M15,-6 L7,-26 M15,-6 L25,-24"/>
+          </g>
+        </svg>
+        <div class="s01b-name">Tissues &amp; organs</div>
+        <ul class="s01b-ex">
+          <li>Optimality in the vascular system</li>
+          <li>Optimal design in compound eyes</li>
+        </ul>
+      </li>
+
+      <li class="s01b-rung" data-k="4">
+        <svg class="s01b-hex" viewBox="-60 -52 120 104" aria-hidden="true">
+          <path class="s01b-cell" d="M56,0 L28,48.5 L-28,48.5 L-56,0 L-28,-48.5 L28,-48.5 Z"/>
+          <g class="s01b-ico">  
+            <circle cx="3" cy="-23" r="6"/>
+            <path d="M2,-15 L-1,6"/>
+            <path d="M1,-11 L-9,-2 M1,-11 L11,-3"/>
+            <path d="M-1,6 L-9,16 L-15,27 M-1,6 L8,15 L11,27"/>
+          </g>
+        </svg>
+        <div class="s01b-name">Organism</div>
+        <ul class="s01b-ex">
+          <li>Optimality in the foraging behaviour of animals</li>
+          <li>Optimality of human gait</li>
+        </ul>
+      </li>
+
+      <li class="s01b-rung" data-k="5">
+        <svg class="s01b-hex" viewBox="-60 -52 120 104" aria-hidden="true">
+          <path class="s01b-cell" d="M56,0 L28,48.5 L-28,48.5 L-56,0 L-28,-48.5 L28,-48.5 Z"/>
+          <g class="s01b-ico">  
+            <circle cx="-19" cy="-6" r="5.5"/>
+            <path d="M-29,15 A10,10 0 0 1 -9,15"/>
+            <circle cx="19" cy="-6" r="5.5"/>
+            <path d="M9,15 A10,10 0 0 1 29,15"/>
+            <circle cx="0" cy="-11" r="7"/>
+            <path d="M-13,20 A13,13 0 0 1 13,20"/>
+          </g>
+        </svg>
+        <div class="s01b-name">Population</div>
+        <ul class="s01b-ex">
+          <li>Optimal sex ratio</li>
+          <li>Optimal allocation of resources in a wasp colony</li>
+        </ul>
+      </li>
+
+      <li class="s01b-rung" data-k="6">
+        <svg class="s01b-hex" viewBox="-60 -52 120 104" aria-hidden="true">
+          <path class="s01b-cell" d="M56,0 L28,48.5 L-28,48.5 L-56,0 L-28,-48.5 L28,-48.5 Z"/>
+          <g class="s01b-ico">  
+            <path d="M-20,20 C-26,-4 -6,-22 20,-24 C22,2 4,20 -20,20 Z"/>
+            <path d="M-20,20 L10,-12 M-8,8 L-8,-4 M0,0 L10,2"/>
+            <circle cx="22" cy="14" r="4"/>
+            <circle cx="12" cy="24" r="3"/>
+            <rect x="24" y="-2" width="10" height="5.5" rx="2.75"/>
+          </g>
+        </svg>
+        <div class="s01b-name">Ecosystem</div>
+        <ul class="s01b-ex">
+          <li>Optimality in microbial consortia</li>
+          <li>Optimal foraging in marine ecosystem models</li>
+        </ul>
+      </li>
+    </ol>
+
+    
+    <svg class="s01b-bee" viewBox="-100 -100 200 200" aria-hidden="true">
+      <defs>
+        <radialGradient id="s01b-g-wing" cx="30%" cy="50%" r="80%">
+          <stop offset="0" class="s01b-st-w0"/>
+          <stop offset="1" class="s01b-st-w1"/>
+        </radialGradient>
+        <clipPath id="s01b-clip-abd" clipPathUnits="userSpaceOnUse"><ellipse cx="-24" cy="0" rx="31" ry="19.5"/></clipPath>
+      </defs>
+      <ellipse class="s01b-shadow" cx="-6" cy="0" rx="50" ry="19"/>
+      <g class="s01b-bee-body">
+        <path class="s01b-leg" d="M12,8 L22,21 M12,-8 L22,-21 M5,10 L5,25 M5,-10 L5,-25 M-1,9 L-15,24 M-1,-9 L-15,-24"/>
+        <path class="s01b-sting" d="M-53,-4 L-63,0 L-53,4 Z"/>
+        <ellipse class="s01b-abd" cx="-24" cy="0" rx="31" ry="19.5"/>
+        <g clip-path="url(#s01b-clip-abd)">
+          <rect class="s01b-stripe" x="-45" y="-22" width="7.5" height="44"/>
+          <rect class="s01b-stripe" x="-33" y="-22" width="7.5" height="44"/>
+          <rect class="s01b-stripe" x="-21" y="-22" width="7.5" height="44"/>
+          <rect class="s01b-stripe" x="-58" y="-22" width="6" height="44"/>
+        </g>
+        <circle class="s01b-thx" cx="6" cy="0" r="14.5"/>
+        <g class="s01b-bant">
+          <path class="s01b-ant" d="M31,-4 Q42,-7 49,-17 M31,4 Q42,7 49,17"/>
+          <circle class="s01b-ant-tip" cx="49.5" cy="-17.5" r="2.4"/>
+          <circle class="s01b-ant-tip" cx="49.5" cy="17.5" r="2.4"/>
+        </g>
+        <circle class="s01b-head" cx="26" cy="0" r="10.5"/>
+        <ellipse class="s01b-eye" cx="27" cy="-6.5" rx="5" ry="3.4"/>
+        <ellipse class="s01b-eye" cx="27" cy="6.5" rx="5" ry="3.4"/>
+        
+        <g transform="translate(3 -6) rotate(-171)"><g class="s01b-wsp" data-d="45"><g class="s01b-wfl s01b-wfl-u s01b-wfl-h">
+          <ellipse class="s01b-wing" cx="19" cy="0" rx="19" ry="7.5"/><path class="s01b-vein" d="M2,0 Q19,-1.88 32.3,1.5"/></g></g></g>
+        <g transform="translate(3 6) rotate(171)"><g class="s01b-wsp" data-d="-45"><g class="s01b-wfl s01b-wfl-l s01b-wfl-h">
+          <ellipse class="s01b-wing" cx="19" cy="0" rx="19" ry="7.5"/><path class="s01b-vein" d="M2,0 Q19,-1.88 32.3,1.5"/></g></g></g>
+        <g transform="translate(9 -7) rotate(-163)"><g class="s01b-wsp" data-d="65"><g class="s01b-wfl s01b-wfl-u">
+          <ellipse class="s01b-wing" cx="28" cy="0" rx="28" ry="10.5"/><path class="s01b-vein" d="M2,0 Q28,-2.63 47.6,2.1"/></g></g></g>
+        <g transform="translate(9 7) rotate(163)"><g class="s01b-wsp" data-d="-65"><g class="s01b-wfl s01b-wfl-l">
+          <ellipse class="s01b-wing" cx="28" cy="0" rx="28" ry="10.5"/><path class="s01b-vein" d="M2,0 Q28,-2.63 47.6,2.1"/></g></g></g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="cite">Banga &amp; Sager 2025, Table 1 (non-exhaustive; ~40 examples)</div>
+</div>
+</section>
+
+
+<section data-block="intro" data-module="s02" data-hud="progress" data-steps="4"><div class="hud" aria-hidden="true"><div class="hud-progress"><div class="seg cur" data-seg="intro"><i></i><span>Intro</span></div><div class="seg" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Intro · Motivation</div>
+  <h2 class="title">Cells switch enzymes on just in time</h2>
+
+  <div class="s02-top">
+    
+    <svg class="s02-path" viewBox="0 0 760 500" aria-label="Linear pathway S1 to S4 catalysed by enzymes e1, e2, e3, with an enzyme budget">
+      <defs>
+        <marker id="s02-arr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" class="s02-arrhead"/>
+        </marker>
+        <clipPath id="s02-clip-tank"><rect x="16" y="110" width="130" height="160" rx="20"/></clipPath>
+        <clipPath id="s02-clip-n2"><circle cx="306" cy="190" r="52"/></clipPath>
+        <clipPath id="s02-clip-n3"><circle cx="496" cy="190" r="52"/></clipPath>
+        <clipPath id="s02-clip-n4"><circle cx="686" cy="190" r="52"/></clipPath>
+        <clipPath id="s02-clip-gauge"><rect x="16" y="392" width="544" height="44" rx="12"/></clipPath>
+      </defs>
+
+      
+      <g class="s02-edges">
+        <line class="s02-draw" x1="158" y1="190" x2="244" y2="190" marker-end="url(#s02-arr)"/>
+        <line class="s02-draw" x1="368" y1="190" x2="434" y2="190" marker-end="url(#s02-arr)"/>
+        <line class="s02-draw" x1="558" y1="190" x2="624" y2="190" marker-end="url(#s02-arr)"/>
+      </g>
+      
+      <g class="s02-flows">
+        <line class="s02-flow" data-e="1" x1="158" y1="190" x2="236" y2="190"/>
+        <line class="s02-flow" data-e="2" x1="368" y1="190" x2="426" y2="190"/>
+        <line class="s02-flow" data-e="3" x1="558" y1="190" x2="616" y2="190"/>
+      </g>
+
+      
+      <g class="s02-enz" data-e="1">
+        <line class="s02-link" x1="201" y1="124" x2="201" y2="180"/>
+        <rect class="s02-draw" x="159" y="72" width="84" height="50" rx="14"/>
+        <text x="201" y="106">e₁</text>
+      </g>
+      <g class="s02-enz" data-e="2">
+        <line class="s02-link" x1="401" y1="124" x2="401" y2="180"/>
+        <rect class="s02-draw" x="359" y="72" width="84" height="50" rx="14"/>
+        <text x="401" y="106">e₂</text>
+      </g>
+      <g class="s02-enz" data-e="3">
+        <line class="s02-link" x1="591" y1="124" x2="591" y2="180"/>
+        <rect class="s02-draw" x="549" y="72" width="84" height="50" rx="14"/>
+        <text x="591" y="106">e₃</text>
+      </g>
+
+      
+      <g class="s02-tank">
+        <g clip-path="url(#s02-clip-tank)">
+          <rect class="s02-liq" x="16" y="152" width="130" height="118"/>
+          <path class="s02-wave" d="M16,152 q16,-7 32.5,0 t32.5,0 t32.5,0 t32.5,0 v6 h-130 z"/>
+        </g>
+        <rect class="s02-draw s02-tank-wall" x="16" y="110" width="130" height="160" rx="20"/>
+        <text class="s02-sym" x="81" y="211">S₁</text>
+        <text class="s02-cap" x="81" y="306">constant pool</text>
+      </g>
+
+      
+      <g class="s02-node" data-s="2">
+        <g clip-path="url(#s02-clip-n2)"><rect class="s02-liq" x="254" y="242" width="104" height="0"/></g>
+        <circle class="s02-draw" cx="306" cy="190" r="52"/>
+        <text class="s02-sym" x="306" y="201">S₂</text>
+      </g>
+      <g class="s02-node" data-s="3">
+        <g clip-path="url(#s02-clip-n3)"><rect class="s02-liq" x="444" y="242" width="104" height="0"/></g>
+        <circle class="s02-draw" cx="496" cy="190" r="52"/>
+        <text class="s02-sym" x="496" y="201">S₃</text>
+      </g>
+      <g class="s02-node" data-s="4">
+        <g clip-path="url(#s02-clip-n4)"><rect class="s02-liq" x="634" y="242" width="104" height="0"/></g>
+        <circle class="s02-draw" cx="686" cy="190" r="52"/>
+        <text class="s02-sym" x="686" y="201">S₄</text>
+      </g>
+
+      
+      <g class="s02-gauge">
+        <text class="s02-glabel" x="16" y="374">Enzyme budget <tspan class="s02-math">Σ<tspan baseline-shift="sub" font-size="19">i</tspan> e<tspan baseline-shift="sub" font-size="19">i</tspan> ≤ 1</tspan></text>
+        <rect class="s02-track" x="16" y="392" width="544" height="44" rx="12"/>
+        <g clip-path="url(#s02-clip-gauge)">
+          <rect class="s02-seg" data-e="1" x="16" y="392" width="0" height="44"/>
+          <rect class="s02-seg" data-e="2" x="16" y="392" width="0" height="44"/>
+          <rect class="s02-seg" data-e="3" x="16" y="392" width="0" height="44"/>
+        </g>
+        <text class="s02-gtick" x="16" y="468">0</text>
+        <text class="s02-gtick" x="560" y="468" text-anchor="end">1</text>
+        <text class="s02-glabel s02-tlabel" x="760" y="374" text-anchor="end">time</text>
+        <text class="s02-clock" x="760" y="426" text-anchor="end">t = 0.00</text>
+      </g>
+    </svg>
+
+    
+    <div class="s02-plotcol">
+      <div class="s02-caption"><b>LPN3B optimum:</b> switches at $t\approx$ <span class="s02-sw">–</span>, $t_f^*\approx$ <span class="s02-tf">–</span></div>
+      <svg class="s02-plot" viewBox="0 0 900 470" aria-label="Optimal enzyme levels and concentrations over time"></svg>
+    </div>
+  </div>
+
+  <div class="s02-bottom">
+    <div class="s02-card s02-pred" data-step="1">
+      <div class="s02-card-h"><span class="s02-yr">2002</span> predicted</div>
+      <div class="s02-card-b">Minimum time + limited enzyme budget ⇒ sequential, just-in-time activation <span class="s02-ref">(Klipp et al. 2002)</span></div>
+    </div>
+    <svg class="s02-tl" viewBox="0 0 70 40" data-step="2" data-anim="fade" aria-hidden="true">
+      <line x1="4" y1="20" x2="56" y2="20"/><path d="M50,10 L66,20 L50,30"/>
+    </svg>
+    <div class="s02-card s02-obs" data-step="2">
+      <div class="s02-card-h"><span class="s02-yr">2004</span> observed</div>
+      <div class="s02-card-b"><i>E. coli</i> amino-acid biosynthesis <span class="s02-ref">(Zaslaver et al. 2004)</span>; yeast <span class="s02-ref">(Chechik et al. 2008)</span></div>
+    </div>
+    <div class="s02-flip" data-step="3" data-anim="scale">
+      <div class="s02-flip-row">
+        <span class="s02-w s02-w-obj">objective<span class="s02-q">?</span></span>
+        <svg class="s02-bigarrow" viewBox="0 0 150 44" aria-hidden="true">
+          <line x1="4" y1="22" x2="128" y2="22"/><path d="M114,6 L144,22 L114,38"/>
+        </svg>
+        <span class="s02-w s02-w-beh">behaviour</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="plan" data-chips="nc@2" data-module="s03"><div class="hud" aria-hidden="true"><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg cur" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Thesis plan · Setting</div>
+  <h2 class="title">Regulation as optimal control</h2>
+
+  <div class="row s03-row" style="gap:70px; flex:1 1 auto;">
+    
+    <div class="s03-path" data-step="0">
+      <svg viewBox="0 0 220 560" width="220" height="560" aria-label="Linear pathway S1 to S4">
+        <defs>
+          
+          <marker id="s03-arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="16" markerHeight="16" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
+            <path d="M0,0.6 L10,5 L0,9.4 z" class="s03-arrhead"/>
+          </marker>
+        </defs>
+        <g class="s03-edges">
+          <line x1="80" y1="99" x2="80" y2="160" marker-end="url(#s03-arr)"/>
+          <line x1="80" y1="239" x2="80" y2="300" marker-end="url(#s03-arr)"/>
+          <line x1="80" y1="379" x2="80" y2="440" marker-end="url(#s03-arr)"/>
+        </g>
+        <g class="s03-enz">
+          <rect x="104" y="114" width="56" height="34" rx="10"/><text x="132" y="138">e₁</text>
+          <rect x="104" y="254" width="56" height="34" rx="10"/><text x="132" y="278">e₂</text>
+          <rect x="104" y="394" width="56" height="34" rx="10"/><text x="132" y="418">e₃</text>
+        </g>
+        <g class="s03-nodes">
+          <circle cx="80" cy="60" r="34"/><text x="80" y="70">S₁</text>
+          <circle cx="80" cy="200" r="34"/><text x="80" y="210">S₂</text>
+          <circle cx="80" cy="340" r="34"/><text x="80" y="350">S₃</text>
+          <circle cx="80" cy="480" r="34" class="obs"/><text x="80" y="490">S₄</text>
+        </g>
+        
+        <g class="s03-eye" transform="translate(150,462)">
+          <path d="M0,18 C14,0 40,0 54,18 C40,36 14,36 0,18 Z"/>
+          <circle cx="27" cy="18" r="8"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="col grow" style="gap:26px;">
+      <div class="s03-eq" data-step="0">
+        $$\dot{\cx{x}}=f(\cx{x},\cu{u},\cth{\theta}),\qquad \cx{x}(t_0)=\cx{x}_0(\cth{\theta}),\qquad \cy{y}=g(\cx{x},\cu{u},\cth{\theta})$$
+      </div>
+      <div class="s03-legend small" data-step="0">
+        <span class="t-mech">x</span> metabolites / gene expression &nbsp;·&nbsp;
+        <span class="t-learn">u</span> enzyme expression &nbsp;·&nbsp;
+        <span class="t-theta">θ</span> kinetic parameters &nbsp;·&nbsp;
+        <span class="t-y">y</span> observables
+      </div>
+      <div class="s03-eq" data-step="1">
+        $$\min_{\cu{u}(\cdot),\,t_f}\; J[\cu{u}]=\int_{t_0}^{t_f}\htmlClass{s03-L}{L}(\cx{x},\cu{u},\cth{\theta})\,dt+\Phi\big(\cx{x}(t_f)\big)$$
+        $$\text{s.t. dynamics},\quad \cx{x}(t)\in\mathcal X,\quad \cu{u}(t)\in\mathcal U,\quad \cx{x}(t_f)\in\mathcal X_f$$
+      </div>
+      <div class="s03-inst small" data-step="2">
+        <span>LPN3B: $L\equiv 1,\ \Phi\equiv 0,\ S_4(t_f)=0.9,\ \sum_i e_i\le 1$, free $t_f$</span>
+        <span class="pill">after discretisation: NLP, in general non-convex</span>
+      </div>
+      <div class="callout s03-but" data-step="3">
+        <b>But $L$ is rarely known</b> &nbsp;→&nbsp; ill-posed inverse problem
+      </div>
+    </div>
+  </div>
+  <div class="cite">Tsiantis &amp; Banga 2020 · Banga &amp; Sager 2025</div>
+</div>
+</section>
+
+
+<section data-block="plan" data-module="s04" data-chips="nc" data-steps="3"><div class="hud" aria-hidden="true"><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg cur" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Thesis plan · Overview</div>
+  <h2 class="title">Thesis plan: four levels</h2>
+  
+  <div class="stage s04-stage"></div>
+  <div class="cite s04-cite" data-step="3" data-anim="fade">cf. Banga &amp; Sager 2025</div>
+</div>
+</section>
+
+
+<section data-block="plan" data-module="s05" data-chips="nc" data-stair="L1" data-steps="3"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g" x="0" y="48" width="90" height="6" rx="2"/><rect class="cur" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg cur" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Thesis plan · L1 · O1 <span class="schematic-tag">schematic</span></div>
+  <h2 class="title">L1 · Learn: what if part of the cell is unknown?</h2>
+
+  <div class="s05-stage">
+    
+    <svg class="s05-svg" viewBox="0 0 1700 700" width="1700" height="700" aria-label="OC and RL share one value function; grey-box model"></svg>
+
+    
+    <div class="s05-eq s05-eqV">
+      <div class="s05-eqlab">value function</div>
+      $$V(t,\cx{x})=\min_{\cu{u}(\cdot)}\Big[\int_t^{t_f}L\,ds+\Phi\big(\cx{x}(t_f)\big)\Big],\quad \cx{x}(t)=\cx{x}$$
+    </div>
+    <div class="s05-eq s05-eqH">
+      <div class="s05-eqlab">Hamilton–Jacobi–Bellman</div>
+      $$-\frac{\partial V}{\partial t}=\min_{\cu{u}\in\mathcal U}\Big[L(\cx{x},\cu{u},\cth{\theta})+\htmlClass{s05-hl}{\nabla_{\cx{x}}V\cdot f(\cx{x},\cu{u},\cth{\theta})}\Big],\qquad V(t_f,\cdot)=\Phi$$
+    </div>
+
+    
+    <div class="s05-txt s05-hd s05-hd-oc" data-step="1"><b>OC</b><span>optimal control</span></div>
+    <div class="s05-txt s05-oc-f" data-step="1">$\dot{\cx{x}}=f(\cx{x},\cu{u},\cth{\theta}),\ \ L$</div>
+    <div class="s05-txt s05-foot s05-foot-oc" data-step="1">$f,\,L$ known <span class="s05-to">→</span> <b>solve</b></div>
+
+    <div class="s05-txt s05-hd s05-hd-rl" data-step="1"><b>RL</b><span>reinforcement learning</span></div>
+    <div class="s05-txt s05-rl-s" data-step="1">samples $(\cx{x},\cu{u},L,\cx{x}')$</div>
+    <div class="s05-txt s05-foot s05-foot-rl" data-step="1">$f,\,L$ only through samples <span class="s05-to">→</span> <b>learn</b></div>
+
+    <div class="s05-txt s05-vlab" data-step="1">$V(t,\cx{x})$</div>
+    <div class="s05-txt s05-vcap" data-step="1">one shared $V$<br><span class="muted">illustrative</span></div>
+
+    
+    <div class="s05-txt s05-hd s05-hd-gb" data-step="2"><b>Grey box</b></div>
+    <div class="s05-txt s05-gb-eq" data-step="2">$\dot{\cx{x}}=f\big(\cx{x},\htmlClass{s05-pi}{\pi_\eta(\cx{x})},\cth{\theta}\big)$</div>
+    <div class="s05-txt s05-blk s05-blk-ode">$\dot{\cx{x}}=f(\cx{x},\cu{u},\cth{\theta})$</div>
+    <div class="s05-txt s05-blk s05-blk-pi">$\cu{u}=\htmlClass{s05-pi}{\pi_\eta(\cx{x})}$</div>
+    <div class="s05-txt s05-gb-cap" data-step="2"><span class="t-mech">known mechanism</span> +<br><span class="t-learn">learned regulatory feedback</span></div>
+
+    
+    <div class="s05-cases" data-step="3"><span class="s05-cases-l">Cases</span><span class="pill">central carbon metabolism</span><span class="pill">stomatal dynamics</span></div>
+    <div class="gap-note s05-gap" data-step="3"><b>Gap</b> · no unified OC–RL framework exploiting the HJB equivalence in biological modelling</div>
+  </div>
+  <div class="cite">Bertsekas 2019</div>
+</div>
+</section>
+
+
+<section data-block="plan" data-module="s06" data-chips="nc,ip@3" data-stair="L2" data-steps="3"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="cur" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg cur" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Thesis plan · L2 · O2 <span class="schematic-tag">schematic</span></div>
+  <h2 class="title">L2 · Infer: what is the cell optimising?</h2>
+
+  <div class="s06-stage">
+    
+    <svg class="s06-boxes" viewBox="0 0 1700 668" width="1700" height="668" aria-hidden="true"></svg>
+
+    
+    <div class="s06-tab s06-tab-out" data-step="2" data-anim="fade">statistics: weighted least squares</div>
+    <div class="s06-oeq" data-step="2">
+      $$\min_{\cinv{w}\in\Delta,\ \cth{\theta}\in[\cth{\theta}^{LB},\cth{\theta}^{UB}]}\ \sum_{k,j,i}\omega_{jki}\Big\|\tilde{\cy{y}}_{jki}-\cy{y}_{jki}\big(t_i;\;\htmlClass{s06-uo}{\cu{u}^*(\cinv{w},\cth{\theta})}\,,\;\cth{\theta}\big)\Big\|^2+\rho\,\mathcal R(\cinv{w})$$
+    </div>
+    <div class="s06-olegend" data-step="2">
+      <span>$\omega$ inverse-variance weights</span>
+      <span>$\mathcal R$ sparsity-promoting</span>
+    </div>
+
+    
+    <div class="s06-inner">
+      <svg class="s06-inbg" viewBox="0 0 1100 470" width="1100" height="470" aria-hidden="true"></svg>
+      <div class="s06-brick" aria-label="forward OC solve">
+        <svg viewBox="0 0 46 30" width="46" height="30" aria-hidden="true">
+          <rect x="1.5" y="1.5" width="43" height="27" rx="4"/>
+          <path d="M1.5 15 H44.5 M16 1.5 V15 M31 1.5 V15 M8.5 15 V28.5 M23 15 V28.5 M37.5 15 V28.5"/>
+        </svg>
+        <span>forward OC solve</span>
+      </div>
+      <div class="s06-tab s06-tab-in" data-step="2" data-anim="fade">OR: optimal control</div>
+      <div class="s06-ieq">
+        $$\htmlClass{s06-ui}{\cu{u}^*(\cinv{w},\cth{\theta})}\,=\arg\min_{\cu{u}(\cdot)}\int_{t_0}^{t_f}\sum_{m=1}^{M}\cinv{w_m}\,L_m(\cx{x},\cu{u},\cth{\theta})\,dt+\Phi\big(\cx{x}(t_f)\big)\quad\text{s.t. dynamics}$$
+      </div>
+      <div class="s06-klabel" data-step="1">$L_m$ candidate cost kernels <span class="muted">· illustration</span></div>
+      <svg class="s06-kern" viewBox="0 0 640 250" width="640" height="250" aria-label="Kernel strips weighted by w and summed"></svg>
+      <div class="s06-delta" data-step="1">$\cinv{w}\in\Delta=\big\{\cinv{w}\ge0,\ \textstyle\sum_m \cinv{w_m}=1\big\}$</div>
+      <svg class="s06-simplex" viewBox="0 0 400 300" width="400" height="300" aria-label="Weight vector w as a dot on the 2-simplex"></svg>
+    </div>
+
+    
+    <svg class="s06-data" viewBox="0 0 500 470" width="500" height="470" aria-label="Schematic data with error bars and model response"></svg>
+
+    
+    <svg class="s06-over" viewBox="0 0 1700 668" width="1700" height="668" aria-hidden="true"></svg>
+  </div>
+
+  <div class="s06-bottom">
+    <div class="s06-badge" data-step="3">
+      <svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><path d="M31 13 A13 13 0 1 0 33 24"/><path d="M33 5 V14 H24"/></svg>
+      <b>every outer evaluation = one inner OC solve</b>
+    </div>
+    <div class="gap-note s06-gap" data-step="3"><b>Gap</b> · no IOC/IRL that is mechanistic, data-consistent and interpretable at once</div>
+  </div>
+  <div class="cite">Tsiantis, Balsa-Canto &amp; Banga 2018 · Banga &amp; Sager 2025</div>
+</div>
+</section>
+
+
+<section data-block="plan" data-module="s07" data-chips="nc,ip,ni@3" data-stair="L2" data-steps="3"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="cur" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg cur" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Thesis plan · L2 · O2 <span class="schematic-tag">schematic</span></div>
+  <h2 class="title">L2 · Why the objective is hard to identify</h2>
+
+  <div class="s07-stage">
+    
+    <div class="s07-row">
+      <div class="s07-col s07-col-a">
+        <svg class="s07-map" viewBox="0 0 640 440" width="640" height="440" aria-label="Illustrative misfit heat-map on the weight simplex with a flat valley"></svg>
+        <div class="s07-cap s07-cap-a">
+          <b>Scaling:</b> $\arg\min J=\arg\min cJ,\ c>0$<br><span class="s07-arr">→</span> normalise on $\Delta$
+        </div>
+      </div>
+      <div class="s07-col s07-col-b" data-step="1" data-anim="fade">
+        <svg class="s07-same" viewBox="0 0 490 440" width="490" height="440" aria-label="Two different weight vectors give identical optimal controls"></svg>
+        <div class="s07-cap s07-cap-b">
+          <b>Equivalent cost functionals:</b> $\cinv{w}\neq \cinv{w'}$, same $\cu{u}^*$
+        </div>
+      </div>
+      <div class="s07-col s07-col-c" data-step="2" data-anim="fade">
+        <svg class="s07-arc" viewBox="0 0 490 440" width="490" height="440" aria-label="Control trajectory with an arc on the constraint boundary"></svg>
+        <div class="s07-cap s07-cap-c">
+          <b>Constraint-driven arcs:</b> active constraints fix $\cu{u}$<br><span class="s07-arr">→</span> no&nbsp;information&nbsp;on&nbsp;$\cinv{w}$
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="s07-lqr4" data-step="2" data-anim="fade"><b>Ill-posed inverse LQR</b> <span class="s07-lqr4-c">(Priess et al. 2015)</span></div>
+
+    <div class="s07-tools" data-step="3">
+      <div class="s07-trow">
+        <span class="s07-tl">Tools</span>
+        <span class="s07-tool">
+          <svg viewBox="0 0 36 30" width="36" height="30" aria-hidden="true"><path class="bar" d="M5 28 V18 M14 28 V27.5 M23 28 V4 M32 28 V27.5"/></svg>
+          sparsity &amp; biological priors
+        </span>
+        <span class="s07-tool">
+          <svg viewBox="0 0 36 30" width="36" height="30" aria-hidden="true"><path class="ln" d="M3 6 Q18 44 33 6"/><path class="ln2" d="M7 18.5 H29"/><circle cx="18" cy="18.5" r="3.5"/></svg>
+          inverse KKT
+        </span>
+        <span class="s07-tool">
+          <svg viewBox="0 0 36 30" width="36" height="30" aria-hidden="true"><path class="ln" d="M33 8 C24 8 20 24 4 24"/><path class="ln" d="M10 19 L4 24 L11 28"/></svg>
+          costate reconstruction
+        </span>
+        <span class="s07-ham">$\mathcal H=L+\lambda^{\top}f,\qquad \dot\lambda=-\nabla_{\cx{x}}\mathcal H$</span>
+      </div>
+      <div class="s07-test"><b>Test:</b> do inferred objectives generalise across conditions?</div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="plan" data-module="s08" data-chips="nc,ip,ni" data-stair="L3" data-steps="4"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="cur" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg cur" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Thesis plan · L3 · O3 <span class="schematic-tag">schematic</span></div>
+  <h2 class="title">L3 · Explain: which mechanism implements it?</h2>
+
+  <div class="s08-grid">
+    
+    <div class="s08-colA">
+      <svg class="s08-scatter" viewBox="0 0 500 540" width="500" height="540" aria-label="Samples of a switch-like policy coming out of a black box"></svg>
+      <div class="s08-cap">Samples $(\cx{x}_k,\cu{u}^*_k)$ from OC / RL policies</div>
+    </div>
+
+    
+    <div class="s08-colB">
+      <div class="s08-eq" data-step="1">
+        $$\Theta(\cx{x})=\Big[\,1,\ \cx{x},\ \cx{x}^2,\ \frac{\cx{x}^{n}}{K^{n}+\cx{x}^{n}}\Big|_{(K,n)\in\text{grid}},\ \dots\Big]$$
+        $$\hat\xi=\arg\min_{\xi}\ \big\|\cu{\mathbf u}^*-\Theta(\cx{\mathbf X})\,\xi\big\|_2^2+\tau\|\xi\|_0$$
+      </div>
+      <svg class="s08-lib" viewBox="0 0 680 400" width="680" height="400" data-step="1" aria-label="Library columns with coefficient bars"></svg>
+      <div class="s08-states">
+        <div class="s08-state" data-step="1" data-until="2" data-anim="fade">least squares → <b>dense</b> $\xi$</div>
+        <div class="s08-state" data-step="2" data-anim="fade">sequential thresholding → <b>sparse</b> $\hat\xi$: one Hill term survives</div>
+      </div>
+    </div>
+
+    
+    <div class="s08-colC">
+      <div class="card s08-law" data-step="3">
+        <div class="s08-law-h">Black-box policy → <b>few-term feedback law</b> (e.g. Hill-type)</div>
+        <div class="s08-law-eq">$$\cu{\hat u}(\cx{x})=\hat\xi_{K,n}\,\frac{\cx{x}^{n}}{K^{n}+\cx{x}^{n}}$$</div>
+      </div>
+      <div class="s08-cl" data-step="4">
+        <svg class="s08-phase" viewBox="0 0 430 250" width="430" height="250" aria-label="Closed-loop phase portrait"></svg>
+        <div class="s08-cl-txt">Closed loop $\dot{\cx{x}}=f\big(\cx{x},\Theta(\cx{x})\hat\xi,\cth{\theta}\big)$: stability &amp; invariance</div>
+      </div>
+    </div>
+  </div>
+
+  
+  <svg class="s08-link" viewBox="0 0 1920 1080" data-step="3" data-anim="fade" aria-hidden="true">
+    <path d="M1098,650 C1290,650 1390,590 1392,438" />
+    <path class="head" d="M1383,436 L1392,418 L1401,436 Z" />
+  </svg>
+  <div class="gap-note s08-gap" data-step="4"><b>Gap</b> · sparse model discovery grounded in mechanistic constraints is underdeveloped</div>
+  <div class="cite">SINDy (Brunton et al. 2016) · SINDy-RL (Zolman et al. 2025)</div>
+</div>
+</section>
+
+
+<section data-block="plan" data-module="s09" data-chips="nc,ip,ni" data-stair="L4" data-steps="4"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="cur" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg cur" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Thesis plan · L4 · O4 <span class="schematic-tag">schematic</span></div>
+  <h2 class="title s09-title">L4 · Interact: what if several agents have their own goals?</h2>
+
+  <div class="s09-grid">
+    
+    <div class="s09-left">
+      <svg class="s09-cells" viewBox="0 0 680 600" width="680" height="600" aria-label="Two cells sharing a substrate pool, each with its own cost"></svg>
+    </div>
+
+    <div class="s09-right">
+      <div class="s09-eq" data-step="1">
+        $$\min_{u_i}\ J_i(u_i;u_{-i})=\int_{t_0}^{t_f}L_i(\cx{x},u_i,u_{-i})\,dt+\Phi_i\big(\cx{x}(t_f)\big),$$
+        $$\dot{\cx{x}}=f(\cx{x},u_1,\dots,u_N)$$
+      </div>
+      <div class="s09-eq s09-nash" data-step="2">
+        $$\text{Nash:}\quad J_i(u_i^*;u_{-i}^*)\le J_i(u_i;u_{-i}^*)\quad\forall u_i,\ \forall i$$
+      </div>
+      <div class="s09-row">
+        <svg class="s09-br" viewBox="0 0 420 330" width="420" height="330" data-step="3" data-anim="fade" aria-label="Best-response diagram with Nash point and a MARL point"></svg>
+        <div class="s09-pts">
+          <ul class="pts">
+            <li data-step="3">MARL behaviour vs analytical Nash: what do deviations mean biologically?</li>
+            <li data-step="4" class="s09-inv">Inverse games / inverse MARL: infer each player's objective</li>
+          </ul>
+          <div class="s09-cases" data-step="4"><span class="pill">Microbial communities</span><span class="pill">Plant resource allocation</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="gap-note s09-gap" data-step="4"><b>Gap</b> · inverse games / inverse MARL almost absent for mechanistic biological models</div>
+  <div class="cite">Inga et al. 2019 · Molloy et al. 2020 · Lian et al. 2022</div>
+</div>
+</section>
+
+
+<section data-block="now" data-module="s10" data-chips="nc,ip,ni" data-stair="G" data-steps="2"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g cur" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg done" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg cur" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Current work</div>
+  <h2 class="title">One brick under every level: solving OC reliably</h2>
+  
+  <div class="stage s10-stage"></div>
+</div>
+</section>
+
+
+<section data-block="now" data-module="s11" data-chips="nc,ip,ni" data-stair="G" data-steps="3"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g cur" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg done" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg cur" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Current work · Methods</div>
+  <h2 class="title">Discretise, then optimise</h2>
+
+  <div class="s11-top">
+    
+    <div class="s11-u">
+      <svg class="s11-usvg" viewBox="0 0 490 330" width="490" height="330" aria-label="A continuous control u(t) and its N piecewise-constant steps, with a piecewise-linear inset"></svg>
+      <div class="s11-ucap">
+        <span data-step="0" data-until="1" data-anim="fade">continuous control $\cu{u}(t)$</span>
+        <span data-step="1" data-anim="fade">$N$ piecewise-constant steps <span class="muted">(PWC)</span></span>
+      </div>
+    </div>
+
+    
+    <div class="s11-panels">
+      <div class="s11-card" data-step="2">
+        <div class="s11-h"><b>CVP</b> <span class="s11-hs">(single shooting)</span></div>
+        <svg class="s11-mini s11-mcvp" viewBox="0 0 340 190" aria-label="CVP: one integrated arc from x0"></svg>
+        <div class="s11-d">controls (+&thinsp;$t_f$) only; states by integration</div>
+      </div>
+      <div class="s11-card" data-step="2">
+        <div class="s11-h"><b>Multiple shooting</b></div>
+        <svg class="s11-mini s11-mms" viewBox="0 0 340 190" aria-label="Multiple shooting: N segments with free node states and continuity gaps"></svg>
+        <div class="s11-d">+ node states,<div class="s11-eq">$\cx{x}_{k+1}-F(\cx{x}_k,\cu{u}_k)=0$</div></div>
+      </div>
+      <div class="s11-card s11-later" data-step="2">
+        <span class="s11-tag">→ later</span>
+        <div class="s11-dim">
+          <div class="s11-h"><b>Full discretisation</b></div>
+          <svg class="s11-mini s11-mfd" viewBox="0 0 340 190" aria-label="Full discretisation: states and controls at every subinterval"></svg>
+          <div class="s11-d">collocation / RK defects: all states &amp; controls</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+  <div class="s11-pipes">
+    <div class="s11-pipes-h" data-step="3" data-anim="fade">
+      <span class="s11-ph-l">Three pipelines · <b>same tolerances for all</b></span>
+      <span class="s11-cols"><span>derivatives</span><span>integrator</span><span>NLP solver</span></span>
+    </div>
+    <div class="s11-pipe s11-p1" data-step="3" data-anim="left">
+      <div class="s11-pl"><div class="s11-pn"><span class="s11-mk sq cvp"></span><b>CasADi CVP</b>&nbsp;&amp;&nbsp;<span class="s11-mk ci ms"></span><b>MS</b>&nbsp;<span class="ink2">(PWC/PWL)</span></div></div>
+      <div class="s11-track">
+        <i class="s11-line cvp"></i><i class="s11-line ms"></i>
+        <span class="s11-chip s11-chip2">exact AD gradients<span class="s11-cs">exact Hessian except BSUB: L-BFGS</span></span>
+        <span class="s11-chip">CVODES</span>
+        <span class="s11-chip">IPOPT</span>
+      </div>
+    </div>
+    <div class="s11-pipe s11-p2" data-step="3" data-anim="left">
+      <div class="s11-pl"><div class="s11-pn"><span class="s11-mk di fd"></span><b>FiniteDiff CVP</b>&nbsp;<span class="ink2">(PWC/PWL)</span></div><div class="s11-note">previous practice</div></div>
+      <div class="s11-track">
+        <i class="s11-line fd"></i>
+        <span class="s11-chip">forward FD</span>
+        <span class="s11-chip">ode15s</span>
+        <span class="s11-chip">fmincon</span>
+      </div>
+    </div>
+    <div class="s11-pipe s11-p3" data-step="3" data-anim="left">
+      <div class="s11-pl"><div class="s11-pn"><span class="s11-mk tr acados"></span><b>ACADOS</b>&nbsp;<span class="ink2">(PWC only)</span></div><div class="s11-note">tuned per problem</div></div>
+      <div class="s11-track">
+        <i class="s11-line acados"></i>
+        <span class="s11-chip s11-chip2">exact AD (CasADi codegen)<span class="s11-cs">Hessian: exact or Gauss–Newton</span></span>
+        <span class="s11-chip">Gauss–Legendre IRK</span>
+        <span class="s11-chip">SQP + HPIPM</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cite">Andersson et al. 2019 · Verschueren et al. 2022</div>
+</div>
+</section>
+
+
+<section data-block="now" data-module="s13" data-chips="nc!,ip,ni" data-stair="G" data-steps="2"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g cur" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg done" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg cur" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Current work · Protocol</div>
+  <h2 class="title">Five pathways, 1000 starts, one strict referee</h2>
+
+  
+  <div class="s13-ladder">
+    <div class="s13-legend">
+      <span>(states, controls)</span>
+      <span class="s13-legend-k"><i class="s13-seg"></i> = 1 control</span>
+    </div>
+    <div class="s13-card" style="--i:0">
+      <div class="s13-name">LPN3B <span class="s13-dims">(4, 3)</span></div>
+      <div class="s13-obj">min $t_f$</div>
+      <svg class="s13-glyph" data-g="lpn3b" viewBox="0 0 284 58" aria-hidden="true"></svg>
+      <div class="s13-bar" data-n="3"></div>
+    </div>
+    <div class="s13-card" style="--i:1">
+      <div class="s13-name">LPDN4 <span class="s13-dims">(8, 4)</span></div>
+      <div class="s13-obj">time + enzyme cost</div>
+      <svg class="s13-glyph" data-g="lpdn4" viewBox="0 0 284 58" aria-hidden="true"></svg>
+      <div class="s13-bar" data-n="4"></div>
+    </div>
+    <div class="s13-card" style="--i:2">
+      <div class="s13-name">GBD <span class="s13-dims">(9, 4)</span></div>
+      <div class="s13-obj">min $t_f$</div>
+      <svg class="s13-glyph" data-g="gbd" viewBox="0 0 284 58" aria-hidden="true"></svg>
+      <div class="s13-bar" data-n="4"></div>
+    </div>
+    <div class="s13-card s13-sc" style="--i:3">
+      <div class="s13-name">SC <span class="s13-dims">6 enzymes</span></div>
+      <div class="s13-sub">yeast diauxic shift</div>
+      <div class="s13-obj">max survival</div>
+      <svg class="s13-floors" viewBox="0 0 284 60" aria-label="Two path constraints: ATP at least 0.7 and NADH at least 0.5"></svg>
+      <div class="s13-bar" data-n="6"></div>
+    </div>
+    <div class="s13-card" style="--i:4">
+      <div class="s13-name">BSUB <span class="s13-dims">(26, 13)</span></div>
+      <div class="s13-sub"><i>B. subtilis</i> nutrient shift</div>
+      <div class="s13-obj">max ATP</div>
+      <svg class="s13-glyph" data-g="bsub" viewBox="0 0 284 58" aria-hidden="true"></svg>
+      <div class="s13-bar" data-n="13"></div>
+    </div>
+  </div>
+
+  
+  <div class="s13-funnel" data-step="1" data-anim="fade">
+    <svg class="s13-fsvg" viewBox="0 0 1700 270" width="1700" height="270" aria-label="Protocol funnel: random starts, solver, classifier, CVODES referee"></svg>
+    <div class="s13-fl s13-a1" data-t="0"><b><span class="s13-nstarts">1000</span> random starts</b></div>
+    <div class="s13-fl s13-a2" data-t="0.1">per (method, problem)</div>
+    <div class="s13-fl s13-a3" data-t="0.2">uniform controls · random $t_f$<br>MS nodes by forward simulation</div>
+    <div class="s13-fl s13-b1" data-t="0.75"><b>solver</b></div>
+    <div class="s13-fl s13-b2" data-t="0.85">$\varepsilon=\delta=10^{-6}$<br>$\varepsilon_{acc}=10^{-4}$</div>
+    <div class="s13-fl s13-c1" data-t="1.35">classifier</div>
+    <div class="s13-fl s13-c2" data-t="1.7">converged</div>
+    <div class="s13-fl s13-c3" data-t="1.8">acceptable</div>
+    <div class="s13-fl s13-c4" data-t="1.9">failed</div>
+    <div class="s13-fl s13-d1" data-t="2.4"><b>CVODES referee</b></div>
+    <div class="s13-fl s13-d2" data-t="2.5">re-simulation $10^{-10}/10^{-12}$<br>violation $<\delta$</div>
+    <div class="s13-fl s13-d3" data-t="3.1">verified</div>
+    <div class="s13-fl s13-d4" data-t="3.3">rejected</div>
+  </div>
+
+  
+  <div class="s13-counters" data-step="2">
+    <div class="s13-tile"><span class="s13-num s13-n1">0</span><span class="s13-lab">solves</span></div>
+    <div class="s13-tile"><span class="s13-num s13-n2">0</span><span class="s13-lab">summed solver time<br><span class="muted">(Drago, CSIC)</span></span></div>
+    <div class="s13-tile s13-tile-ok"><span class="s13-lab s13-lab-l">rejected:</span><span class="s13-num s13-n3">0</span>
+      <svg class="s13-ok" viewBox="0 0 44 44" aria-hidden="true"><circle cx="22" cy="22" r="19"/><path d="M12,22.5 L19,29.5 L32,15.5"/></svg>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="now" data-module="s14" data-chips="nc!,ip,ni" data-stair="G" data-steps="3"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g cur" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg done" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg cur" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Current work · Results</div>
+  <h2 class="title">No universal winner</h2>
+  <div class="stage s14-stage">
+    
+    <svg class="s14-svg" viewBox="0 0 1700 748" width="1700" height="748" role="img"
+         aria-label="Success percentage per problem and method, then mean time per start on a log scale"></svg>
+
+    <div class="s14-panel">
+      <div class="s14-legend" data-step="0" data-until="3" data-anim="fade">
+        <div class="s14-legend-h">success %</div>
+        <svg class="s14-legend-bar" viewBox="0 0 400 64" width="400" height="64" aria-hidden="true">
+          <defs>
+            <linearGradient id="s14-grad" x1="0" x2="1" y1="0" y2="0">
+              <stop offset="0" style="stop-color:var(--seq-0)"/>
+              <stop offset="0.1667" style="stop-color:var(--seq-1)"/>
+              <stop offset="0.3333" style="stop-color:var(--seq-2)"/>
+              <stop offset="0.5" style="stop-color:var(--seq-3)"/>
+              <stop offset="0.6667" style="stop-color:var(--seq-4)"/>
+              <stop offset="0.8333" style="stop-color:var(--seq-5)"/>
+              <stop offset="1" style="stop-color:var(--seq-6)"/>
+            </linearGradient>
+          </defs>
+          <rect x="1" y="2" width="260" height="22" rx="5" class="s14-legend-ramp"/>
+          <text x="1" y="54" class="s14-legend-t">0</text>
+          <text x="131" y="54" class="s14-legend-t" text-anchor="middle">50</text>
+          <text x="261" y="54" class="s14-legend-t" text-anchor="end">100</text>
+          <rect x="300" y="2" width="44" height="22" rx="5" class="s14-legend-hatch"/>
+          <text x="322" y="54" class="s14-legend-t" text-anchor="middle">not run</text>
+        </svg>
+      </div>
+      <div class="s14-card s14-c1" data-step="1"><b>Ranking is <span class="s14-nw">problem-dependent</span></b></div>
+      <div class="s14-card s14-c2" data-step="1">
+        <span class="s14-mk s14-mk-acados" aria-hidden="true"></span><b>ACADOS:</b> fastest on <span data-s14="acFastN">3</span> small problems; SC <b data-s14="acSC">0</b>&nbsp;%, BSUB <b data-s14="acBSUB">4.1</b>&nbsp;%
+      </div>
+      <div class="s14-card s14-c3" data-step="3">
+        AD-based vs FD-based CVP pipeline:
+        <div class="s14-big"><span data-s14="ratioRange">39–159</span>× faster<sup>*</sup></div>
+        <div class="s14-foot"><sup>*</sup>Pipelines also differ in NLP solver and integrator</div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="now" data-module="s15" data-chips="nc!,ip,ni" data-stair="G" data-steps="2"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g cur" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg done" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg cur" data-seg="now"><i></i><span>Current work</span></div><div class="seg" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Current work · Results</div>
+  <h2 class="title">Where do the starts end?</h2>
+  <div class="stage s15-stage">
+    
+    <svg class="s15-svg" viewBox="0 0 1700 748" width="1700" height="748" role="img"
+         aria-label="Final objective of every successful start for the SC problem, CasADi CVP with piecewise-constant and piecewise-linear controls"></svg>
+
+    
+    <div class="s15-inset">
+      <div class="s15-inset-txt">
+        <div class="s15-inset-h">All successes agree</div>
+        <div class="s15-inset-s">LPN3B, LPDN4, GBD, BSUB: successful starts agree on&nbsp;<i>J</i> (10<sup>−3</sup>)</div>
+        <div class="s15-inset-r">→ risk = <b>non-convergence</b></div>
+      </div>
+      <svg class="s15-spikes" viewBox="0 0 352 112" width="352" height="112" aria-hidden="true"></svg>
+    </div>
+
+    
+    <div class="s15-sc" data-step="1" data-anim="fade">
+      <div class="s15-sc-h">SC · yeast diauxic shift</div>
+      <div class="s15-sc-t">No start <q>converged</q>; all successes <q>acceptable</q></div>
+    </div>
+
+    
+    <div class="s15-take" data-step="2">Wide spread of end points, <b>not</b> proven local optima</div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="next" data-module="s16" data-chips="nc!,ip,ni" data-stair="L2" data-steps="2"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g" x="0" y="48" width="90" height="6" rx="2"/><rect class="" x="0" y="27" width="20" height="17" rx="2"/><rect class="cur" x="23" y="18" width="20" height="26" rx="2"/><rect class="" x="46" y="9" width="20" height="35" rx="2"/><rect class="" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg done" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg done" data-seg="now"><i></i><span>Current work</span></div><div class="seg cur" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">What comes next</div>
+  <h2 class="title">What comes next: fast, verified inner solvers</h2>
+
+  
+  <div class="s16-ms">
+    <div class="s16-head">
+      <div class="s16-proto">
+        <span class="s16-stamp">Separate protocol</span>
+        <span>workstation · cold start · 600&nbsp;s · <span data-s16="nstarts">90</span> held-out starts · <b>not comparable with HPC numbers</b></span>
+      </div>
+      <div class="s16-meth">
+        <span class="s16-mi"><svg class="s16-ico" viewBox="0 0 26 26" aria-hidden="true"><circle cx="6" cy="7" r="3.2"/><circle cx="20" cy="7" r="3.2"/><circle cx="13" cy="19.5" r="3.2"/><path d="M9 8.2 L17 8.2 M7.8 9.8 L11.3 16.8 M18.2 9.8 L14.7 16.8"/></svg>Method search by an agentic multi-agent LLM workflow</span>
+        <span class="s16-sep">·</span>
+        <span class="s16-mi"><svg class="s16-ico" viewBox="0 0 26 26" aria-hidden="true"><rect x="4" y="5" width="18" height="17" rx="3"/><path d="M4 10.5 H22 M9 3 V7 M17 3 V7 M9 16 L12 19 L17.5 13.5"/></svg>pre-registered seeds</span>
+        <span class="s16-sep">·</span>
+        <span class="s16-mi"><svg class="s16-ico" viewBox="0 0 26 26" aria-hidden="true"><rect x="5" y="11.5" width="16" height="11" rx="2.5"/><path d="M8.5 11.5 V8 a4.5 4.5 0 0 1 9 0 V11.5"/></svg>read-only verifier</span>
+      </div>
+    </div>
+
+    <div class="s16-new" data-step="1">
+      <svg class="s16-key" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="9"/></svg>
+      <div><b>Direct transcription</b> (full discretisation: Radau collocation or RK4) · exact sparse Hessian · single IPOPT solve (two stages on SC): on all <span data-s16="nfronts">5</span> held-out Pareto fronts</div>
+    </div>
+
+    <div class="s16-body">
+      <div class="s16-chart">
+        <div class="s16-chead">
+          <svg class="s16-key s16-key-base" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="8.5"/></svg>
+          fastest baseline at tied $J^*$ · benchmark mesh
+        </div>
+        <svg class="s16-svg" viewBox="0 0 1150 372" width="1150" height="372" role="img"
+             aria-label="Dumbbell chart of expected time to first verified hit, log scale: fastest baseline versus new direct transcription for GBD, LPN3B, LPDN4 and BSUB"></svg>
+        <div class="s16-xlab"><span class="s16-faster">← faster</span> expected time to first verified hit $\mathbb E[T]$ (s, log scale) · whiskers: bootstrap 95% CI</div>
+      </div>
+
+      <div class="s16-side">
+        <div class="s16-big" data-step="1">
+          <div class="s16-bignum">≈ 5–20×</div>
+          <div class="s16-bigsub">faster $\mathbb E[T]$ at equal $J^*$</div>
+          <div class="s16-bigmesh">on the benchmark mesh (GBD, LPN3B, LPDN4, BSUB)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="s16-next" data-step="2">
+    <svg class="s16-bil" viewBox="0 0 156 74" aria-hidden="true">
+      <rect class="s16-bo" x="2" y="2" width="152" height="70" rx="13"/>
+      <text class="s16-bt" x="13" y="44">IOC</text>
+      <rect class="s16-bi" x="68" y="15" width="74" height="44" rx="10"/>
+      <circle class="s16-bd" cx="105" cy="37" r="10"/>
+    </svg>
+    <div class="s16-ntxt"><b class="s16-nx">Next →</b> tentative: the most promising method from this search as the inner solver of bilevel IOC (Level&nbsp;2)</div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="close" data-module="s17" data-chips="nc!,ip,ni" data-stair="all"><div class="hud" aria-hidden="true"><div class="hud-tr"><svg class="hud-stair" viewBox="0 0 92 54"><rect class="g cur" x="0" y="48" width="90" height="6" rx="2"/><rect class="cur" x="0" y="27" width="20" height="17" rx="2"/><rect class="cur" x="23" y="18" width="20" height="26" rx="2"/><rect class="cur" x="46" y="9" width="20" height="35" rx="2"/><rect class="cur" x="69" y="0" width="20" height="44" rx="2"/></svg></div><div class="hud-progress"><div class="seg done" data-seg="intro"><i></i><span>Intro</span></div><div class="seg done" data-seg="plan"><i></i><span>Thesis plan</span></div><div class="seg done" data-seg="now"><i></i><span>Current work</span></div><div class="seg cur" data-seg="next"><i></i><span>Next</span></div></div></div>
+<div class="frame">
+  <div class="slide-tag">Closing</div>
+  <h2 class="title">Take-home &amp; thanks</h2>
+
+  
+  <div class="s17-cards">
+    <div class="s17-card" data-k="1" style="--kc: var(--b-intro);">
+      <div class="s17-icon">
+        <svg viewBox="0 0 480 170" aria-label="Pathway S1 to S4 with enzymes e1, e2, e3">
+          <defs>
+            <marker id="s17-ah1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.8 L10,5 L0,9.2 z" class="s17-ahd" data-e="1"/></marker>
+            <marker id="s17-ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.8 L10,5 L0,9.2 z" class="s17-ahd" data-e="2"/></marker>
+            <marker id="s17-ah3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0.8 L10,5 L0,9.2 z" class="s17-ahd" data-e="3"/></marker>
+          </defs>
+          <g class="s17-pw">
+            <rect class="s17-liq" x="16" y="80" width="68" height="64" rx="4"/>
+            <rect class="s17-tank" x="14" y="58" width="72" height="88" rx="14"/>
+            <text class="s17-sy" x="50" y="117">S₁</text>
+            <line class="s17-ar" data-e="1" x1="92" y1="102" x2="136" y2="102" marker-end="url(#s17-ah1)"/>
+            <line class="s17-ar" data-e="2" x1="218" y1="102" x2="258" y2="102" marker-end="url(#s17-ah2)"/>
+            <line class="s17-ar" data-e="3" x1="340" y1="102" x2="380" y2="102" marker-end="url(#s17-ah3)"/>
+            <g class="s17-ez" data-e="1"><line x1="114" y1="54" x2="114" y2="94"/><rect x="88" y="18" width="52" height="36" rx="10"/><text x="114" y="44">e₁</text></g>
+            <g class="s17-ez" data-e="2"><line x1="238" y1="54" x2="238" y2="94"/><rect x="212" y="18" width="52" height="36" rx="10"/><text x="238" y="44">e₂</text></g>
+            <g class="s17-ez" data-e="3"><line x1="360" y1="54" x2="360" y2="94"/><rect x="334" y="18" width="52" height="36" rx="10"/><text x="360" y="44">e₃</text></g>
+            <circle class="s17-nd" data-s="2" cx="178" cy="102" r="36"/><text class="s17-sy" x="178" y="111">S₂</text>
+            <circle class="s17-nd" data-s="3" cx="300" cy="102" r="36"/><text class="s17-sy" x="300" y="111">S₃</text>
+            <circle class="s17-nd" data-s="4" cx="422" cy="102" r="36"/><text class="s17-sy" x="422" y="111">S₄</text>
+          </g>
+        </svg>
+      </div>
+      <div class="s17-head"><span class="s17-num">1</span><span class="s17-lead" data-step="1">Optimality as a hypothesis</span></div>
+      <div class="s17-body" data-step="1">regulation = optimal control</div>
+    </div>
+
+    <div class="s17-card" data-k="2" style="--kc: var(--b-plan);">
+      <div class="s17-icon">
+        <svg viewBox="0 0 480 170" aria-label="Thesis staircase: ground floor and levels L1 to L4; L2 is a bilevel loop with an inner box">
+          <g class="s17-st">
+            <rect class="s17-step" x="12"  y="118" width="104" height="40"  rx="5"/>
+            <rect class="s17-step s17-l2" x="126" y="86" width="104" height="72" rx="5"/>
+            <rect class="s17-step" x="240" y="54"  width="104" height="104" rx="5"/>
+            <rect class="s17-step" x="354" y="30"  width="104" height="128" rx="5"/>
+            <text class="s17-lv" x="22"  y="108">L1</text>
+            <text class="s17-lv" x="136" y="76">L2</text>
+            <text class="s17-lv" x="250" y="44">L3</text>
+            <text class="s17-lv" x="364" y="20">L4</text>
+            
+            <rect class="s17-outer" x="136" y="94" width="84" height="56" rx="8"/>
+            <rect class="s17-inner" x="152" y="103" width="52" height="38" rx="6"/>
+            <g class="s17-inbrick">
+              <rect class="s17-bk" x="157" y="107" width="42" height="30" rx="3"/>
+              <path class="s17-bkl" d="M157,122 H199 M178,107 V122 M167,122 V137 M189,122 V137"/>
+            </g>
+            <rect class="s17-ground" x="6" y="160" width="468" height="9" rx="3"/>
+          </g>
+        </svg>
+      </div>
+      <div class="s17-head"><span class="s17-num">2</span><span class="s17-lead" data-step="2">Thesis</span></div>
+      <div class="s17-body" data-step="2">OC ⇄ RL → inverse objectives → mechanisms → games</div>
+    </div>
+
+    <div class="s17-card" data-k="3" style="--kc: var(--b-now);">
+      <div class="s17-icon">
+        <svg viewBox="0 0 480 170" aria-label="The brick: a reliable, verified forward optimal-control solver">
+          <g class="s17-wall">
+            <rect class="s17-bw" x="130" y="30"  width="70" height="34" rx="4"/>
+            <rect class="s17-bw" x="205" y="30"  width="70" height="34" rx="4"/>
+            <rect class="s17-bw" x="280" y="30"  width="70" height="34" rx="4"/>
+            <rect class="s17-bw" x="130" y="69"  width="32.5" height="34" rx="4"/>
+            <rect class="s17-bw" x="167.5" y="69" width="70" height="34" rx="4"/>
+            <rect class="s17-bw" x="242.5" y="69" width="70" height="34" rx="4"/>
+            <rect class="s17-bw" x="317.5" y="69" width="32.5" height="34" rx="4"/>
+            <rect class="s17-bw" x="130" y="108" width="70" height="34" rx="4"/>
+            <rect class="s17-bw" x="205" y="108" width="70" height="34" rx="4"/>
+            <rect class="s17-bw" x="280" y="108" width="70" height="34" rx="4"/>
+            <rect class="s17-ground" x="104" y="150" width="272" height="9" rx="3"/>
+            <g class="s17-check" transform="translate(354,30)">
+              <circle r="23"/><path d="M-10,0 L-3,8 L11,-8"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="s17-head"><span class="s17-num">3</span><span class="s17-lead" data-step="3">Foundation</span></div>
+      <div class="s17-body" data-step="3">non-convex even in simple cases · independently verified · no universal solver</div>
+    </div>
+  </div>
+
+  <div class="s17-mid" data-step="4">
+    <div class="s17-talk">
+      <p class="s17-mail">
+        <svg viewBox="0 0 40 30" aria-hidden="true"><rect x="2" y="3" width="36" height="24" rx="4"/><path d="M4,6 L20,18 L36,6"/></svg>
+        adrian.b@csic.es
+      </p>
+    </div>
+    <div class="s17-thanks">
+      <div class="s17-ty">Thank you!</div>
+      <div class="s17-q">Questions?</div>
+    </div>
+  </div>
+
+  
+  <div class="s17-fund">
+    <div class="s17-plate s17-fplate"><img src="assets/logos/funding_miciu_aei_eu.png" alt="Ministerio de Ciencia, Innovación y Universidades · Cofinanciado por la Unión Europea · Agencia Estatal de Investigación"></div>
+    <div class="s17-ftext">
+      <p>Project DYNAMO-bio (PID2023-146275NB-C22) funded by MICIU/AEI/10.13039/501100011033 and ERDF/EU</p>
+      <p class="s17-comp">Computing: Drago (CSIC)</p>
+    </div>
+    <div class="s17-plate s17-lplate">
+      <img class="s17-csic" src="assets/logos/csic.svg" alt="CSIC">
+      <span class="s17-sep"></span>
+      <img class="s17-mbg" src="assets/logos/mbg.png" alt="Misión Biológica de Galicia (MBG-CSIC)">
+    </div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="backup" data-hud="none">
+<div class="frame b0-frame">
+  <div class="b0-head">
+    <div class="slide-tag">Backup slides · for questions</div>
+    <h2 class="title b0-title">Backup</h2>
+  </div>
+  
+  <div class="b0-cards">
+    <a class="b0-card" href="#/19" style="--kc: var(--b-now);"><span class="b0-id">B1</span><span class="b0-t">Proposition 1:<br>derivation and scope</span></a>
+    <a class="b0-card" href="#/20" style="--kc: var(--b-now);"><span class="b0-id">B2</span><span class="b0-t">Full multistart<br>results</span></a>
+    <a class="b0-card" href="#/21" style="--kc: var(--b-plan);"><span class="b0-id">B3</span><span class="b0-t">Non-identifiability<br>in IOC</span></a>
+    <a class="b0-card" href="#/22" style="--kc: var(--b-next);"><span class="b0-id">B4</span><span class="b0-t">Method search:<br>protocol and caveats</span></a>
+  </div>
+</div>
+</section>
+
+
+<section data-block="backup" data-module="b1" data-hud="none">
+<div class="frame">
+  <div class="slide-tag">Backup B1</div>
+  <h2 class="title">Proposition 1: derivation and scope</h2>
+
+  
+  <div class="b1-model" data-step="0">
+    <div class="b1-ode">$$\dot S_1=0,\quad \dot S_2=\htmlClass{b1-e1}{e_1}S_1-\htmlClass{b1-e2}{e_2}S_2,\quad \dot S_3=\htmlClass{b1-e2}{e_2}S_2-\htmlClass{b1-e3}{e_3}S_3,\quad \dot S_4=\htmlClass{b1-e3}{e_3}S_3,\qquad S(0)=(1,0,0,0)$$</div>
+    <svg class="b1-path" viewBox="0 0 420 92" width="420" height="92" aria-label="Linear pathway S1 to S4 catalysed by e1, e2, e3">
+      <defs>
+        <marker id="b1-arr" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="13" markerHeight="13" markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M0,0.8 L10,5 L0,9.2 z" class="b1-arrhead"/>
+        </marker>
+      </defs>
+      <g class="b1-pe">
+        <line x1="61" y1="56" x2="117" y2="56" marker-end="url(#b1-arr)"/>
+        <line x1="173" y1="56" x2="229" y2="56" marker-end="url(#b1-arr)"/>
+        <line x1="285" y1="56" x2="341" y2="56" marker-end="url(#b1-arr)"/>
+      </g>
+      <g class="b1-pk">
+        <text x="89" y="34" class="k1">e₁</text><text x="201" y="34" class="k2">e₂</text><text x="313" y="34" class="k3">e₃</text>
+      </g>
+      <g class="b1-pn">
+        <rect x="8" y="32" width="50" height="52" rx="11" class="n1"/><rect x="11" y="46" width="44" height="35" rx="8" class="b1-liq"/><text x="33" y="66">S₁</text>
+        <circle cx="145" cy="56" r="26" class="n2"/><text x="145" y="64">S₂</text>
+        <circle cx="257" cy="56" r="26" class="n3"/><text x="257" y="64">S₃</text>
+        <circle cx="369" cy="56" r="26" class="n4"/><text x="369" y="64">S₄</text>
+      </g>
+      <text x="33" y="23" class="b1-pool">≡ 1</text>
+    </svg>
+  </div>
+
+  <div class="b1-body">
+    <div class="b1-left">
+      
+      <div class="b1-blk" data-step="0">
+        <div class="b1-eye"><span class="b1-num">1</span>Factorise</div>
+        <div class="b1-txt">Constant $e$ ⇒ a linear cascade with $S_1\equiv1$ ⇒ <span class="b1-key">$S_4(t_f)=\htmlClass{b1-e1}{e_1}\,\varphi(\htmlClass{b1-e2}{e_2},\htmlClass{b1-e3}{e_3},t_f)$</span></div>
+        <div class="b1-eq">$$\varphi(a,a,t)=t-\frac{2\,(1-e^{-at})}{a}+t\,e^{-at}\qquad\big(\varphi(0.3,0.3,10)\approx4.163\big)$$</div>
+      </div>
+
+      
+      <div class="b1-blk" data-step="1">
+        <div class="b1-eye"><span class="b1-num">2</span>Propagate</div>
+        <ul class="pts b1-pts">
+          <li>$A:(e,t_f)\mapsto(e,\dots,e,t_f)$ is linear and $\mathcal F_1=A^{-1}(\mathcal F_N)$ <span class="b1-mut">(PWC; PWL with equal node values)</span></li>
+          <li>MS, exact integration: the projection of $\mathcal F_{MS}$ onto $(u,t_f)$ is $\mathcal F_{CVP}$</li>
+        </ul>
+      </div>
+
+      
+      <div class="b1-blk b1-scope" data-step="2">
+        <div class="b1-eye"><span class="b1-num">3</span>Scope</div>
+        <div class="b1-txt">The counterexample uses the <b>equality</b> $S_4(t_f)=0.9$ <span class="b1-mut b1-nw">(benchmark formulation)</span></div>
+        <div class="b1-toy"><b>Toy example:</b> illustrates that non-convexity can appear<br>not claimed for collocation · non-convex $\not\Rightarrow$ multiple local optima</div>
+      </div>
+    </div>
+
+    
+    <div class="b1-right" data-step="1">
+      <div class="b1-phead"><span>Constant controls in the $N$-interval space</span><span class="b1-schem">schematic</span></div>
+      <div class="b1-fig">
+        <svg class="b1-svg" viewBox="0 0 640 450" width="640" height="450" aria-label="Schematic: the line of constant controls crosses the curved feasible set twice; the midpoint is not feasible">
+          <defs>
+            <marker id="b1-ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">
+              <path d="M0,1 L10,5 L0,9 z" class="b1-axhead"/>
+            </marker>
+          </defs>
+          <g class="b1-axes">
+            <line x1="60" y1="430" x2="626" y2="430" marker-end="url(#b1-ax)"/>
+            <line x1="60" y1="430" x2="60" y2="14" marker-end="url(#b1-ax)"/>
+            <text x="626" y="420" text-anchor="end">interval 1</text>
+            <text x="76" y="30">intervals 2 … N</text>
+          </g>
+          
+          <line class="b1-diag" x1="60" y1="430" x2="420" y2="70"/>
+          
+          <path class="b1-feas" d="M92.4,297.3 L103.6,301.5 L114.5,305.5 L125.2,309.2 L135.6,312.6 L145.7,315.7 L155.6,318.6 L165.2,321.3 L174.5,323.6 L183.6,325.8 L192.5,327.6 L201.0,329.2 L209.4,330.5 L217.4,331.6 L225.2,332.4 L232.7,333.0 L240.0,333.3 L247.0,333.3 L253.7,333.1 L260.2,332.6 L266.5,331.8 L272.4,330.8 L278.1,329.5 L283.6,328.0 L288.8,326.2 L293.7,324.2 L298.3,321.8 L302.7,319.3 L306.9,316.4 L310.8,313.3 L314.4,310.0 L317.7,306.4 L320.8,302.5 L323.7,298.3 L326.2,293.9 L328.6,289.3 L330.6,284.4 L332.4,279.2 L333.9,273.7 L335.2,268.0 L336.2,262.1 L337.0,255.8 L337.5,249.3 L337.7,242.6 L337.7,235.6 L337.4,228.3 L336.8,220.8 L336.0,213.0 L334.9,205.0 L333.6,196.6 L332.0,188.1 L330.2,179.2 L328.0,170.1 L325.7,160.8 L323.0,151.2 L320.1,141.3 L317.0,131.2 L313.6,120.8 L309.9,110.1 L305.9,99.2 L301.7,88.0"/>
+          
+          <line class="b1-chord" x1="168" y1="322" x2="326.4" y2="163.6"/>
+          <line class="b1-gap" x1="247.2" y1="242.8" x2="314.4" y2="310"/>
+          <circle class="b1-pt b1-ok" cx="168" cy="322" r="10"/>
+          <circle class="b1-pt b1-ok" cx="326.4" cy="163.6" r="10"/>
+          <circle class="b1-pt b1-bad" cx="247.2" cy="242.8" r="10"/>
+        </svg>
+        
+        <div class="b1-lab b1-l-diag"><span class="b1-l-o">constant controls</span><br>$(e,\dots,e,t_f)$</div>
+        <div class="b1-lab b1-l-F"><span class="b1-l-Fn">$\mathcal F_N$</span><br>$S_4(t_f)=0.9$</div>
+        <div class="b1-lab b1-l-m">midpoint<br>$\notin\mathcal F_N$</div>
+      </div>
+      <div class="b1-cap">If $\mathcal F_N$ were convex, so would be $\mathcal F_1$: contradiction</div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="backup" data-module="b2" data-hud="none">
+<div class="frame">
+  <div class="slide-tag">Backup B2</div>
+  <h2 class="title">Full multistart results <span class="b2-tsub">(success %, mean time per start)</span></h2>
+
+  
+  <div class="b2-cap">
+    <span><b>Success %</b> · converged + acceptable, CVODES-verified&nbsp;&nbsp;·&nbsp;&nbsp;<b>mean time per start</b> · all <span data-b2="nstarts">1000</span> starts</span>
+    <svg class="b2-legend" viewBox="0 0 380 30" width="380" height="30" aria-hidden="true">
+      <defs>
+        <linearGradient id="b2-grad" x1="0" x2="1" y1="0" y2="0">
+          <stop offset="0" style="stop-color:var(--seq-0)"/>
+          <stop offset="0.1667" style="stop-color:var(--seq-1)"/>
+          <stop offset="0.3333" style="stop-color:var(--seq-2)"/>
+          <stop offset="0.5" style="stop-color:var(--seq-3)"/>
+          <stop offset="0.6667" style="stop-color:var(--seq-4)"/>
+          <stop offset="0.8333" style="stop-color:var(--seq-5)"/>
+          <stop offset="1" style="stop-color:var(--seq-6)"/>
+        </linearGradient>
+        <pattern id="b2-hatch" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+          <rect width="12" height="12" class="b2-hatch-bg"/>
+          <line x1="0" y1="0" x2="0" y2="12" class="b2-hatch-ln"/>
+        </pattern>
+      </defs>
+      <text x="0" y="22" class="b2-leg-t">0</text>
+      <rect x="22" y="5" width="170" height="20" rx="5" class="b2-leg-ramp"/>
+      <text x="200" y="22" class="b2-leg-t">100</text>
+      <rect x="262" y="5" width="34" height="20" rx="5" class="b2-leg-hatch"/>
+      <text x="304" y="22" class="b2-leg-t">not run</text>
+    </svg>
+  </div>
+  <div class="b2-table" role="table" aria-label="Success percentage and mean time per start for every problem and method"></div>
+
+  <ul class="pts b2-notes">
+    <li>$\varepsilon=\delta=10^{-6}$, $\varepsilon_{acc}=10^{-4}$ · max iterations 1000 (IPOPT, fmincon), 10,000 (ACADOS) · <span data-b2="Nline">N</span></li>
+    <li>CasADi: exact AD gradients; IPOPT exact Hessian, except BSUB (L-BFGS)</li>
+    <li>95% half-width $\le$ <span data-b2="hw"></span> pp</li>
+    <li>FD vs CasADi: different derivatives, integrator and NLP solver</li>
+  </ul>
+</div>
+</section>
+
+
+<section data-block="backup" data-module="b3" data-hud="none">
+<div class="frame">
+  <div class="slide-tag">Backup B3</div>
+  <h2 class="title">Non-identifiability in IOC: the mechanisms</h2>
+
+  <div class="b3-rows">
+    
+    <div class="b3-row" data-step="0">
+      <div class="b3-num">1</div>
+      <div class="b3-main">
+        <div class="b3-h">Scaling</div>
+        <div class="b3-f">$\arg\min_{\cu{u}} J=\arg\min_{\cu{u}}\,cJ\ \ (c>0)$ <span class="b3-then">⇒</span> normalise $\cinv{w}\in\Delta$</div>
+      </div>
+      <svg class="b3-g b3-g1" viewBox="0 0 460 132" width="460" height="132" aria-label="J and cJ share the same minimiser; weights normalised on the simplex">
+        <line class="b3-ax" x1="10" y1="108" x2="250" y2="108"/>
+        <path class="b3-bowl" d="M15.0,48.2 L20.0,52.7 L25.0,57.0 L30.0,61.1 L35.0,65.0 L40.0,68.7 L45.0,72.1 L50.0,75.4 L55.0,78.4 L60.0,81.3 L65.0,83.9 L70.0,86.3 L75.0,88.5 L80.0,90.5 L85.0,92.3 L90.0,93.9 L95.0,95.2 L100.0,96.4 L105.0,97.3 L110.0,98.1 L115.0,98.6 L120.0,98.9 L125.0,99.0 L130.0,98.9 L135.0,98.6 L140.0,98.1 L145.0,97.3 L150.0,96.4 L155.0,95.2 L160.0,93.9 L165.0,92.3 L170.0,90.5 L175.0,88.5 L180.0,86.3 L185.0,83.9 L190.0,81.3 L195.0,78.4 L200.0,75.4 L205.0,72.1 L210.0,68.7 L215.0,65.0 L220.0,61.1 L225.0,57.0 L230.0,52.7 L235.0,48.2"/>
+        <path class="b3-bowl c" d="M25.0,11.1 L30.0,18.9 L35.0,26.3 L40.0,33.2 L45.0,39.8 L50.0,46.0 L55.0,51.8 L60.0,57.2 L65.0,62.2 L70.0,66.8 L75.0,71.0 L80.0,74.7 L85.0,78.1 L90.0,81.1 L95.0,83.7 L100.0,85.9 L105.0,87.7 L110.0,89.1 L115.0,90.1 L120.0,90.7 L125.0,90.9 L130.0,90.7 L135.0,90.1 L140.0,89.1 L145.0,87.7 L150.0,85.9 L155.0,83.7 L160.0,81.1 L165.0,78.1 L170.0,74.7 L175.0,71.0 L180.0,66.8 L185.0,62.2 L190.0,57.2 L195.0,51.8 L200.0,46.0 L205.0,39.8 L210.0,33.2 L215.0,26.3 L220.0,18.9 L225.0,11.1"/>
+        <line class="b3-ustar" x1="125" y1="80" x2="125" y2="108"/>
+        <circle class="b3-udot" cx="125" cy="108" r="6"/>
+        <text class="b3-t it" x="242" y="54">J</text>
+        <text class="b3-t it inv" x="232" y="18">cJ</text>
+        <text class="b3-t it u" x="125" y="131" text-anchor="middle">u*</text>
+        <text class="b3-then-g" x="290" y="76" text-anchor="middle">⇒</text>
+        <path class="b3-simp" d="M330,108 L440,108 L385,12.7 Z"/>
+        <circle class="b3-wdot" cx="398" cy="78" r="7"/>
+        <text class="b3-t it inv" x="384" y="84" text-anchor="end">w</text>
+        <text class="b3-t" x="385" y="131" text-anchor="middle">Δ</text>
+      </svg>
+    </div>
+
+    
+    <div class="b3-row" data-step="1">
+      <div class="b3-num">2</div>
+      <div class="b3-main">
+        <div class="b3-h">Equivalent functionals</div>
+        <div class="b3-f b3-disp">$$\int_{t_0}^{t_f}\big(L+\nabla\psi\cdot f\big)\,dt=\int_{t_0}^{t_f}L\,dt+\psi\big(\cx{x}(t_f)\big)-\psi(\cx{x}_0)$$</div>
+        <div class="b3-sub">boundary term only: indistinguishable if $\cx{x}(t_f)$ is fixed or compensated in $\Phi$<br>cf. reward shaping in RL</div>
+      </div>
+      <svg class="b3-g b3-g2" viewBox="0 0 460 150" width="460" height="150" aria-label="Two different state paths with the same end points give the same boundary term">
+        <path class="b3-path b3-p2" d="M40,104 C150,136 300,-6 420,34"/>
+        <path class="b3-path b3-p1" d="M40,104 C120,6 250,136 420,34"/>
+        <circle class="b3-ring" cx="40" cy="104" r="15"/>
+        <circle class="b3-ring" cx="420" cy="34" r="15"/>
+        <circle class="b3-end" cx="40" cy="104" r="7"/>
+        <circle class="b3-end" cx="420" cy="34" r="7"/>
+        <text class="b3-t inv" x="40" y="146" text-anchor="middle">ψ(x<tspan class="sub" dy="6">0</tspan><tspan dy="-6">)</tspan></text>
+        <text class="b3-t inv" x="454" y="10" text-anchor="end">ψ(x(t<tspan class="sub" dy="6">f</tspan><tspan dy="-6">))</tspan></text>
+        <text class="b3-t mut" x="250" y="144" text-anchor="middle">same boundary term on every path</text>
+      </svg>
+    </div>
+
+    
+    <div class="b3-row b3-row3" data-step="2">
+      <div class="b3-num">3</div>
+      <div class="b3-main">
+        <div class="b3-h">Inverse KKT</div>
+        <div class="b3-f">$\mathcal H=\sum_m \cinv{w_m}L_m+\lambda^\top f$:&ensp;$\nabla_{\cu{u}}\mathcal H=0,\ \ \dot\lambda=-\nabla_{\cx{x}}\mathcal H$</div>
+        <div class="b3-lin"><span class="b3-then">→</span> linear in $(\cinv{w},\lambda)$ on interior arcs</div>
+        <div class="b3-act"><span class="b3-sw" aria-hidden="true"></span>Active constraints add multipliers → residual absorbed → <b>no information on $\cinv{w}$</b></div>
+      </div>
+      <svg class="b3-g b3-g3" viewBox="0 0 460 210" width="460" height="210" aria-label="Illustrative control trajectory with a constraint-driven arc on the upper bound">
+        <defs>
+          <marker id="b3-ax" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto">
+            <path d="M0,1 L10,5 L0,9 z" class="b3-axhead"/>
+          </marker>
+        </defs>
+        <line class="b3-ax" x1="34" y1="186" x2="452" y2="186" marker-end="url(#b3-ax)"/>
+        <line class="b3-ax" x1="34" y1="186" x2="34" y2="10" marker-end="url(#b3-ax)"/>
+        <text class="b3-t it mut" x="450" y="208" text-anchor="end">t</text>
+        <text class="b3-t it u" x="46" y="24">u</text>
+        <line class="b3-bound" x1="34" y1="54" x2="444" y2="54"/>
+        <text class="b3-t mut b3-umax" x="444" y="80" text-anchor="end"><tspan class="it u">u</tspan><tspan class="sub" dy="6">max</tspan></text>
+        <line class="b3-band" x1="176" y1="54" x2="300" y2="54"/>
+        <path class="b3-traj" d="M44,166 C110,166 128,54 176,54 L300,54 C346,54 372,150 440,150"/>
+        <text class="b3-t warn b3-bandlab" x="238" y="34" text-anchor="middle">constraint-driven arc</text>
+        <text class="b3-t mut b3-intlab" x="130" y="150">interior</text>
+      </svg>
+    </div>
+  </div>
+
+  
+  <div class="b3-foot" data-step="0">
+    <div class="b3-ctx">
+      <span class="b3-ctxl">Context, cf. Banga &amp; Sager 2025:</span>
+      <span class="b3-c">parameters</span><span class="b3-ca">→</span><span class="b3-c">structure</span><span class="b3-ca">→</span><span class="b3-c on">objectives</span><span class="b3-ca">→</span><span class="b3-c">competing objectives</span>
+    </div>
+    <div class="b3-std">Standard arguments, not thesis results</div>
+  </div>
+</div>
+</section>
+
+
+<section data-block="backup" data-module="b4" data-hud="none" data-steps="1">
+<div class="frame">
+  <div class="slide-tag">Backup B4</div>
+  <h2 class="title b4-title">Method search: protocol, mesh choices, SC result, caveats</h2>
+
+  <div class="b4-row">
+    
+    <div class="b4-left">
+      <div class="b4-flow" aria-label="Agent workflow">
+        <span class="b4-chip">Proposers</span>
+        <span class="b4-pair"><span class="b4-arr">→</span><span class="b4-chip">synthesiser</span></span>
+        <span class="b4-pair"><span class="b4-arr">→</span><span class="b4-chip">adversarial critics</span></span>
+        <span class="b4-pair"><span class="b4-arr">→</span><span class="b4-chip b4-chip-out">7 method families</span></span>
+      </div>
+      <ul class="pts b4-pts">
+        <li>isolated git worktrees · independent audits · read-only harness &amp; verifier</li>
+        <li>Seeds: dev 1–10, held-out 11–100 (pre-registered) · 3,600 held-out jobs ≈ 116&nbsp;h</li>
+        <li>Success = classifier + 600&nbsp;s cold-start limit + CVODES&nbsp;check</li>
+        <li>$\mathbb E[T]=\mathbb E[\tau]/p$: expected time to first hit under iid restarts (Wald) · 2,000-sample bootstrap 95% CIs</li>
+        <li>Main fronts allow coarser tied meshes (LPN3B $N=50$: <span data-b4="lpn3b_coarse">0.29</span>&nbsp;s; BSUB $N=4$: <span data-b4="bsub_coarse">0.40</span>&nbsp;s) → 8–20×; benchmark mesh only → ≈&nbsp;5–20× (S17)</li>
+      </ul>
+    </div>
+
+    
+    <div class="b4-ms">
+      <div class="b4-chead">
+        <span class="b4-ct">SC · held-out test, <span data-b4="nstarts">90</span> starts per method</span>
+        <span class="b4-lg"><svg class="b4-key b4-key-base" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7.5"/></svg>baselines $(N=10)$</span>
+        <span class="b4-lg" data-step="1"><svg class="b4-key" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/></svg>new methods</span>
+      </div>
+      <svg class="b4-svg" viewBox="0 0 880 300" width="880" height="300" role="img"
+           aria-label="SC Pareto front: best verified J star versus expected time to first hit, log scale, with bootstrap confidence whiskers"></svg>
+      <div class="b4-xlab">$\mathbb E[T]$ (s, log scale) · whiskers: bootstrap 95% CI · $J^*$ = best verified survival time (higher is better)</div>
+
+      <div class="b4-bottom" data-step="1">
+        <div class="b4-inset">
+          <div class="b4-it">$J^*$ vs mesh size $N$ (held-out test)</div>
+          <svg class="b4-isvg" viewBox="0 0 400 170" width="400" height="170" role="img" aria-label="SC J star versus mesh size N"></svg>
+        </div>
+        <div class="b4-read">
+          <div class="b4-r1">SC, mesh refinement ($N=10\to80/200/500$)</div>
+          <div class="b4-r2">$J^*=$&thinsp;<b data-b4="mr_J">95.742</b> ($N=80$) on <b data-b4="mr_hits">90/90</b> · <span class="b4-nw">$\mathbb E[T]$&nbsp;<b data-b4="mr_ET">13.6&nbsp;s</b></span></div>
+          <div class="b4-r3">Best baseline (MS PWL, $N=10$): <span class="b4-nw">$J^*=$&thinsp;<span data-b4="bl_J">94.738</span></span> · <span data-b4="bl_hit">13.3%</span> hit · ≈&nbsp;<span data-b4="bl_ET">4,150&nbsp;s</span></div>
+        </div>
+      </div>
+      <div class="b4-cav" data-step="1">
+        <svg class="b4-warn" viewBox="0 0 26 24" aria-hidden="true"><path d="M13 2.5 L24.5 21.5 H1.5 Z"/><path d="M13 9 V14.5 M13 17.6 V18"/></svg>
+        <span><b>Caveats:</b> finer mesh; designed after seeing test results</span>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+</div>
+</div>
+
+<script src="vendor/reveal/reveal.js"></script>
+
+<script src="vendor/katex/katex.min.js"></script>
+<script src="vendor/katex/auto-render.min.js"></script>
+<script src="vendor/gsap/gsap.min.js"></script>
+<script src="vendor/gsap/DrawSVGPlugin.min.js"></script>
+<script src="vendor/gsap/MotionPathPlugin.min.js"></script>
+<script src="vendor/gsap/MorphSVGPlugin.min.js"></script>
+<script src="vendor/gsap/TextPlugin.min.js"></script>
+<script>
+if (window.gsap) {
+  gsap.registerPlugin(DrawSVGPlugin, MotionPathPlugin, MorphSVGPlugin, TextPlugin);
+  gsap.defaults({ ease: 'power2.out', duration: 0.6 });
+  // killTweensOf(array) does not kill delayed per-element tweens whose targets are a subset of the array:
+  // without property filter, kill every tween that touches any target instead.
+  const _kill = gsap.killTweensOf.bind(gsap);
+  gsap.killTweensOf = (t, props, onlyActive) => props ? _kill(t, props, onlyActive) : gsap.getTweensOf(t, onlyActive).forEach(x => x.kill());
+}
+</script>
+<script src="vendor/d3/d3.min.js"></script>
+<script src="data/lpn3b.js"></script>
+<script src="data/methodsearch.js"></script>
+<script src="data/multistart.js"></script>
+<script src="js/deck.js"></script>
+<script src="js/slides/b1.js"></script>
+<script src="js/slides/b2.js"></script>
+<script src="js/slides/b3.js"></script>
+<script src="js/slides/b4.js"></script>
+<script src="js/slides/s01.js"></script>
+<script src="js/slides/s01a.js"></script>
+<script src="js/slides/s01b.js"></script>
+<script src="js/slides/s02.js"></script>
+<script src="js/slides/s03.js"></script>
+<script src="js/slides/s04.js"></script>
+<script src="js/slides/s05.js"></script>
+<script src="js/slides/s06.js"></script>
+<script src="js/slides/s07.js"></script>
+<script src="js/slides/s08.js"></script>
+<script src="js/slides/s09.js"></script>
+<script src="js/slides/s10.js"></script>
+<script src="js/slides/s11.js"></script>
+<script src="js/slides/s13.js"></script>
+<script src="js/slides/s14.js"></script>
+<script src="js/slides/s15.js"></script>
+<script src="js/slides/s16.js"></script>
+<script src="js/slides/s17.js"></script>
+</body>
+</html>

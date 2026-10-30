@@ -1,0 +1,109 @@
+/* B1 — Proposition 1: derivation and scope (backup).
+   Colours: enzymes --c-e1..3 / species --c-s1..4 (as S2/S12), feasible set + feasible points --c-now (as S12),
+   off-set midpoint --c-bad, the constant-control line --c-learn (controls u), scope caveat --c-warn. */
+
+section[data-module="b1"] h2.title { margin-bottom: 24px; }
+
+/* ---------- model band: ODE + mini pathway ---------- */
+.b1-model {
+  display: flex; align-items: center; justify-content: space-between; gap: 32px;
+  padding: 8px 26px 8px 30px; margin-bottom: 22px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow);
+}
+.b1-ode { min-width: 0; }
+.b1-ode .katex-display { margin: 0.12em 0; }
+.b1-ode .katex { font-size: 0.86em; }
+.b1-e1 { color: var(--c-e1); }
+.b1-e2 { color: var(--c-e2); }
+.b1-e3 { color: var(--c-e3); }
+
+.b1-path { flex: none; overflow: visible; }
+.b1-pe line { stroke: var(--ink-3); stroke-width: 2.5; stroke-linecap: round; }
+.b1-arrhead { fill: var(--ink-3); }
+.b1-pk text { font-size: 22px; font-weight: 600; text-anchor: middle; }
+.b1-pk .k1 { fill: var(--c-e1); }
+.b1-pk .k2 { fill: var(--c-e2); }
+.b1-pk .k3 { fill: var(--c-e3); }
+.b1-pn circle, .b1-pn rect.n1 { fill: var(--surface-2); stroke-width: 2.5; }
+.b1-pn .n1 { stroke: var(--c-s1); }                         /* S1: constant pool drawn as a tank, as in S2/S17 */
+.b1-pn .b1-liq { fill: color-mix(in srgb, var(--c-s1) 35%, transparent); stroke: none; }
+.b1-pn .n2 { stroke: var(--c-s2); }
+.b1-pn .n3 { stroke: var(--c-s3); }
+.b1-pn .n4 { stroke: var(--c-s4); }
+.b1-pn text { fill: var(--ink); font-size: 22px; font-weight: 600; text-anchor: middle; }
+.b1-pool { fill: var(--ink-2); font-size: 22px; text-anchor: middle; }
+
+/* ---------- body: derivation (left) + schematic (right) ---------- */
+.b1-body { display: flex; gap: 46px; flex: 1 1 auto; min-height: 0; }
+.b1-left { flex: 1 1 0; min-width: 0; display: flex; flex-direction: column; gap: 20px; }
+.b1-right { flex: 0 0 640px; display: flex; flex-direction: column; gap: 4px; }
+
+.b1-eye {
+  display: flex; align-items: center; gap: 12px; margin-bottom: 4px;
+  font-family: var(--font-head); font-size: 20px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-3);
+}
+.b1-num {
+  display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%;
+  border: 1.5px solid var(--line-2); color: var(--ink-2); font-size: 19px; letter-spacing: 0; background: var(--surface-2);
+}
+.b1-txt { font-size: 28px; color: var(--ink-2); line-height: 1.38; }
+.b1-txt .katex, .b1-pts .katex, .b1-toy .katex { color: var(--ink); font-size: 1.04em; }
+.b1-key {
+  display: inline-block; padding: 0 10px; border-radius: 10px; white-space: nowrap;
+  border: 1.5px solid color-mix(in srgb, var(--c-now) 70%, transparent);
+  background: color-mix(in srgb, var(--c-now) 9%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--c-now) 22%, transparent);
+}
+.b1-eq .katex-display { margin: 0.1em 0 0 0; }
+.b1-eq .katex { font-size: 0.98em; color: var(--ink); }
+.reveal ul.b1-pts > li { font-size: 27px; color: var(--ink-2); line-height: 1.36; margin-bottom: 8px; }
+.b1-mut { color: var(--ink-3); }
+.b1-nw { white-space: nowrap; }
+
+.b1-scope {
+  border-left: 4px solid var(--c-warn); padding: 8px 0 10px 22px; border-radius: 0 14px 14px 0;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--c-warn) 9%, transparent), transparent 85%);
+}
+.b1-scope .b1-eye { color: var(--c-warn); }
+.b1-scope .b1-num { border-color: color-mix(in srgb, var(--c-warn) 70%, transparent); color: var(--c-warn); }
+.b1-scope .b1-txt b { color: var(--ink); }
+.b1-toy { font-size: 25px; color: var(--ink-2); line-height: 1.38; margin-top: 4px; }
+
+/* ---------- schematic ---------- */
+.b1-phead { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 22px; color: var(--ink-2); }
+.b1-phead .katex { font-size: 1.02em; }
+.b1-schem {
+  flex: none; font-size: 19px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-3);
+  border: 1px solid var(--line-2); border-radius: 999px; padding: 1px 12px;
+}
+.b1-fig { position: relative; width: 640px; height: 450px; }
+.b1-svg { display: block; overflow: visible; }
+.b1-axes line { stroke: var(--ink-3); stroke-width: 1.6; }
+.b1-axhead { fill: var(--ink-3); }
+.b1-axes text { fill: var(--ink-3); font-size: 21px; }
+.b1-diag { stroke: var(--c-learn); stroke-width: 3; stroke-linecap: round; }
+.b1-feas {
+  fill: none; stroke: var(--c-now); stroke-width: 5.5; stroke-linecap: round; stroke-linejoin: round;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-now) 50%, transparent));
+}
+.b1-chord { stroke: var(--ink); stroke-width: 3.5; stroke-linecap: round; }
+.b1-gap { stroke: var(--c-bad); stroke-width: 3; stroke-dasharray: 3 7; stroke-linecap: round; }
+.b1-pt { stroke: var(--bg); stroke-width: 3; }
+.b1-ok { fill: var(--c-now); filter: drop-shadow(0 0 7px color-mix(in srgb, var(--c-now) 60%, transparent)); }
+.b1-bad { fill: var(--c-bad); filter: drop-shadow(0 0 7px color-mix(in srgb, var(--c-bad) 60%, transparent)); }
+
+.b1-lab { position: absolute; font-size: 22px; line-height: 1.2; color: var(--ink-2); white-space: nowrap; }
+.b1-lab .katex { font-size: 1.04em; color: var(--ink); }
+.b1-l-diag { left: 430px; top: 38px; }
+.b1-l-o { color: var(--ink); font-weight: 600; }   /* identity carried by the orange line itself */
+.b1-l-F { left: 354px; top: 212px; }
+.b1-l-Fn { font-size: 32px; line-height: 1.1; }
+.b1-l-Fn .katex { color: var(--c-now); }
+.b1-l-m { right: 412px; top: 176px; text-align: right; color: var(--c-bad); font-weight: 600; }
+.b1-l-m .katex { color: var(--c-bad); }
+
+.b1-cap {
+  font-size: 24px; color: var(--ink-2); padding: 8px 16px; border-radius: 12px; align-self: flex-start;
+  background: var(--surface-2); border: 1px solid var(--line-2);
+}
+.b1-cap .katex { color: var(--ink); font-size: 1.02em; }

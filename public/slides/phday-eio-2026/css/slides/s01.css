@@ -1,0 +1,68 @@
+/* S1 — Title slide (no HUD). Logos sit on var(--logo-plate) plates: the official logos are made for var(--logo-plate) backgrounds
+   (and the AEI funding image must be shown on var(--logo-plate)), so the plate colour is the keyword `var(--logo-plate)` in both themes. */
+.s01-frame { padding: 0; }
+
+/* ---------- faint pathway drawing, right of the title's 2nd/3rd lines (placed in s01.js; never behind text) ---------- */
+.s01-bg { position: absolute; inset: 0; width: 1920px; height: 1080px; pointer-events: none; z-index: 0; opacity: 0.5; }
+:root[data-theme="light"] .s01-bg { opacity: 0.55; }
+.s01-bg .s01-ln { fill: none; stroke: var(--ink-3); stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+.s01-bg .s01-lnk { fill: none; stroke: var(--ink-3); stroke-width: 1.6; stroke-linecap: round; }
+.s01-bg .s01-wave { fill: none; stroke: var(--ink-3); stroke-width: 2; stroke-linecap: round; }
+.s01-bg .s01-lab { fill: var(--ink-3); font-family: var(--font-head); font-weight: 600; text-anchor: middle; }
+.s01-bg .s01-flow { fill: none; stroke-width: 4; stroke-linecap: round; }
+.s01-bg .s01-flow[data-e="1"] { stroke: var(--c-e1); }
+.s01-bg .s01-flow[data-e="2"] { stroke: var(--c-e2); }
+.s01-bg .s01-flow[data-e="3"] { stroke: var(--c-e3); }
+.s01-bg .s01-tint { fill: none; stroke-width: 3; }
+.s01-bg .s01-tint[data-e="1"] { stroke: var(--c-e1); }
+.s01-bg .s01-tint[data-e="2"] { stroke: var(--c-e2); }
+.s01-bg .s01-tint[data-e="3"] { stroke: var(--c-e3); }
+.s01-bg .s01-fill4 { fill: color-mix(in srgb, var(--c-s4) 30%, transparent); stroke: none; }
+
+/* ---------- logo plates ---------- */
+.s01-plate {
+  position: absolute; top: 46px; height: 96px; box-sizing: border-box; z-index: 2;
+  display: flex; align-items: center; gap: 26px; padding: 0 30px;
+  background: var(--logo-plate); border-radius: 20px;
+  box-shadow: var(--shadow); border: 1px solid var(--line);
+}
+.s01-plate-l { left: 110px; }
+.s01-plate-r { right: 110px; }
+.s01-plate img { display: block; width: auto; }
+.s01-phday { height: 54px; }
+.s01-csic  { height: 42px; }
+.s01-mbg   { height: 54px; }
+.s01-sep { width: 2px; height: 56px; border-radius: 1px; background: color-mix(in srgb, black 14%, var(--logo-plate)); }
+
+/* ---------- title block ---------- */
+.s01-main { position: absolute; left: 110px; right: 110px; top: 236px; z-index: 1; }
+.reveal .s01-title { font-size: 80px; line-height: 1.07; letter-spacing: -0.022em; font-weight: 650; max-width: 1640px; }
+.s01-k-oc  { color: var(--c-mech); }
+.s01-k-rl  { color: var(--c-learn); }
+.s01-k-inv { color: var(--c-inv); }
+.reveal .s01-sub { font-size: 40px; font-style: italic; color: var(--ink-2); margin: 30px 0 0; letter-spacing: -0.005em; }
+.s01-rule {
+  width: 560px; height: 4px; border-radius: 2px; margin: 44px 0 36px;
+  background: linear-gradient(90deg, var(--c-mech), var(--c-learn) 50%, var(--c-inv));
+  transform-origin: 0 50%;
+}
+.reveal .s01-author { font-size: 38px; margin: 0; color: var(--ink); }
+.s01-author b { font-weight: 650; }
+.s01-dot { color: var(--ink-3); margin: 0 18px; }
+.s01-sup { color: var(--ink-2); }
+.reveal .s01-aff { font-size: 28px; color: var(--ink-2); margin: 12px 0 0; }
+.reveal .s01-event {
+  display: inline-flex; align-items: center; gap: 14px; margin: 30px 0 0;
+  font-family: var(--font-head); font-size: 28px; font-weight: 600; letter-spacing: 0.02em; color: var(--ink);
+  padding: 8px 22px 8px 18px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--surface);
+}
+.s01-pin { width: 12px; height: 12px; border-radius: 50%; background: var(--b-intro); box-shadow: 0 0 12px var(--b-intro); }
+
+/* ---------- funding footer (mandatory) ---------- */
+.s01-foot {
+  position: absolute; left: 110px; right: 110px; bottom: 34px; z-index: 2;
+  display: flex; align-items: center; gap: 30px; padding-top: 20px; border-top: 1px solid var(--line);
+}
+.s01-fplate { flex: 0 0 auto; background: var(--logo-plate); border-radius: 12px; padding: 7px 10px; border: 1px solid var(--line); }
+.s01-fplate img { display: block; height: 70px; width: auto; }
+.reveal .s01-ftext { margin: 0; font-size: 21px; color: var(--ink-2); line-height: 1.35; }

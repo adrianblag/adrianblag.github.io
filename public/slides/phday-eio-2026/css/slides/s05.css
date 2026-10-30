@@ -1,0 +1,109 @@
+/* S5 — L1 · Learn: HJB, OC vs RL sharing one V, grey-box model (schematic) */
+.s05-stage { position: relative; width: 1700px; height: 700px; flex: none; margin-top: -6px; }
+.s05-stage > * { position: absolute; }
+.s05-svg { left: 0; top: 0; overflow: visible; }
+.s05-ghost { left: 0; top: 6px; overflow: visible; pointer-events: none; z-index: 6; }   /* S4 staircase position (S4 stage starts 6 px lower) */
+
+/* ---------- equations (step 0) ---------- */
+.s05-eq .katex-display { margin: 0; }
+.s05-eq .katex { font-size: 1.12em; }
+.s05-eqV { left: 0; top: 0; }
+.s05-eqH { left: 0; top: 140px; }
+.s05-eqlab {
+  font-family: var(--font-head); font-size: 21px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--ink-3); margin-bottom: 4px;
+}
+/* the model term: highlight box + "model enters here" label underneath */
+.s05-hl { position: relative; display: inline-block; border-radius: 8px; margin: 0 0.2em; transition: background-color .5s ease, box-shadow .5s ease; }
+.s05-hl::after {
+  content: "↑ model enters here"; position: absolute; left: 50%; top: calc(100% + 12px); transform: translate(-50%, 6px);
+  font-family: var(--font-text); font-style: normal; font-weight: 600; font-size: 24px; letter-spacing: 0.01em; white-space: nowrap;
+  color: var(--c-mech); opacity: 0; transition: opacity .5s ease, transform .5s ease;
+}
+section.s05-hl-on .s05-hl {
+  background: color-mix(in srgb, var(--c-mech) 16%, transparent);
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--c-mech) 16%, transparent), 0 0 0 7px color-mix(in srgb, var(--c-mech) 70%, transparent),
+              0 0 22px 8px color-mix(in srgb, var(--c-mech) 30%, transparent);
+}
+section.s05-hl-on .s05-hl::after { opacity: 1; transform: translate(-50%, 0); }
+section.deck-instant .s05-hl, section.deck-instant .s05-hl::after { transition: none; }
+
+/* ---------- SVG cards & glyphs ---------- */
+.s05-card { stroke-width: 2; }
+.s05-card-oc { fill: color-mix(in srgb, var(--c-mech) 8%, var(--surface)); stroke: color-mix(in srgb, var(--c-mech) 70%, transparent); }
+.s05-card-rl { fill: color-mix(in srgb, var(--c-learn) 8%, var(--surface)); stroke: color-mix(in srgb, var(--c-learn) 70%, transparent); }
+.s05-card-gb { fill: color-mix(in srgb, var(--ink-3) 9%, var(--surface)); stroke: var(--line-2); }
+.s05-card-gb-band { fill: url(#s05-gbgrad); opacity: 0.9; }
+.s05-gb0 { stop-color: var(--c-mech); stop-opacity: 1; }
+.s05-gb1 { stop-color: var(--c-learn); stop-opacity: 1; }
+
+.s05-node { fill: color-mix(in srgb, var(--c-mech) 22%, var(--surface)); stroke: var(--c-mech); stroke-width: 2.5; }
+.s05-node-t { font-size: 22px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+.s05-edge-m { stroke: var(--c-mech); stroke-width: 2.5; fill: none; }
+.s05-head-m { fill: var(--c-mech); }
+
+.s05-agent { fill: color-mix(in srgb, var(--c-learn) 20%, var(--surface)); stroke: var(--c-learn); stroke-width: 2.5; }
+.s05-env { fill: color-mix(in srgb, var(--ink-3) 28%, var(--surface)); stroke: var(--ink-3); stroke-width: 2; }   /* grey box; ink text on it (> 10:1 both themes) */
+.s05-box-t { font-size: 23px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+.s05-env-t { font-size: 23px; font-weight: 600; fill: var(--ink); text-anchor: middle; }
+.s05-env-q { font-family: var(--font-head); font-style: normal; font-size: 34px; font-weight: 700; fill: var(--ink); }
+.s05-env-f { font-family: KaTeX_Math, "Times New Roman", serif; font-style: italic; font-size: 30px; fill: var(--ink); text-anchor: middle; }
+.s05-edge-l { stroke: var(--c-learn); stroke-width: 2.5; fill: none; }
+.s05-head-l { fill: var(--c-learn); }
+.s05-edge-lab { font-family: KaTeX_Math, "Times New Roman", serif; font-style: italic; font-size: 26px; fill: var(--ink); text-anchor: middle; }
+.s05-dot { fill: var(--c-learn); }
+
+.s05-flash { fill: none; stroke-width: 6; opacity: 0; }
+.s05-flash-oc { stroke: var(--c-mech); filter: drop-shadow(0 0 14px color-mix(in srgb, var(--c-mech) 80%, transparent)); }
+.s05-flash-rl { stroke: var(--c-learn); filter: drop-shadow(0 0 14px color-mix(in srgb, var(--c-learn) 80%, transparent)); }
+
+/* shared V */
+.s05-vbox { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 2;
+  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--c-inv) 22%, transparent)); }
+.s05-vaxis { stroke: var(--ink-3); stroke-width: 2; fill: none; }
+.s05-vcurve { stroke: url(#s05-vgrad); stroke-width: 4; fill: none; stroke-linecap: round; }
+.s05-arr-oc { stroke: var(--c-mech); stroke-width: 3.5; stroke-linecap: round; }
+.s05-arr-rl { stroke: var(--c-learn); stroke-width: 3.5; stroke-linecap: round; }
+
+/* grey-box loop */
+.s05-blkbox-ode { fill: color-mix(in srgb, var(--c-mech) 18%, var(--surface)); stroke: var(--c-mech); stroke-width: 2.5; }
+.s05-blkbox-pi  { fill: color-mix(in srgb, var(--c-learn) 18%, var(--surface)); stroke: var(--c-learn); stroke-width: 2.5; }
+.s05-loop { stroke: var(--ink-2); stroke-width: 2.5; fill: none; stroke-linejoin: round; }
+.s05-loop-head { fill: var(--ink-2); }
+.s05-loop-x { stroke: var(--c-mech); }
+.s05-loop-u { stroke: var(--c-learn); }
+.s05-loop-hx { fill: var(--c-mech); }
+.s05-loop-hu { fill: var(--c-learn); }
+
+/* ---------- HTML text over the SVG ---------- */
+.s05-txt { white-space: nowrap; color: var(--ink); font-size: 26px; }
+.s05-txt .katex { font-size: 1.08em; }
+.s05-hd { display: flex; align-items: baseline; gap: 14px; }
+.s05-hd b { font-family: var(--font-head); font-size: 40px; font-weight: 700; letter-spacing: 0.01em; }
+.s05-hd span { font-size: 23px; color: var(--ink-2); }
+.s05-hd-oc { left: 26px; top: 332px; } .s05-hd-oc b { color: var(--c-mech); }
+.s05-hd-rl { left: 651px; top: 332px; } .s05-hd-rl b { color: var(--c-learn); }
+.s05-hd-gb { left: 1146px; top: 16px; } .s05-hd-gb b { color: var(--ink); }
+.s05-oc-f { left: 26px; top: 494px; font-size: 27px; color: var(--ink-2); }
+.s05-rl-s { left: 815px; top: 516px; font-size: 24px; color: var(--ink-2); }
+.s05-foot { top: 572px; font-size: 25px; color: var(--ink-2); }
+.s05-foot b { color: var(--ink); }
+.s05-foot-oc { left: 26px; }
+.s05-foot-rl { left: 651px; }
+.s05-to { color: var(--ink-3); }
+.s05-vlab { left: 413px; top: 368px; width: 140px; text-align: center; font-size: 26px; }
+.s05-vcap { left: 383px; top: 556px; width: 200px; text-align: center; font-size: 24px; line-height: 1.25; color: var(--ink); white-space: normal; }
+.s05-vcap .muted { font-size: 20px; }
+
+.s05-gb-eq { left: 1146px; top: 84px; font-size: 30px; }
+.s05-blk { display: flex; align-items: center; justify-content: center; font-size: 26px; }
+.s05-blk-ode { left: 1230px; top: 166px; width: 360px; height: 66px; font-size: 28px; }
+.s05-blk-pi  { left: 1300px; top: 290px; width: 220px; height: 62px; font-size: 28px; }
+.s05-gb-cap { left: 1120px; top: 384px; width: 580px; text-align: center; font-size: 27px; line-height: 1.35; white-space: normal; }
+.s05-pi { color: var(--c-learn); }
+
+.s05-cases { left: 1146px; top: 476px; width: 530px; display: flex; flex-direction: column; align-items: flex-start; gap: 10px; font-size: 24px; }
+.s05-cases .pill { font-size: 24px; padding: 4px 16px; color: var(--ink); border-color: color-mix(in srgb, var(--c-inv) 55%, transparent);
+  background: color-mix(in srgb, var(--c-inv) 10%, transparent); }
+.s05-cases-l { font-family: var(--font-head); font-size: 21px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); width: 100%; margin-bottom: 2px; }
+.s05-gap { left: 0; top: 664px; }

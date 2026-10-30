@@ -1,0 +1,80 @@
+/* S14 — No universal winner: success-% heatmap -> log-time dot plot */
+.s14-stage { position: relative; }
+.s14-svg { position: absolute; left: 0; top: 0; width: 1700px; height: 748px; overflow: visible; }
+.s14-svg text { font-family: var(--font-text); }
+
+/* captions + headers + row labels */
+.s14-cap { font-size: 24px; fill: var(--ink-2); }
+.s14-cap b, .s14-cap .s14-b { font-weight: 650; fill: var(--ink); }
+.s14-colh { font-size: 23px; fill: var(--ink); font-weight: 600; }
+.s14-rowl { font-size: 27px; fill: var(--ink); font-weight: 650; text-anchor: end; }
+.s14-rowl .s14-sub { font-weight: 450; fill: var(--ink-2); font-size: 23px; transition: fill .4s ease; }
+.s14-rowl .s14-sub.s14-hl { fill: var(--ink); font-weight: 700; }
+
+/* heatmap cells */
+.s14-out { fill: none; stroke: var(--line-2); stroke-width: 1.5; stroke-dasharray: 5 6; }
+.s14-fill { stroke: none; }
+.s14-hatch-bg { fill: var(--surface); }
+.s14-hatch-ln { stroke: var(--line-2); stroke-width: 3; }
+.s14-hatchrect { fill: url(#s14-hatch); stroke: var(--line); stroke-width: 1; }
+.s14-nrbg { fill: var(--surface); }
+.s14-nr { font-size: 21px; fill: var(--ink-2); text-anchor: middle; font-style: italic; }
+.s14-num { font-size: 32px; font-weight: 700; text-anchor: middle; font-variant-numeric: tabular-nums; fill: var(--seq-ink-light); }
+.s14-num.s14-dk { fill: var(--seq-ink-dark); }                         /* dark theme: light cells -> dark ink */
+:root[data-theme="light"] .s14-num { fill: var(--seq-ink-dark); }
+:root[data-theme="light"] .s14-num.s14-lt { fill: var(--seq-ink-light); } /* light theme: dark cells -> light ink */
+.s14-ring { fill: none; stroke: var(--c-bad); stroke-width: 3.5; filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-bad) 60%, transparent)); }
+
+/* ACADOS spotlight + callout */
+.s14-spot { fill: color-mix(in srgb, var(--m-acados) 7%, transparent); stroke: var(--m-acados); stroke-width: 3;
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--m-acados) 45%, transparent)); }
+.s14-co-box { fill: var(--surface); stroke: var(--m-acados); stroke-width: 2; }
+.s14-co-ln { fill: none; stroke: var(--m-acados); stroke-width: 2.5; }
+.s14-co-dot { fill: var(--m-acados); }
+.s14-co-t1 { font-size: 30px; font-weight: 700; fill: var(--ink); font-variant-numeric: tabular-nums; }
+.s14-co-t2 { font-size: 24px; fill: var(--ink-2); }
+
+/* PWC -> PWL arrows */
+.s14-arrow { fill: none; stroke: var(--ink); stroke-width: 4; stroke-linecap: round;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--c-now) 55%, transparent)); }
+.s14-ah { fill: var(--ink); }
+.s14-pill rect { fill: var(--surface-2); stroke: var(--c-now); stroke-width: 2; }
+.s14-pill text { font-size: 22px; font-weight: 650; fill: var(--ink); text-anchor: middle; }
+
+/* dot plot */
+.s14-axis line.s14-tick { stroke: var(--line-2); stroke-width: 1.5; }
+.s14-axis line.s14-vgrid { stroke: var(--grid); stroke-width: 1.5; }
+.s14-axis line.s14-base { stroke: var(--line-2); stroke-width: 1.5; }
+.s14-axis line.s14-hgrid { stroke: var(--grid); stroke-width: 1.5; }
+.s14-axis text { font-size: 20px; fill: var(--ink-3); text-anchor: middle; font-variant-numeric: tabular-nums; }
+.s14-axis text.s14-axnote { font-size: 20px; fill: var(--ink-3); text-anchor: end; }
+.s14-m-ms { fill: var(--m-ms); stroke: var(--bg); stroke-width: 2; }
+.s14-m-cvp { fill: var(--m-cvp); stroke: var(--bg); stroke-width: 2; }
+.s14-m-acados { fill: var(--m-acados); stroke: var(--bg); stroke-width: 2; }
+.s14-m-fd { fill: var(--bg); stroke: var(--m-fd); stroke-width: 3; }
+.s14-br { stroke: var(--ink-3); stroke-width: 2.5; fill: none; }
+.s14-brt { font-size: 26px; font-weight: 700; fill: var(--ink); font-variant-numeric: tabular-nums; }
+
+/* right-hand panel (HTML) */
+.s14-panel { position: absolute; left: 1250px; top: 52px; width: 450px; display: flex; flex-direction: column; gap: 26px; }
+.s14-legend-h { font-size: 22px; color: var(--ink-2); margin-bottom: 8px; letter-spacing: 0.02em; }
+.s14-legend-bar { display: block; overflow: visible; }
+.s14-legend-ramp { fill: url(#s14-grad); stroke: var(--line-2); stroke-width: 1; }
+.s14-legend-hatch { fill: url(#s14-hatch); stroke: var(--line-2); stroke-width: 1; }
+.s14-legend-t { font-size: 20px; fill: var(--ink-3); }
+.s14-card { font-size: 28px; line-height: 1.3; color: var(--ink-2); border-left: 4px solid var(--b-now); padding: 4px 0 4px 20px; transition-property: opacity, transform; }
+.s14-card b { color: var(--ink); }
+.s14-c1 { font-size: 32px; }
+.s14-c2 { border-left-color: var(--m-acados); }
+.s14-c3 { border-left-color: var(--m-cvp); }
+.s14-big { white-space: nowrap; font-family: var(--font-head); font-size: 54px; font-weight: 650; color: var(--ink); line-height: 1.1; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.s14-big sup { font-size: 0.55em; color: var(--ink-2); margin-left: 2px; }
+.s14-mk { display: inline-block; width: 22px; height: 20px; margin-right: 10px; vertical-align: -1px; }
+.s14-mk-acados { background: var(--m-acados); clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+.s14-nw { white-space: nowrap; }                     /* wrap "Ranking is / problem-dependent" between words */
+/* step 3: the earlier cards stay fully readable (only their accent bars recede) */
+section.s14-t .s14-c1, section.s14-t .s14-c2 { border-left-color: var(--line-2); transition: border-color .6s ease, opacity .55s ease, transform .6s cubic-bezier(.2,.8,.2,1); }
+.s14-c3.is-on { transition-delay: 1.3s; }
+/* the mandatory caveat sits right under the number it qualifies */
+.s14-foot { font-size: 24px; line-height: 1.3; color: var(--ink-2); margin-top: 10px; }
+.s14-foot sup { font-size: 0.8em; margin-right: 2px; }

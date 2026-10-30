@@ -1,0 +1,78 @@
+/* S4 — Thesis plan staircase. The s04-col / s04-icon / s04-dif classes are also used by S10 (same motif). */
+.s04-stage { flex: 0 0 748px; height: 748px; }
+.s04-svg { display: block; overflow: visible; }
+
+/* dichotomy bar */
+.s04-pole-mech  { fill: color-mix(in srgb, var(--c-mech) 13%, var(--surface));  stroke: var(--c-mech);  stroke-width: 2; }
+.s04-pole-learn { fill: color-mix(in srgb, var(--c-learn) 13%, var(--surface)); stroke: var(--c-learn); stroke-width: 2; }
+.s04-pole-t { font-family: var(--font-head); font-size: 31px; font-weight: 600; fill: var(--ink); }
+.s04-pole-s { font-size: 24px; font-style: italic; fill: var(--ink-2); }
+.s04-pole-node-mech { fill: var(--surface-2); stroke: var(--c-mech); stroke-width: 2.5; }
+.s04-pole-link-mech { stroke: var(--c-mech); stroke-width: 2.5; fill: none; }
+.s04-pole-node-learn { fill: var(--c-learn); }
+.s04-pole-link-learn { stroke: color-mix(in srgb, var(--c-learn) 55%, transparent); stroke-width: 1.6; }
+.s04-arr-mech  { stroke: var(--c-mech);  stroke-width: 3.5; stroke-linecap: round; }
+.s04-arr-learn { stroke: var(--c-learn); stroke-width: 3.5; stroke-linecap: round; }
+.s04-head-mech  { fill: var(--c-mech); }
+.s04-head-learn { fill: var(--c-learn); }
+.s04-node { fill: var(--c-inv); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--c-inv) 70%, transparent)); }
+.s04-thesis { font-size: 27px; fill: var(--ink); }
+.s04-thesis-b { fill: var(--c-inv); font-weight: 700; }
+
+/* ground floor */
+.s04-slab { fill: color-mix(in srgb, var(--c-now) 15%, var(--surface)); stroke: var(--c-now); stroke-width: 2;
+  filter: drop-shadow(0 0 14px color-mix(in srgb, var(--c-now) 28%, transparent)); }
+.s04-slab-t { font-family: var(--font-head); font-size: 29px; font-weight: 600; fill: var(--ink); }
+.s04-slab-s { font-family: var(--font-text); font-size: 26px; font-weight: 400; fill: var(--ink-2); }
+.s04-gear { fill: none; stroke: var(--c-now); stroke-width: 2.6; stroke-linejoin: round; }
+.s04-now rect { fill: var(--c-now); }
+.s04-now text { fill: var(--bg); font-family: var(--font-head); font-size: 20px; font-weight: 700; letter-spacing: 0.14em; text-anchor: middle; }
+
+/* staircase columns: neutral (purple = inverse in the story colours, and not every level is an inverse problem) */
+.s04-gs0 { stop-color: var(--ink-3); stop-opacity: 0.30; }
+.s04-gs1 { stop-color: var(--ink-3); stop-opacity: 0.04; }
+.s04-face { stroke: color-mix(in srgb, var(--ink-3) 45%, transparent); stroke-width: 1.5; }
+.s04-tread { stroke: var(--ink-3); stroke-width: 4; stroke-linecap: round; }
+.s04-badge rect { fill: var(--surface-2); stroke: var(--line-2); stroke-width: 1.6; }
+.s04-badge text { font-family: var(--font-head); font-size: 22px; font-weight: 700; fill: var(--ink); text-anchor: middle; }
+.s04-h { font-family: var(--font-head); font-size: 32px; font-weight: 600; fill: var(--ink); }
+.s04-q { font-size: 26px; font-style: italic; fill: var(--ink-2); }
+.s04-m { font-size: 24px; fill: var(--ink); }
+
+/* level icons */
+.s04-ic-node { fill: var(--surface-2); stroke: var(--c-mech); stroke-width: 2.5; }
+.s04-ic-edge { stroke: var(--ink-3); stroke-width: 2.5; fill: none; }
+.s04-ic-head { fill: var(--ink-3); }
+.s04-ic-box { fill: color-mix(in srgb, var(--ink-3) 62%, var(--surface)); stroke: var(--ink-3); stroke-width: 1.5; }
+.s04-ic-boxq { font-family: var(--font-head); font-size: 24px; font-weight: 700; fill: var(--surface); }
+.s04-ic-serif { font-family: KaTeX_Main, "Times New Roman", serif; fill: var(--ink); }
+.s04-ic-int { font-size: 50px; }
+.s04-ic-dt { font-size: 30px; font-style: italic; }
+.s04-ic-q { font-family: var(--font-head); font-size: 36px; font-weight: 700; fill: var(--c-bad); }
+.s04-ic-qbox { fill: none; stroke: var(--c-bad); stroke-width: 2; stroke-dasharray: 4 4; }
+.s04-ic-axis { stroke: var(--ink-3); stroke-width: 2; fill: none; }
+.s04-ic-hill { stroke: var(--c-learn); stroke-width: 3.5; fill: none; stroke-linecap: round; }
+.s04-ic-cellA { fill: color-mix(in srgb, var(--cat-2) 22%, transparent); stroke: var(--cat-2); stroke-width: 2.5; }
+.s04-ic-cellB { fill: color-mix(in srgb, var(--cat-3) 22%, transparent); stroke: var(--cat-3); stroke-width: 2.5; }
+.s04-ic-sub { fill: var(--c-mech); }
+
+/* difficulty icons (S10 brick) */
+.s04-dif { stroke: var(--ink); stroke-width: 3; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.s04-dif-plate { stroke-width: 3.5; }
+.s04-dif-wall { stroke: var(--c-bad); stroke-width: 3.5; }
+.s04-dif-hatch { stroke: color-mix(in srgb, var(--c-bad) 70%, transparent); stroke-width: 2; fill: none; }
+.s04-dif-act { stroke: var(--c-warn); stroke-width: 4.5; }
+.s04-dif-head { fill: var(--ink); }
+
+/* difficulty compounds + footer */
+.s04-diff-line { stroke: var(--ink-3); stroke-width: 2.5; stroke-linecap: round; }
+.s04-diff-head { fill: var(--ink-3); }
+.s04-diff-t { font-size: 25px; font-style: italic; fill: var(--ink-2); letter-spacing: 0.02em; }
+.s04-foot { font-size: 24px; fill: var(--ink-2); }
+.s04-foot-sep { fill: var(--ink-3); }
+.s04-dg0 { stop-color: var(--ink-3); stop-opacity: 0.25; }
+.s04-dg1 { stop-color: var(--ink-2); stop-opacity: 1; }
+.s04-diff-line { stroke-width: 3; }
+.s04-diff-head { fill: var(--ink-2); }
+.s04-inherit { stroke: color-mix(in srgb, var(--ink-3) 70%, transparent); stroke-width: 2; stroke-dasharray: 4 8; stroke-linecap: round; }
+.s04-ic-pool { fill: color-mix(in srgb, var(--c-mech) 12%, transparent); stroke: color-mix(in srgb, var(--c-mech) 65%, transparent); stroke-width: 1.5; stroke-dasharray: 4 3; }
