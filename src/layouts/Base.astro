@@ -136,6 +136,8 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
     </div>
 
     <script>
+      import type { TransitionBeforeSwapEvent } from 'astro:transitions/client';
+
       /* One-shot scroll reveals (.reveal → .is-in) and the header hairline.
          IntersectionObserver only calls back when an element crosses the
          edge of the screen, so nothing here runs while the page is simply
@@ -176,6 +178,23 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
       // Fires on the first load and after every view transition.
       document.addEventListener('astro:page-load', init);
 
+      // Section links glide there (scroll-behavior: smooth in global.css), but
+      // Back and Forward to another page should land where you were at once,
+      // not glide down from the top. The router swaps the page, restores the
+      // scroll position, and only then fires after-swap, so the override goes
+      // in right after the swap and comes out on after-swap.
+      document.addEventListener('astro:before-swap', (e) => {
+        const ev = e as TransitionBeforeSwapEvent;
+        if (ev.navigationType !== 'traverse') return;
+        const swap = ev.swap;
+        ev.swap = () => {
+          swap();
+          document.documentElement.style.scrollBehavior = 'auto';
+        };
+      });
+      document.addEventListener('astro:after-swap', () => {
+        document.documentElement.style.removeProperty('scroll-behavior');
+      });
 
       // Printing the homepage prints the whole profile: open every folded
       // list first, and close the ones we opened afterwards.

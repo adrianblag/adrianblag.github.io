@@ -98,6 +98,14 @@ html {
   scroll-padding-top: 88px;
 }
 @media (max-width: 960px) { html { scroll-padding-top: 116px; } }
+/* The nav links glide to their section rather than jump, so it stays clear
+   where each section sits on the page. It lives here, not in a script,
+   because the page router replaces <html>'s attributes when it changes page
+   and only then scrolls to the section. Back and Forward to another page
+   stay instant (see Base.astro). */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 
 body {
   margin: 0;
