@@ -2,57 +2,60 @@
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
+import MoreList from '../components/MoreList.astro';
 import ObjectiveMap from '../components/ObjectiveMap.astro';
+import Organization from '../components/Organization.astro';
 import Placeholder from '../components/Placeholder.astro';
+import PostRow from '../components/PostRow.astro';
+import PublicationRow from '../components/PublicationRow.astro';
+import RoleEntry from '../components/RoleEntry.astro';
+import SectionHead from '../components/SectionHead.astro';
+import TalkRow from '../components/TalkRow.astro';
+import TrainingEntry from '../components/TrainingEntry.astro';
 import { site, skills } from '../config/site';
-import { cvSection, dateLabel, isCurrentRole, logosOf, type CvEntry } from '../lib/cv';
-import { doiUrl, emphasize, readingMinutes, stampDate, url } from '../lib/format';
+import { cvSection, dateLabel } from '../lib/cv';
+import { emphasize, plural, readingMinutes, stampDate, url } from '../lib/format';
 
-/* The homepage is an overview of everything, each section linking to its
-   full page. All of it comes from the same content as those pages. */
+/* The whole profile on one page. Every section lists all of its entries,
+   newest first: the first few are shown, and the rest fold under a toggle
+   that says how many there are (MoreList). It all comes from the content
+   files, so adding an entry never needs a change here. */
 
-/* ---- CV: roles with their first two bullets, degrees, latest training -- */
+/** How many entries each list shows before folding the rest. */
+const SHOW = { roles: 3, training: 1, publications: 2, talks: 2 };
+
+/* ---- CV ----------------------------------------------------------------- */
 const experience = cvSection('employment');
 const education = cvSection('education');
 const training = cvSection('training');
-const roles = experience.items.slice(0, 3);
-const when = (e: CvEntry) => (isCurrentRole(e) ? `${e.start} — present` : dateLabel(e));
 
-/* ---- Publications: featured, newest first, else the two most recent ---- */
+/* ---- Publications: featured first, then newest -------------------------- */
 const pubs = (await getCollection('publications')).sort(
   (a, b) =>
+    Number(b.data.featured) - Number(a.data.featured) ||
     b.data.year - a.data.year ||
     (b.data.date?.getTime() ?? 0) - (a.data.date?.getTime() ?? 0)
 );
-const featured = pubs.filter((p) => p.data.featured);
-const selected = (featured.length > 0 ? featured : pubs).slice(0, 2);
 
-/** PDF and DOI first, then any other links — as on the publications page. */
-function pubLinks(data: (typeof pubs)[number]['data']) {
-  const out: { label: string; url: string }[] = [];
-  if (data.pdf) out.push({ label: 'PDF', url: data.pdf });
-  if (data.doi) out.push({ label: 'DOI', url: doiUrl(data.doi) });
-  return [...out, ...data.links];
-}
+/* ---- Talks: newest first ------------------------------------------------ */
+const talks = (await getCollection('talks')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime()
+);
 
-/* ---- Talks: the two most recent ---------------------------------------- */
-const talks = (await getCollection('talks'))
-  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
-  .slice(0, 2);
-
-/* ---- Writing: the newest post (drafts only show in `npm run dev`) ------ */
-const [latest] = (await getCollection('posts'))
+/* ---- Writing: newest first (drafts only show in `npm run dev`) ---------- */
+const posts = (await getCollection('posts'))
   .filter((p) => import.meta.env.DEV || !p.data.draft)
   .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+const [latest, ...olderPosts] = posts;
 
 /* ---- Section numbers, so they stay in sequence if one is empty ---------- */
 const present = {
-  experience: roles.length > 0,
+  experience: experience.items.length > 0,
   education: education.items.length > 0,
   skills: skills.length > 0,
-  publications: selected.length > 0,
+  publications: pubs.length > 0,
   talks: talks.length > 0,
-  writing: Boolean(latest),
+  writing: posts.length > 0,
 };
 let n = 0;
 const num = Object.fromEntries(
@@ -116,74 +119,68 @@ const num = Object.fromEntries(
       <div class="wrap home-row">
         <div class="split">
           {present.experience && (
-            <section class="home-sec" aria-labelledby="h-experience">
-              <div class="sec-head reveal">
-                <span class="sec-num">{num.experience}</span>
-                <h2 id="h-experience">{experience.label}</h2>
-                <span class="sec-rule" />
-                <a class="more" href={url('/cv')}>Full CV <span class="arr" aria-hidden="true">→</span></a>
-              </div>
+            <section class="home-sec" id="experience" aria-labelledby="h-experience">
+              <SectionHead
+                num={num.experience}
+                id="h-experience"
+                title={experience.label}
+                count={plural(experience.items.length, 'role', 'roles')}
+              >
+                {site.cvPdf && (
+                  <a class="btn btn-sm btn-ghost" href={url(site.cvPdf)} download>
+                    CV (PDF)
+                  </a>
+                )}
+              </SectionHead>
               <div class="timeline">
-                {roles.map((role) => (
-                  <article class:list={['tl-item', 'reveal', { current: isCurrentRole(role) }]}>
-                    <span class="tl-date">{when(role)}</span>
-                    <h3>{role.title}</h3>
-                    {role.organization && (
-                      <p class="entry-org">
-                        {logosOf(role).map((src) => (
-                          <img class="cv-logo" src={url(src)} alt="" height="20" loading="lazy" />
-                        ))}
-                        {role.organization}
-                      </p>
-                    )}
-                    {role.bullets && role.bullets.length > 0 && (
-                      <ul class="entry-bullets">
-                        {role.bullets.slice(0, 2).map((b) => <li>{b}</li>)}
-                      </ul>
-                    )}
-                  </article>
+                {experience.items.slice(0, SHOW.roles).map((role) => (
+                  <RoleEntry role={role} />
                 ))}
               </div>
+              <MoreList
+                count={experience.items.length - SHOW.roles}
+                noun={['earlier role', 'earlier roles']}
+              >
+                <div class="timeline">
+                  {experience.items.slice(SHOW.roles).map((role) => (
+                    <RoleEntry role={role} />
+                  ))}
+                </div>
+              </MoreList>
             </section>
           )}
 
           {present.education && (
-            <section class="home-sec" aria-labelledby="h-education">
-              <div class="sec-head reveal">
-                <span class="sec-num">{num.education}</span>
-                <h2 id="h-education">{education.label}</h2>
-                <span class="sec-rule" />
-              </div>
+            <section class="home-sec" id="education" aria-labelledby="h-education">
+              <SectionHead
+                num={num.education}
+                id="h-education"
+                title={education.label}
+                count={plural(education.items.length, 'degree', 'degrees')}
+              />
               <div class="edu-list">
                 {education.items.map((degree) => (
                   <div class="edu-item reveal">
-                    <span class="tl-date">{when(degree)}</span>
+                    <span class="tl-date">{dateLabel(degree)}</span>
                     <h3>{degree.title}</h3>
-                    {degree.organization && (
-                      <p class="entry-org">
-                        {logosOf(degree).map((src) => (
-                          <img class="cv-logo" src={url(src)} alt="" height="20" loading="lazy" />
-                        ))}
-                        {logosOf(degree).length > 1 && <br />}
-                        {degree.organization}
-                      </p>
-                    )}
+                    <Organization entry={degree} />
                   </div>
                 ))}
               </div>
-              {training.items[0] && (
-                <div class="home-training reveal">
-                  <span class="mini-label">{training.label}</span>
-                  <p>{training.items[0].title}</p>
-                  <small>
-                    {[training.items[0].organization, training.items[0].start].filter(Boolean).join(' · ')}
-                    {training.items.length > 1 && (
-                      <Fragment>
-                        {' · '}
-                        <a href={url('/cv')}>{training.items.length - 1} more on the CV</a>
-                      </Fragment>
-                    )}
-                  </small>
+              {training.items.length > 0 && (
+                <div class="home-training">
+                  <div class="mini-head reveal">
+                    <span class="mini-label">{training.label}</span>
+                    <span class="sec-count">{training.items.length}</span>
+                  </div>
+                  {training.items.slice(0, SHOW.training).map((entry) => (
+                    <TrainingEntry entry={entry} />
+                  ))}
+                  <MoreList count={training.items.length - SHOW.training} noun={['more', 'more']}>
+                    {training.items.slice(SHOW.training).map((entry) => (
+                      <TrainingEntry entry={entry} />
+                    ))}
+                  </MoreList>
                 </div>
               )}
             </section>
@@ -196,17 +193,15 @@ const num = Object.fromEntries(
   {
     present.skills && (
       <section class="wrap home-sec home-row" aria-labelledby="h-skills">
-        <div class="sec-head reveal">
-          <span class="sec-num">{num.skills}</span>
-          <h2 id="h-skills">Skills &amp; tools</h2>
-          <span class="sec-rule" />
-        </div>
+        <SectionHead num={num.skills} id="h-skills" title="Skills & tools" />
         <div class="skills">
           {skills.map((group) => (
             <div class="skill-group reveal">
               <span class="mini-label">{group.label}</span>
               <ul class="tags">
-                {group.items.map((item) => <li>{item}</li>)}
+                {group.items.map((item) => (
+                  <li>{item}</li>
+                ))}
               </ul>
             </div>
           ))}
@@ -216,98 +211,66 @@ const num = Object.fromEntries(
   }
 
   {
-    (present.publications || present.talks) && (
-      <div class="wrap home-row">
-        <div class="split">
-          {present.publications && (
-            <section class="home-sec" aria-labelledby="h-publications">
-              <div class="sec-head reveal">
-                <span class="sec-num">{num.publications}</span>
-                <h2 id="h-publications">Publications</h2>
-                <span class="sec-rule" />
-                <a class="more" href={url('/publications')}>All <span class="arr" aria-hidden="true">→</span></a>
-              </div>
-              <div class="home-pubs">
-                {selected.map((pub) => {
-                  const links = pubLinks(pub.data);
-                  return (
-                    <article class="home-pub reveal">
-                      <span class="row-stamp">{pub.data.year} · {pub.data.venueType}</span>
-                      {links[0] ? (
-                        <a class="home-pub-title" href={links[0].url}>{pub.data.title}</a>
-                      ) : (
-                        <h3 class="home-pub-title">{pub.data.title}</h3>
-                      )}
-                      <span class="pub-authors">
-                        {pub.data.authors.map((a, i) => (
-                          <Fragment>
-                            {i > 0 && ', '}
-                            {a.isYou ? <span class="you">{a.name}</span> : a.name}
-                          </Fragment>
-                        ))}
-                      </span>
-                      <span class="row-venue">
-                        {[pub.data.venue, pub.data.note].filter(Boolean).join(' · ')}
-                      </span>
-                      {links.length > 0 && (
-                        <div class="taglinks">
-                          {links.map((l) => (
-                            <a href={l.url}>
-                              {l.label}
-                              <span class="sr-only"> — {pub.data.title}</span>
-                            </a>
-                          ))}
-                        </div>
-                      )}
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          )}
-
-          {present.talks && (
-            <section class="home-sec" aria-labelledby="h-talks">
-              <div class="sec-head reveal">
-                <span class="sec-num">{num.talks}</span>
-                <h2 id="h-talks">Talks &amp; posters</h2>
-                <span class="sec-rule" />
-                <a class="more" href={url('/talks')}>All <span class="arr" aria-hidden="true">→</span></a>
-              </div>
-              <div class="home-talks">
-                {talks.map((talk) => (
-                  <a class="home-talk reveal" href={url('/talks')}>
-                    <Placeholder
-                      class="home-talk-thumb"
-                      src={talk.data.image}
-                      widths={[112, 224]}
-                      sizes="(max-width: 760px) 92px, 112px"
-                      frame
-                    />
-                    <div>
-                      <span class="row-stamp">{stampDate(talk.data.date)} · {talk.data.type}</span>
-                      <h3>{talk.data.title}</h3>
-                      <p>{[talk.data.event, talk.data.location].join(' · ')}</p>
-                    </div>
-                  </a>
-                ))}
-              </div>
-            </section>
-          )}
+    present.publications && (
+      <section class="wrap home-sec home-row" id="publications" aria-labelledby="h-publications">
+        <SectionHead
+          num={num.publications}
+          id="h-publications"
+          title="Publications"
+          count={plural(pubs.length, 'publication', 'publications')}
+        />
+        <div class="row-list">
+          {pubs.slice(0, SHOW.publications).map((pub) => (
+            <PublicationRow pub={pub} />
+          ))}
+          <MoreList
+            count={pubs.length - SHOW.publications}
+            noun={['more publication', 'more publications']}
+          >
+            {pubs.slice(SHOW.publications).map((pub) => (
+              <PublicationRow pub={pub} />
+            ))}
+          </MoreList>
         </div>
-      </div>
+      </section>
+    )
+  }
+
+  {
+    present.talks && (
+      <section class="wrap home-sec home-row" id="talks" aria-labelledby="h-talks">
+        <SectionHead
+          num={num.talks}
+          id="h-talks"
+          title="Talks & posters"
+          count={plural(talks.length, 'presentation', 'presentations')}
+        />
+        <div class="row-list">
+          {talks.slice(0, SHOW.talks).map((talk) => (
+            <TalkRow talk={talk} />
+          ))}
+          <MoreList
+            count={talks.length - SHOW.talks}
+            noun={['older presentation', 'older presentations']}
+          >
+            {talks.slice(SHOW.talks).map((talk) => (
+              <TalkRow talk={talk} />
+            ))}
+          </MoreList>
+        </div>
+      </section>
     )
   }
 
   {
     latest && (
-      <section class="wrap home-sec home-row" aria-labelledby="h-writing">
-        <div class="sec-head reveal">
-          <span class="sec-num">{num.writing}</span>
-          <h2 id="h-writing">Writing</h2>
-          <span class="sec-rule" />
-          <a class="more" href={url('/writing')}>All posts <span class="arr" aria-hidden="true">→</span></a>
-        </div>
+      <section class="wrap home-sec home-row" id="writing" aria-labelledby="h-writing">
+        <SectionHead
+          num={num.writing}
+          id="h-writing"
+          title="Writing"
+          count={plural(posts.length, 'post', 'posts')}
+        />
         <article class="home-post reveal">
           <div class="home-post-body">
             <span class="row-stamp">
@@ -315,7 +278,9 @@ const num = Object.fromEntries(
                 .filter(Boolean)
                 .join(' · ')}
             </span>
-            <a class="home-post-title" href={url(`/writing/${latest.id}`)}>{latest.data.title}</a>
+            <a class="home-post-title" href={url(`/writing/${latest.id}`)}>
+              {latest.data.title}
+            </a>
             <p class="home-post-desc">{latest.data.description}</p>
             <a class="more" href={url(`/writing/${latest.id}`)}>
               Read <span class="arr" aria-hidden="true">→</span>
@@ -332,11 +297,16 @@ const num = Object.fromEntries(
             />
           )}
         </article>
+        <MoreList count={olderPosts.length} noun={['older post', 'older posts']}>
+          {olderPosts.map((post) => (
+            <PostRow post={post} />
+          ))}
+        </MoreList>
       </section>
     )
   }
 
-  <section class="wrap home-contact" aria-labelledby="h-contact">
+  <section class="wrap home-contact" id="contact" aria-labelledby="h-contact">
     <h2 id="h-contact" class="reveal">Get in <em>touch</em></h2>
     <div class="contact-actions reveal">
       <a class="btn" href={`mailto:${site.email}`}>

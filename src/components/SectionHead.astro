@@ -1,0 +1,21 @@
+---
+/** A homepage section heading: number, title, hairline, and how many
+ *  entries the section holds. Anything in the slot sits at the end. */
+interface Props {
+  num: string;
+  /** id of the <h2>, for the section's aria-labelledby */
+  id: string;
+  title: string;
+  /** e.g. "3 presentations" */
+  count?: string;
+}
+const { num, id, title, count } = Astro.props;
+---
+
+<div class="sec-head reveal">
+  <span class="sec-num">{num}</span>
+  <h2 id={id}>{title}</h2>
+  <span class="sec-rule"></span>
+  {count && <span class="sec-count">{count}</span>}
+  <slot />
+</div>

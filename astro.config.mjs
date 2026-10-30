@@ -9,6 +9,15 @@ export default defineConfig({
   // prefix every asset URL with a subpath that does not exist.
   site: 'https://adrianblag.github.io',
 
+  // The site is one page now; these were separate pages before. Each old URL
+  // forwards to its section, so links already shared keep working.
+  redirects: {
+    '/cv': '/#experience',
+    '/publications': '/#publications',
+    '/talks': '/#talks',
+    '/writing': '/#writing',
+  },
+
   markdown: {
     shikiConfig: {
       // Both themes are emitted; the light one inline and the dark one in a

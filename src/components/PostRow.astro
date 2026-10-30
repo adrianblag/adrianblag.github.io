@@ -1,0 +1,19 @@
+---
+/** One older post as a compact row: date, title and description, category. */
+import type { CollectionEntry } from 'astro:content';
+import { stampDate, url } from '../lib/format';
+
+interface Props {
+  post: CollectionEntry<'posts'>;
+}
+const { post } = Astro.props;
+---
+
+<article class="row post-row reveal">
+  <span class="post-date">{stampDate(post.data.date)}</span>
+  <div class="post-row-body">
+    <a class="post-row-title" href={url(`/writing/${post.id}`)}>{post.data.title}</a>
+    <span class="post-row-desc">{post.data.description}</span>
+  </div>
+  <span class="post-cat">{post.data.category}</span>
+</article>

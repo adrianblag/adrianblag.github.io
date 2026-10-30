@@ -1,0 +1,17 @@
+---
+/** One course or certificate under Education: year, title, organization. */
+import Organization from './Organization.astro';
+import type { CvEntry } from '../lib/cv';
+import { dateLabel } from '../lib/cv';
+
+interface Props {
+  entry: CvEntry;
+}
+const { entry } = Astro.props;
+---
+
+<div class="training-item reveal">
+  <span class="tl-date">{dateLabel(entry)}</span>
+  <p class="training-title">{entry.title}</p>
+  <Organization entry={entry} />
+</div>

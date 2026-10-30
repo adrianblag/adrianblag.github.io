@@ -1,5 +1,5 @@
 /* The CV timeline from src/data/cv.json, typed, plus the small helpers the
-   CV page and the homepage share. Nothing here needs editing for content. */
+   homepage uses to render it. Nothing here needs editing for content. */
 import cv from '../data/cv.json';
 
 export type CvEntry = {
@@ -15,17 +15,12 @@ export type CvEntry = {
   bullets?: string[];
 };
 
-export const cvEntries = cv.entries as CvEntry[];
-
-/** Sections in the order declared in cv.json; empty ones are skipped. */
-export const cvSections = cv.sections
-  .map((s) => ({ ...s, items: cvEntries.filter((e) => e.section === s.id) }))
-  .filter((s) => s.items.length > 0);
+const entries = cv.entries as CvEntry[];
 
 /** One section's entries in cv.json order, with its heading. */
 export function cvSection(id: string) {
   const label = cv.sections.find((s) => s.id === id)?.label ?? id;
-  return { label, items: cvEntries.filter((e) => e.section === id) };
+  return { label, items: entries.filter((e) => e.section === id) };
 }
 
 export const isCurrentRole = (e: CvEntry) =>
@@ -35,9 +30,9 @@ export const isCurrentRole = (e: CvEntry) =>
 export const logosOf = (e: CvEntry): string[] =>
   Array.isArray(e.logo) ? e.logo : e.logo ? [e.logo] : [];
 
-/** "2023 —" for a current role, "2020 — 2024" for a span, else the year. */
+/** "2023 — present", "2020 — 2024", or a single year. */
 export function dateLabel(e: CvEntry): string {
-  if (isCurrentRole(e)) return `${e.start} —`;
+  if (isCurrentRole(e)) return `${e.start} — present`;
   if (e.end && e.end !== e.start) return `${e.start} — ${e.end}`;
   return e.start;
 }

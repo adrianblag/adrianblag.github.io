@@ -5,9 +5,8 @@ import { glob } from 'astro/loaders';
    CONTENT COLLECTIONS
 
    Note on category fields: `venueType`, talk `type` and post `category` are
-   plain strings on purpose — NOT Zod enums. The list of options shown as
-   filter pills lives in `src/config/taxonomy.ts`, so you can rename or add
-   categories there without touching validation here.
+   plain strings on purpose — NOT Zod enums — so any label works. They are
+   shown as written next to each entry on the homepage.
    ========================================================================= */
 
 /** One author of a publication. Set `isYou: true` on your own name and it
@@ -29,7 +28,7 @@ const publications = defineCollection({
     title: z.string(),
     authors: z.array(author),
     venue: z.string(),
-    /** free text — see src/config/taxonomy.ts */
+    /** free text, e.g. "Conference" / "Contributed" / "Notes" */
     venueType: z.string(),
     year: z.number(),
     /** optional exact date; only `year` is used for grouping */
@@ -41,7 +40,7 @@ const publications = defineCollection({
     /** e.g. "Best paper honourable mention" — appended after the venue */
     note: z.string().optional(),
     tags: z.array(z.string()).optional().default([]),
-    /** show in the "Selected work" panel on the homepage */
+    /** listed first in the homepage Publications section */
     featured: z.boolean().optional().default(false),
   }),
 });
@@ -53,7 +52,7 @@ const talks = defineCollection({
       title: z.string(),
       event: z.string(),
       location: z.string(),
-      /** free text — see src/config/taxonomy.ts */
+      /** free text, e.g. "Conference" / "Contributed" / "Notes" */
       type: z.string(),
       date: z.coerce.date(),
       links: z.array(link).optional().default([]),
@@ -76,7 +75,7 @@ const posts = defineCollection({
       title: z.string(),
       date: z.coerce.date(),
       description: z.string(),
-      /** free text — see src/config/taxonomy.ts */
+      /** free text, e.g. "Conference" / "Contributed" / "Notes" */
       category: z.string().optional(),
       /** an image next to this file, e.g. './my-post.jpg' (16:9 reads best).
        *  Resized and converted to WebP at build time. */

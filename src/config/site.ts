@@ -103,26 +103,13 @@ export const skills = [
 ] as const;
 
 /* ---------------------------------------------------------------
-   SECTION INTROS — the lead paragraph under each page title.
-   --------------------------------------------------------------- */
-export const pageIntros = {
-  publications:
-    'Conference proceedings and papers. Ask me for a copy of anything that is not linked.',
-  talks:
-    'Talks and posters presented at national and international conferences.',
-  writing:
-    'Notes on research practice, side projects, and things I am reading. Less formal than the papers, on purpose.',
-  cv: 'Positions, training, and the work that shaped the direction.',
-} as const;
-
-/* ---------------------------------------------------------------
-   NAVIGATION — the header links, in order. Kept in the same order
-   as the sections on the homepage; your name in the header links
-   back home.
+   NAVIGATION — the header links, in order. Each one jumps to its
+   section on the homepage (the ids are set in src/pages/index.astro),
+   from any page; your name in the header links back to the top.
    --------------------------------------------------------------- */
 export const nav = [
-  { label: 'CV', href: '/cv' },
-  { label: 'Publications', href: '/publications' },
-  { label: 'Talks & posters', href: '/talks' },
-  { label: 'Writing', href: '/writing' },
+  { label: 'CV', href: '/#experience' },
+  { label: 'Publications', href: '/#publications' },
+  { label: 'Talks & posters', href: '/#talks' },
+  { label: 'Writing', href: '/#writing' },
 ] as const;

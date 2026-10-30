@@ -1,0 +1,27 @@
+---
+/** One role on the experience timeline: dates, title, organization and all
+ *  its bullets. The current role (end: "present") gets the filled dot. */
+import Organization from './Organization.astro';
+import type { CvEntry } from '../lib/cv';
+import { dateLabel, isCurrentRole } from '../lib/cv';
+
+interface Props {
+  role: CvEntry;
+}
+const { role } = Astro.props;
+---
+
+<article class:list={['tl-item', 'reveal', { current: isCurrentRole(role) }]}>
+  <span class="tl-date">{dateLabel(role)}</span>
+  <h3>{role.title}</h3>
+  <Organization entry={role} />
+  {
+    role.bullets && role.bullets.length > 0 && (
+      <ul class="entry-bullets">
+        {role.bullets.map((b) => (
+          <li>{b}</li>
+        ))}
+      </ul>
+    )
+  }
+</article>

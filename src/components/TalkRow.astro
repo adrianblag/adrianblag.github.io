@@ -1,0 +1,60 @@
+---
+/** One talk or poster: photo, date and type, title, event, abstract, and
+ *  the Slides button (opens in a new tab) followed by any other links. */
+import type { CollectionEntry } from 'astro:content';
+import Placeholder from './Placeholder.astro';
+import { stampDate } from '../lib/format';
+
+interface Props {
+  talk: CollectionEntry<'talks'>;
+}
+const { data } = Astro.props.talk;
+
+// The title opens the slides when there are any, else the first link.
+const slides = data.slides;
+const primary = slides ?? data.links[0]?.url;
+const newTab = slides ? { target: '_blank', rel: 'noopener' } : {};
+---
+
+<article class="row talk-row reveal">
+  <Placeholder
+    class="talk-thumb"
+    src={data.image}
+    alt={data.image ? data.title : ''}
+    widths={[168, 336, 440]}
+    sizes="(max-width: 560px) 220px, (max-width: 880px) 132px, 168px"
+    frame
+  />
+  <div class="talk-body">
+    <span class="row-stamp">{stampDate(data.date)} · {data.type}</span>
+    {
+      primary ? (
+        <a class="row-title" href={primary} {...newTab}>
+          {data.title}
+        </a>
+      ) : (
+        <h3 class="row-title">{data.title}</h3>
+      )
+    }
+    <span class="row-venue">{[data.event, data.location].filter(Boolean).join(' · ')}</span>
+    {data.abstract && <span class="talk-abstract">{data.abstract}</span>}
+  </div>
+  <div class="taglinks">
+    {
+      slides && (
+        <a class="btn btn-sm btn-ghost" href={slides} {...newTab}>
+          Slides <span class="arr" aria-hidden="true">↗</span>
+          <span class="sr-only"> — {data.title} (opens in a new tab)</span>
+        </a>
+      )
+    }
+    {
+      data.links.map((l) => (
+        <a href={l.url}>
+          {l.label}
+          <span class="sr-only"> — {data.title}</span>
+        </a>
+      ))
+    }
+  </div>
+</article>

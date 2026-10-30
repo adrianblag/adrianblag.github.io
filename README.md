@@ -1,12 +1,14 @@
 # Personal academic site
 
-A static [Astro](https://astro.build) site with five sections — home,
-publications, talks, writing (blog) and CV. Built from the approved design
-mockup; all colour, type and spacing values live as CSS custom properties in
+A static [Astro](https://astro.build) site: one page with the whole profile —
+experience, education, skills, publications, talks and posters, writing — plus
+a page for each blog post. Built from the approved design mockup; all colour,
+type and spacing values live as CSS custom properties in
 [`src/styles/global.css`](src/styles/global.css).
 
-Everything currently on the site is **placeholder content**. The three files
-you will actually edit are covered under [Configuration](#configuration).
+The files you will actually edit are covered under
+[Configuration](#configuration); everything else comes from the Markdown files
+under `src/content/`.
 
 ---
 
@@ -43,7 +45,6 @@ Requires Node 18 or newer (Node 22 LTS or 24 is a good default).
 src/
   config/
     site.ts          ← your name, bio, email, socials, skills, CV PDF ← EDIT THIS
-    taxonomy.ts      ← the category options for the filter pills ← EDIT THIS
   data/
     cv.json          ← the CV timeline ← EDIT THIS
   content/
@@ -53,15 +54,17 @@ src/
   assets/
     portrait.jpg     ← the hero portrait (imported in site.ts)
   content.config.ts  ← Zod schemas (validation only — rarely needs editing)
-  pages/             ← the routes: /, /publications, /talks, /writing, /cv
-  components/        ← header, footer, filter pills, the contour figure, …
+  pages/             ← the routes: / and /writing/<post>
+  components/        ← header, footer, the homepage rows and toggles, the
+                       contour figure, …
   layouts/Base.astro ← <head>, fonts, view transitions, scroll reveals
   styles/global.css  ← every design token and every style rule
   lib/
-    format.ts        ← date formatting, year grouping, small helpers
-    cv.ts            ← cv.json typed, shared by the CV page and the homepage
+    format.ts        ← date formatting and other small helpers
+    cv.ts            ← cv.json typed, for the homepage
     objective-map.ts ← draws the contour figure at build time
-public/              ← static files served as-is: logos, favicons, PDFs
+public/              ← static files served as-is: logos, favicons, slides, PDFs
+astro.config.mjs     ← site URL, and redirects from the old page URLs
 ```
 
 ---
@@ -70,7 +73,7 @@ public/              ← static files served as-is: logos, favicons, PDFs
 
 ### 1. `src/config/site.ts` — who you are
 
-One object plus two small ones. Every value is marked `// TODO: replace`.
+The `site` object, plus two small lists, `skills` and `nav`.
 
 - `name`, `role`, `heroStatement`, `bio` — the homepage hero. Wrap a word
   of `heroStatement` in `*asterisks*` to set it in green italics.
@@ -83,37 +86,25 @@ One object plus two small ones. Every value is marked `// TODO: replace`.
   converted to WebP at build time. Set it to `null` for the striped
   placeholder box.
 - `cvPdf` — set to `'/cv.pdf'` after putting `cv.pdf` in `public/`. While it
-  is `null` the **Download CV (PDF)** button is simply not rendered, so the
-  page never links to a missing file.
+  is `null` the **CV (PDF)** button in the Experience heading is simply not
+  rendered, so the page never links to a missing file.
 - `footerAddress` — the small mono line in the footer; `null` hides it.
 - `skills` — the **Skills & tools** block on the homepage: a list of
   groups, each a label and its items. Each group becomes a column.
-- `pageIntros` — the lead paragraph under each page title.
-- `nav` — the header links and their order (kept in the same order as the
-  homepage sections). Your name in the header links back home.
+- `nav` — the header links and their order. Each jumps to its section of
+  the homepage (`/#experience`, `/#publications`, `/#talks`, `/#writing`),
+  from any page; your name in the header links back to the top.
 
-### 2. `src/config/taxonomy.ts` — the filter pills
-
-Three plain string arrays: `publicationTypes`, `talkTypes`, `postCategories`.
-
-These are deliberately **separate from the Zod schemas**. The schemas accept
-any free-text string for `venueType`, talk `type` and post `category`, so
-renaming or adding a category here can never fail a build.
-
-The strings must match the values in your content frontmatter exactly,
-including case. An `All` pill is added automatically. A category with no
-matching content does not get a pill at all, so you will not end up with dead
-buttons while the site is half-populated.
-
-### 3. `src/data/cv.json` — the CV timeline
+### 2. `src/data/cv.json` — the CV timeline
 
 Plain JSON, in two parts:
 
 - `sections` — sets the order and heading of each block, e.g.
   `{ "id": "employment", "label": "Experience" }`. Empty sections are
   skipped automatically. The homepage uses the `employment`, `education`
-  and `training` sections: each role with its first two bullets (so put
-  the strongest ones first), every degree, and the first training entry.
+  and `training` sections: every role with all its bullets (roles beyond
+  the latest three fold under **Show N earlier roles**), every degree, and
+  the training entries (the first shown, the rest under **Show N more**).
 - `entries` — each entry's `section` must match one of those `id`s.
 
 ```json
@@ -166,14 +157,16 @@ links:
   - { label: "Code", url: "https://github.com/you/repo" }
 note: "Best paper honourable mention"   # optional
 tags: ["dialogue"]      # optional, not displayed yet
-featured: true          # optional — shows in the homepage "Selected work" panel
+featured: true          # optional — listed first under Publications
 ---
 ```
 
 `isYou: true` renders that author's name in bold. `pdf` and `doi` become
 `PDF` and `DOI` link tags automatically (a bare DOI is expanded to a
 `doi.org` URL), followed by anything in `links`. The body of the file is
-unused for publications — leave it empty.
+unused for publications — leave it empty. The homepage shows two
+publications (featured ones first, then the newest) and folds the rest under
+**Show N more publications**.
 
 ### A talk — `src/content/talks/whatever.md`
 
@@ -196,17 +189,18 @@ links:
 folder with its `index.html` (`public/slides/sigdial-2026/`), or a PDF
 (`public/slides/sigdial-2026.pdf`) — and point `slides:` at it. For a
 folder, link the `index.html` itself: GitHub Pages would also serve the bare
-folder URL, but `npm run dev` does not. The talks page shows a **Slides**
-button that opens it in a new tab, and the talk's title links there too. `slides:` also takes any URL. Files in `public/` are
-published exactly as they are, so strip speaker notes and anything private
-first; `public/slides/phday-eio-2026/` is an example of a cleaned reveal.js
-deck.
+folder URL, but `npm run dev` does not. The talk gets a **Slides** button that
+opens it in a new tab, and its title links there too. `slides:` also takes
+any URL. Files in `public/` are published exactly as they are, so strip
+speaker notes and anything private first; `public/slides/phday-eio-2026/` is
+an example of a cleaned reveal.js deck.
 
 Put the photo next to the talk's Markdown file and point `image:` at it with
 `./`. It is resized and converted to WebP at build time, and a wrong path
 fails the build with a clear message instead of shipping a broken image.
-Without an image the talk gets the striped placeholder box. The two most
-recent talks also appear on the homepage.
+Without an image the talk gets the striped placeholder box. The homepage
+shows the two most recent talks and folds older ones under **Show N older
+presentations**.
 
 ### A post — `src/content/posts/whatever.md`
 
@@ -214,7 +208,7 @@ recent talks also appear on the homepage.
 ---
 title: "On reviewing as a form of teaching"
 date: 2026-07-21
-description: "One or two sentences. Shown on the index and used as the page description."
+description: "One or two sentences. Shown on the homepage and used as the page description."
 category: "Research life"   # optional
 image: ./reviewing.jpg      # optional, next to this file; 16:9 reads best
 draft: false                # optional
@@ -224,12 +218,13 @@ The Markdown body is the post. Headings, links, lists, blockquotes, tables and
 fenced code blocks are all styled.
 ```
 
-The newest post is featured large at the top of `/writing` and on the
-homepage; the rest become compact rows. Reading time is computed from the
-body. The `image:` works like a talk's: the file sits next to the post.
+The newest post is featured in the homepage's Writing section; older posts
+fold under **Show N older posts** as compact rows. Reading time is computed
+from the body. The `image:` works like a talk's: the file sits next to the
+post.
 
 `draft: true` keeps a post visible in `npm run dev` but excludes it from
-`npm run build` — from the index, the homepage panel and the generated route.
+`npm run build` — from the homepage and from its own page.
 
 ### Images, figures and PDFs in a post
 
@@ -350,24 +345,28 @@ UTC, so a date never shifts by a day depending on where the site is built.
 
 ## How the pieces work
 
-- **Filtering** is ~40 lines of vanilla DOM code in
-  [`src/components/FilterPills.astro`](src/components/FilterPills.astro) — no
-  client framework. Clicking a pill hides non-matching rows, hides year groups
-  that become empty, keeps the `N items` counts in sync, and moves the
-  trailing hairline to the last visible row.
-- **The homepage** is an overview of the whole site: experience, education,
-  skills, publications, talks, the latest post and a contact section, each
-  linking to its full page. It is built from the same content files, so
-  there is nothing extra to keep up to date.
+- **The homepage** is the whole profile: experience, education, skills,
+  publications, talks and posters, writing and a contact section. Each
+  section heading says how many entries it holds; the newest few are shown
+  and the rest fold under a toggle that names them (**Show 1 older
+  presentation**), so a visitor never has to leave the page. How many each
+  list shows is the `SHOW` constant at the top of `src/pages/index.astro`.
+  The toggle is a native `<details>` (`MoreList.astro`): no script,
+  keyboard- and screen-reader-friendly, and images inside load only once it
+  opens. Printing the homepage opens every toggle first, so it prints the
+  full profile.
+- **Old URLs** (`/cv`, `/publications`, `/talks`, `/writing`, from when these
+  were separate pages) are `redirects` in `astro.config.mjs` to the matching
+  homepage section, so links already shared keep working.
 - **The contour figure** in the hero is computed at build time by
   `src/lib/objective-map.ts` and rendered as plain SVG by
   `ObjectiveMap.astro`: a landscape of Gaussian hills, its contour lines,
   and four gradient-ascent paths that climb to the optimum, J*. Edit the
   `HILLS` and `STARTS` constants there to reshape it.
 - **Navigation** uses Astro's `ClientRouter` (View Transitions) for a fade
-  between pages, while every page remains a real route with a real URL. The
-  filter and reveal scripts re-initialise on each navigation via
-  `astro:page-load`.
+  between the homepage and the post pages, while every page remains a real
+  route with a real URL. The reveal script re-initialises on each
+  navigation via `astro:page-load`.
 - **Motion**: one signature moment, the contour figure drawing itself on
   the homepage, then a calm fade-and-rise on every page (`.rv`) and
   homepage sections that fade up once as they first come into view
@@ -399,8 +398,8 @@ UTC, so a date never shifts by a day depending on where the site is built.
   otherwise disappear.
 - **Responsive** down to 375px: multi-column rows stack, the hero type scales
   with `clamp()`, the header links drop to a row of their own below 960px,
-  the contour figure moves under the hero text, and the CV date column moves
-  above each entry while the timeline rule stays continuous.
+  the contour figure moves under the hero text, and Experience and Education
+  stack into one column.
 
 ---
 

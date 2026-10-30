@@ -94,7 +94,10 @@ html {
      and all centred content jump ~7px sideways on navigation between them.
      Browsers without support just keep the old behaviour. */
   scrollbar-gutter: stable;
+  /* Jumps to a homepage section (/#talks …) stop below the sticky header. */
+  scroll-padding-top: 88px;
 }
+@media (max-width: 960px) { html { scroll-padding-top: 116px; } }
 
 body {
   margin: 0;
@@ -367,117 +370,23 @@ a:hover > .arr { transform: translateX(4px); }
 .footer-links a { color: var(--pill-ink); transition: color 0.25s ease; }
 .footer-links a:hover { color: var(--accent); }
 
-/* =========================================================================
-   PAGE HEADER (title + lead + filter pills)
-   ========================================================================= */
-.page-head {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 40px;
-  flex-wrap: wrap;
-}
-
-.page-head-text {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 56ch;
-}
-
-.page-title {
-  font-family: var(--serif);
-  font-weight: 300;
-  font-size: clamp(34px, 7.5vw, 52px);
-  line-height: 1.05;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-}
-
-.page-lead {
-  font-family: var(--serif);
-  font-size: 18px;
-  line-height: 1.6;
-  color: var(--body-mid);
-  text-wrap: pretty;
-}
-
-/* =========================================================================
-   FILTER PILLS
-   ========================================================================= */
-.pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  font-size: 12.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.pill {
-  padding: 7px 14px;
-  border: 1px solid var(--rule-pill);
-  color: var(--pill-ink);
-  white-space: nowrap;
-  cursor: pointer;
-  transition: border-color 0.25s ease, color 0.25s ease,
-    background-color 0.25s ease;
-}
-.pill:hover { border-color: var(--accent); color: var(--accent); }
-.pill[aria-pressed="true"] {
-  border-color: var(--accent);
-  background: var(--accent);
-  color: var(--bg);
-}
-
-/* Hidden by the filter script. */
 [hidden] { display: none !important; }
 
-.filter-empty {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 19px;
-  color: var(--meta-italic);
-  padding: 48px 0;
-}
-
 /* =========================================================================
-   YEAR GROUP HEADING
-   ========================================================================= */
-.year-head {
-  display: flex;
-  align-items: baseline;
-  gap: 20px;
-  padding: 56px 0 14px;
-}
-.year-group + .year-group .year-head { padding-top: 48px; }
-
-.year-label {
-  font-family: var(--serif);
-  font-style: italic;
-  font-size: 30px;
-  color: var(--ink);
-}
-.year-rule { flex: 1; height: 1px; background: var(--rule-strong); }
-.year-count {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--muted-3);
-  white-space: nowrap;
-}
-
-/* =========================================================================
-   SHARED LIST ROW BEHAVIOUR
-   The hover nudge moves the row's contents with a transform, not padding,
-   so it never triggers a relayout.
+   LIST ROWS (publications, talks, older posts on the homepage)
+   Rows are separated by a hairline above each one, except the first of a
+   list, so a list folded under a toggle draws its own lines. The hover
+   nudge moves the row's contents with a transform, not padding, so it
+   never triggers a relayout.
    ========================================================================= */
 .row {
   display: grid;
   gap: 40px;
   padding: 24px 0;
-  border-bottom: 1px solid var(--rule-soft);
+  border-top: 1px solid var(--rule-soft);
   transition: background-color 0.3s ease;
 }
+.row-list > .row:first-child { border-top: 0; }
 .row > * { transition: transform 0.35s var(--ease); }
 .row:hover,
 .row:focus-within { background-color: var(--wash); }
@@ -486,6 +395,7 @@ a:hover > .arr { transform: translateX(4px); }
 
 .row-title {
   font-family: var(--serif);
+  font-weight: 400; /* titles without a link are headings, bold by default */
   font-size: 25px;
   line-height: 1.3;
   color: var(--ink);
@@ -566,54 +476,8 @@ a.row-title:hover { color: var(--accent); }
 }
 
 /* =========================================================================
-   WRITING INDEX
+   OLDER POSTS (compact rows under the latest post)
    ========================================================================= */
-.post-lead-row {
-  display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 56px;
-  margin-top: 40px;
-  padding: 40px 0;
-  border-top: 1px solid var(--rule-strong);
-  border-bottom: 1px solid var(--rule-strong);
-  transition: background-color 0.3s ease;
-}
-.post-lead-row > * { transition: transform 0.35s var(--ease); }
-.post-lead-row:hover, .post-lead-row:focus-within { background-color: var(--wash); }
-.post-lead-row:hover > *, .post-lead-row:focus-within > * { transform: translateX(12px); }
-.post-lead-body { display: flex; flex-direction: column; gap: 14px; }
-.post-lead-title {
-  font-family: var(--serif);
-  font-weight: 300;
-  font-size: clamp(28px, 5.5vw, 38px);
-  line-height: 1.15;
-  letter-spacing: -0.015em;
-  color: var(--ink);
-  text-wrap: pretty;
-}
-a.post-lead-title:hover { color: var(--accent); }
-.post-lead-desc {
-  font-size: 15.5px;
-  line-height: 1.65;
-  color: var(--body);
-  max-width: 58ch;
-}
-.read-more {
-  font-size: 13px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent);
-  border-bottom: 1px solid currentColor;
-  align-self: flex-start;
-  padding-bottom: 2px;
-  transition: color 0.25s ease;
-}
-.read-more:hover { color: var(--accent-hover); }
-.post-lead-media { display: flex; flex-direction: column; gap: 8px; }
-.post-lead-media .ph, .post-lead-media img { height: 200px; width: 100%; object-fit: cover; }
-.post-lead-media .frame { --frame-offset: 12px; }
-.post-lead-media .ph-caption { font-size: 10px; }
-
 .post-row {
   grid-template-columns: 130px 1fr 120px;
   gap: 32px;
@@ -638,10 +502,6 @@ a.post-lead-title:hover { color: var(--accent); }
   padding-top: 8px;
 }
 
-@media (max-width: 880px) {
-  .post-lead-row { grid-template-columns: 1fr; gap: 24px; }
-  .post-lead-media { max-width: 420px; }
-}
 @media (max-width: 640px) {
   .post-row { grid-template-columns: 1fr; gap: 8px; }
   .post-date { padding-top: 0; }
@@ -649,16 +509,26 @@ a.post-lead-title:hover { color: var(--accent); }
   .post-row-title { font-size: 21px; }
 }
 
-/* Trailing hairline is removed from the last *visible* row of each list
-   (set server-side, then kept in sync by the filter script). */
-.row.is-last-visible,
-.post-row.is-last-visible { border-bottom: none; }
-
 /* =========================================================================
    POST DETAIL  (Markdown body)
    ========================================================================= */
 .post-header { display: flex; flex-direction: column; gap: 16px; max-width: 68ch; }
-.post-header .post-lead-title { font-size: clamp(32px, 6.5vw, 46px); }
+.post-lead-title {
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(32px, 6.5vw, 46px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  text-wrap: pretty;
+}
+.page-lead {
+  font-family: var(--serif);
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--body-mid);
+  text-wrap: pretty;
+}
 
 .post-hero { margin-top: 48px; }
 .post-hero .ph, .post-hero img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
@@ -673,7 +543,6 @@ a.post-lead-title:hover { color: var(--accent); }
   /* The gutter is only 22px here, and the hero runs the full content width,
      so a 14px offset would nearly touch the viewport edge. */
   .post-hero .frame { --frame-offset: 8px; }
-  .post-lead-media .frame { --frame-offset: 8px; }
 }
 
 .prose {
@@ -791,108 +660,8 @@ a.post-lead-title:hover { color: var(--accent); }
 }
 
 /* =========================================================================
-   CV TIMELINE
+   CV ENTRIES: logos and linked organization names
    ========================================================================= */
-.cv-grid { display: grid; grid-template-columns: 108px 1fr; }
-
-.cv-section-head {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: baseline;
-  gap: 20px;
-  padding: 8px 0;
-}
-.cv-section + .cv-section .cv-section-head { padding-top: 36px; }
-.cv-section-label {
-  font-size: 12px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
-}
-.cv-section-rule { flex: 1; height: 1px; background: var(--rule-strong); }
-
-.cv-date {
-  font-family: var(--mono);
-  font-size: 11.5px;
-  color: var(--accent);
-  padding: 28px 0 0;
-  white-space: nowrap;
-}
-
-.cv-entry {
-  position: relative;
-  padding: 28px 0 28px 40px;
-  border-left: 1px solid var(--rule-strong);
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-/* Last entry of a section: stop the vertical line just under the dot. */
-.cv-entry.is-last { border-left-color: transparent; }
-.cv-entry.is-last::after {
-  content: "";
-  position: absolute;
-  left: -1px;
-  top: 0;
-  height: 42px;
-  border-left: 1px solid var(--rule-strong);
-}
-
-.cv-dot {
-  position: absolute;
-  left: -4.5px;
-  top: 34px;
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--bg);
-  border: 1px solid var(--accent);
-}
-.cv-dot.is-current {
-  background: var(--accent);
-  box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 18%, transparent);
-}
-
-.cv-title { font-family: var(--serif); font-size: 25px; line-height: 1.3; color: var(--ink); }
-.cv-org { font-family: var(--serif); font-style: italic; font-size: 16px; color: var(--meta-italic); }
-.cv-bullets {
-  font-size: 14.5px;
-  line-height: 1.6;
-  color: var(--body-light);
-  max-width: 72ch;
-  list-style: none;
-  padding: 0;
-  margin-top: 2px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.cv-download {
-  padding: 10px 18px;
-  border: 1px solid var(--accent);
-  font-size: 12.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--accent);
-  white-space: nowrap;
-  transition: background-color 0.25s ease, color 0.25s ease;
-}
-.cv-download:hover { background-color: var(--accent); color: var(--bg); }
-
-@media (max-width: 700px) {
-  .cv-grid { grid-template-columns: 1fr; }
-  .cv-date {
-    padding: 24px 0 0 40px;
-    border-left: 1px solid var(--rule-strong);
-  }
-  .cv-entry { padding-top: 4px; }
-  .cv-dot { top: 10px; }
-  .cv-title { font-size: 21px; }
-  .cv-entry.is-last::after { height: 18px; }
-}
-
 /* Institution logo(s) + linked organization name on a CV entry.
    Logos are decorative (alt=""), since the organization name sits right
    beside them and would otherwise be announced twice.
@@ -921,10 +690,9 @@ a.post-lead-title:hover { color: var(--accent); }
   opacity: 0.72;
   transition: filter 0.3s ease, opacity 0.3s ease;
 }
-.cv-entry:hover .cv-logo,
-.cv-entry:focus-within .cv-logo,
 .tl-item:hover .cv-logo,
-.edu-item:hover .cv-logo {
+.edu-item:hover .cv-logo,
+.training-item:hover .cv-logo {
   filter: grayscale(0);
   opacity: 1;
 }
@@ -1087,6 +855,46 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
   white-space: nowrap;
   color: var(--accent);
 }
+/* How many entries the section holds, at the end of its heading. */
+.sec-count {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: var(--body-light);
+  white-space: nowrap;
+}
+
+/* ---- "Show N older …" toggle (MoreList.astro) ------------------------- */
+.more-list > summary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 0;
+  border-top: 1px solid var(--rule-soft);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  cursor: pointer;
+  list-style: none;
+  transition: color 0.25s ease;
+}
+.more-list > summary::-webkit-details-marker { display: none; }
+.more-list > summary:hover { color: var(--accent-hover); }
+.more-chevron {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.3s var(--ease);
+}
+.more-list[open] > summary .more-chevron { transform: rotate(180deg); }
+.more-list[open] .when-closed,
+.more-list:not([open]) .when-open { display: none; }
 
 .mini-label {
   font-family: var(--mono);
@@ -1157,15 +965,18 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
 .edu-item { display: flex; flex-direction: column; gap: 6px; }
 .edu-item h3 { font-size: 21px; }
 
-.home-training {
-  display: grid;
-  gap: 8px;
-  margin-top: 32px;
-  padding-top: 22px;
-  border-top: 1px solid var(--rule);
+.home-training { margin-top: 32px; padding-top: 22px; border-top: 1px solid var(--rule); }
+.mini-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.training-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 14px 0;
+  border-top: 1px solid var(--rule-soft);
 }
-.home-training p { font-family: var(--serif); font-size: 17px; line-height: 1.45; color: var(--ink-soft); }
-.home-training small { font-size: 13px; color: var(--body-light); }
+.mini-head + .training-item { border-top: 0; }
+.training-title { font-family: var(--serif); font-size: 17px; line-height: 1.4; color: var(--ink-soft); }
+.training-item .entry-org { font-size: 14.5px; }
 
 /* ---- Skills & tools ---------------------------------------------------- */
 .skills { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; }
@@ -1179,51 +990,6 @@ a.cv-org-link:hover .cv-org-name { border-bottom-color: var(--accent); }
   transition: border-color 0.25s ease, color 0.25s ease, background-color 0.25s ease;
 }
 .tags li:hover { border-color: var(--accent); color: var(--accent); background: var(--wash); }
-
-/* ---- Publications ------------------------------------------------------ */
-.home-pubs { display: grid; gap: 24px; }
-.home-pub {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 26px;
-  margin: -26px;
-  transition: background-color 0.3s ease;
-}
-.home-pub:hover { background: var(--wash); }
-.home-pub-title {
-  font-family: var(--serif);
-  font-weight: 400;
-  font-size: 25px;
-  line-height: 1.3;
-  color: var(--ink);
-  text-wrap: pretty;
-}
-a.home-pub-title:hover { color: var(--accent); }
-.home-pub .pub-authors { font-size: 14.5px; color: var(--body-light); }
-.home-pub .taglinks { flex-direction: row; gap: 18px; margin-top: 6px; }
-
-/* ---- Talks ------------------------------------------------------------- */
-.home-talks { display: grid; gap: 4px; }
-.home-talk {
-  display: grid;
-  grid-template-columns: 112px minmax(0, 1fr);
-  gap: 20px;
-  padding: 16px 12px 16px 0;
-  color: inherit;
-  transition: background-color 0.3s ease;
-}
-.home-talk:hover { background: var(--wash); color: inherit; }
-/* The hover nudge is a transform (no relayout), not a padding change. */
-.home-talk > * { transition: transform 0.35s var(--ease); }
-.home-talk:hover > * { transform: translateX(12px); }
-.home-talk-thumb { align-self: start; }
-.home-talk-thumb .frame { --frame-offset: 6px; }
-.home-talk-thumb img,
-.home-talk-thumb .ph { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; }
-.home-talk h3 { font-family: var(--serif); font-weight: 400; font-size: 18px; line-height: 1.35; color: var(--ink); margin-top: 6px; }
-.home-talk:hover h3 { color: var(--accent); }
-.home-talk p { font-family: var(--serif); font-style: italic; font-size: 14px; line-height: 1.5; color: var(--meta-italic); margin-top: 4px; }
 
 /* ---- Writing ----------------------------------------------------------- */
 .home-post { display: grid; grid-template-columns: minmax(0, 1fr) 420px; gap: 56px; align-items: center; }
@@ -1276,8 +1042,7 @@ a.home-pub-title:hover { color: var(--accent); }
   .sec-rule { display: none; }
   .more { margin-left: auto; }
   .skills { grid-template-columns: 1fr; gap: 28px; }
-  .home-pub { padding: 14px; margin: -14px; }
-  .home-talk { grid-template-columns: 92px minmax(0, 1fr); gap: 16px; }
+  .sec-count { margin-left: auto; }
   .home-contact { grid-template-columns: 1fr; padding-block: 56px; }
 }
 
@@ -1350,6 +1115,15 @@ a.home-pub-title:hover { color: var(--accent); }
   .js .reveal.is-in { opacity: 1; transform: none; }
   .js .timeline::before { transform: scaleY(0); transition: transform 1.4s var(--ease) 0.15s; }
   .js .timeline.is-in::before { transform: none; }
+}
+
+/* Printing gives the whole profile: Base.astro opens every folded list
+   first, sections not yet scrolled to are shown, and the toggles and the
+   sticky header stay out of the way. */
+@media print {
+  .site-header { position: static; }
+  .js .reveal { opacity: 1 !important; transform: none !important; }
+  .more-list > summary { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

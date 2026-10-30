@@ -1,0 +1,33 @@
+---
+/**
+ * The rest of a homepage list, folded under a toggle that says how many
+ * entries it holds ("Show 2 older talks"); open, it reads "Show fewer".
+ * A native <details>, so it works without JavaScript, keyboards and screen
+ * readers treat it as an expandable button, and images inside load only
+ * once it is opened. Renders nothing when there is nothing to fold.
+ */
+import { plural } from '../lib/format';
+
+interface Props {
+  /** how many entries are folded inside */
+  count: number;
+  /** the folded entries, e.g. ['older talk', 'older talks'] */
+  noun: [string, string];
+}
+const { count, noun } = Astro.props;
+---
+
+{
+  count > 0 && (
+    <details class="more-list">
+      <summary>
+        <svg class="more-chevron" viewBox="0 0 16 16" aria-hidden="true">
+          <path d="M4 6l4 4 4-4" />
+        </svg>
+        <span class="when-closed">Show {plural(count, ...noun)}</span>
+        <span class="when-open">Show fewer</span>
+      </summary>
+      <slot />
+    </details>
+  )
+}

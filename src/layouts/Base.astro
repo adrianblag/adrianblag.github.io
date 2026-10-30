@@ -175,6 +175,22 @@ const fullTitle = title ? `${title} · ${site.name}` : site.name;
 
       // Fires on the first load and after every view transition.
       document.addEventListener('astro:page-load', init);
+
+
+      // Printing the homepage prints the whole profile: open every folded
+      // list first, and close the ones we opened afterwards.
+      addEventListener('beforeprint', () => {
+        document.querySelectorAll<HTMLDetailsElement>('details.more-list:not([open])').forEach((d) => {
+          d.open = true;
+          d.dataset.printOpened = '';
+        });
+      });
+      addEventListener('afterprint', () => {
+        document.querySelectorAll<HTMLDetailsElement>('details[data-print-opened]').forEach((d) => {
+          d.open = false;
+          delete d.dataset.printOpened;
+        });
+      });
     </script>
   </body>
 </html>

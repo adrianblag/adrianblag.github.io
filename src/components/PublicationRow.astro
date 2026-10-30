@@ -1,0 +1,55 @@
+---
+/** One publication: year and type, title (linked to the PDF, DOI or first
+ *  link), authors with yours in bold, venue, and the link tags. */
+import type { CollectionEntry } from 'astro:content';
+import { doiUrl } from '../lib/format';
+
+interface Props {
+  pub: CollectionEntry<'publications'>;
+}
+const { data } = Astro.props.pub;
+
+/** PDF and DOI are promoted to link tags ahead of any explicit `links`. */
+const links = [
+  ...(data.pdf ? [{ label: 'PDF', url: data.pdf }] : []),
+  ...(data.doi ? [{ label: 'DOI', url: doiUrl(data.doi) }] : []),
+  ...data.links,
+];
+const primary = links[0]?.url;
+---
+
+<article class="row pub-row reveal">
+  <div class="pub-body">
+    <span class="row-stamp">{data.year} · {data.venueType}</span>
+    {
+      primary ? (
+        <a class="row-title" href={primary}>
+          {data.title}
+        </a>
+      ) : (
+        <h3 class="row-title">{data.title}</h3>
+      )
+    }
+    <span class="row-meta pub-authors">
+      {
+        data.authors.map((a, i) => (
+          <Fragment>
+            {i > 0 && ', '}
+            {a.isYou ? <span class="you">{a.name}</span> : a.name}
+          </Fragment>
+        ))
+      }
+    </span>
+    <span class="row-venue">{[data.venue, data.note].filter(Boolean).join(' · ')}</span>
+  </div>
+  <div class="taglinks">
+    {
+      links.map((l) => (
+        <a href={l.url}>
+          {l.label}
+          <span class="sr-only"> — {data.title}</span>
+        </a>
+      ))
+    }
+  </div>
+</article>

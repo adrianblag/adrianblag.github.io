@@ -1,0 +1,42 @@
+---
+/**
+ * The organization line of a CV entry: its logo(s), then the name, linked
+ * when cv.json gives a `url` (a verification link where one exists).
+ * Logos are decorative (alt=""): the name sits right beside them and would
+ * otherwise be announced twice. Several logos (a joint degree) get a line
+ * of their own above the name.
+ */
+import type { CvEntry } from '../lib/cv';
+import { logosOf } from '../lib/cv';
+import { url } from '../lib/format';
+
+interface Props {
+  entry: CvEntry;
+}
+const { entry } = Astro.props;
+const logos = logosOf(entry);
+---
+
+{
+  entry.organization && (
+    <p class="entry-org">
+      {entry.url ? (
+        <a class="cv-org-link" href={entry.url}>
+          {logos.map((src) => (
+            <img class="cv-logo" src={url(src)} alt="" height="20" loading="lazy" />
+          ))}
+          {logos.length > 1 && <br />}
+          <span class="cv-org-name">{entry.organization}</span>
+        </a>
+      ) : (
+        <Fragment>
+          {logos.map((src) => (
+            <img class="cv-logo" src={url(src)} alt="" height="20" loading="lazy" />
+          ))}
+          {logos.length > 1 && <br />}
+          <span>{entry.organization}</span>
+        </Fragment>
+      )}
+    </p>
+  )
+}
