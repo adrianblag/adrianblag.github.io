@@ -7,7 +7,8 @@ type: "Contributed"
 date: 2025-10-23
 abstract: "Cluster analysis of input data for photovoltaic system simulations under local shading. Presented at the XVII Galician Congress of Statistics and Operations Research, organised by SGAPEIO with the Department of Statistics and Operations Research of the Universidade de Vigo."
 image: "./sgapeio-xvii-2025.jpg"
-# The slides are the Google Slides PDF export, in public/slides/.
+# The slides are the Google Slides PDF export in public/slides/, keeping
+# only the last step of each animation build.
 slides: "/slides/sgapeio-xvii-2025.pdf"
 links: []
 tags: ["photovoltaics", "clustering"]
