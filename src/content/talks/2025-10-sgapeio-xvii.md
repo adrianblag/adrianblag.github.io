@@ -9,7 +9,7 @@ abstract: "Cluster analysis of input data for photovoltaic system simulations un
 image: "./sgapeio-xvii-2025.jpg"
 # The slides are the Google Slides PDF export in public/slides/, keeping
 # only the last step of each animation build.
-slides: "/slides/sgapeio-xvii-2025.pdf"
+slides: "/slides/sgapeio-2025.pdf"
 links: []
 tags: ["photovoltaics", "clustering"]
 ---

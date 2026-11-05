@@ -195,6 +195,16 @@ any URL. Files in `public/` are published exactly as they are, so strip
 speaker notes and anything private first; `public/slides/phday-eio-2026/` is
 an example of a cleaned reveal.js deck.
 
+Name every deck the same way, so they look alike when opened:
+
+- File or folder: `<event>-<year>`, lowercase, e.g. `eu-pvsec-2025.pdf`,
+  `phday-eio-2026/`.
+- Title shown in the browser tab: `<talk title, as on the first slide> ·
+  <event> <year>`, in sentence case, e.g. "Accelerating photovoltaic system
+  simulations via statistical data aggregation · EU PVSEC 2025". For an HTML
+  deck it is the `<title>` in its `index.html`; for a PDF it is the document
+  title (in Google Slides, the presentation's name when you download it).
+
 Put the photo next to the talk's Markdown file and point `image:` at it with
 `./`. It is resized and converted to WebP at build time, and a wrong path
 fails the build with a clear message instead of shipping a broken image.
